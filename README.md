@@ -1,8 +1,7 @@
-# WRO2025 Future Engineers – Nerdvana Taurus Team
-
+# WRO2026 Future Engineers – HyperLine Robotics Team
 ---
 
-Repository of Nerdvana Taurus Team competing in the **World Robot Olympiad (WRO) 2025**, Future Engineers category. 
+Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (WRO) 2026**, Future Engineers category. 
 
 ### 🔗 Links
 
@@ -518,3 +517,4 @@ This software and all associated files are the exclusive property of the copyrig
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 ```
+
