@@ -37,18 +37,48 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 
 ## ❤️ Sponsors and Partners
 
-<p align="center">
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/openmv.avif" height="60" />
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/EasyEDA_logo.png" height="60" />
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/OSHWLab.png" height="60" />
-  <img src="https://static.lcsc.com/feassets/pc/images/headIcons/logo-s.png" height="60" />
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/ING.png" height="60" />
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/FundatiaComunitaraBucuresti.png" height="60" />
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/SoBotz.png" height="60" />
-  <img src="https://jsumo.com/Data/EditorFiles/jsumo-robot-parts-logo.png" height="60" />
-  <img src="https://hyperlinerobotics.com/assets/images/sponsors/evergreen.png" height="60" />
-  <img src="https://fae-drones.com/wp-content/uploads/2022/08/logo-vertical-ro.png" height="60" />
-</p>
+<table align="center" cellspacing="12">
+<tr>
+  <td bgcolor="#ffffff" align="center" width="200">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/openmv.avif" height="55">
+  </td>
+  <td bgcolor="#ffffff" align="center" width="200">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/EasyEDA_logo.png" height="55">
+  </td>
+  <td bgcolor="#ffffff" align="center" width="200">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/OSHWLab.png" height="55">
+  </td>
+  <td bgcolor="#ffffff" align="center" width="200">
+    <img src="https://static.lcsc.com/feassets/pc/images/headIcons/logo-s.png" height="55">
+  </td>
+</tr>
+
+<tr>
+  <td bgcolor="#ffffff" align="center">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/ING.png" height="45">
+  </td>
+  <td bgcolor="#ffffff" align="center">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/FundatiaComunitaraBucuresti.png" height="55">
+  </td>
+  <td bgcolor="#ffffff" align="center">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/SoBotz.png" height="55">
+  </td>
+  <td bgcolor="#ffffff" align="center">
+    <img src="https://jsumo.com/Data/EditorFiles/jsumo-robot-parts-logo.png" height="55">
+  </td>
+</tr>
+
+<tr>
+  <td bgcolor="#ffffff" align="center">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/evergreen.png" height="50">
+  </td>
+  <td bgcolor="#ffffff" align="center">
+    <img src="https://fae-drones.com/wp-content/uploads/2022/08/logo-vertical-ro.png" height="55">
+  </td>
+  <td></td>
+  <td></td>
+</tr>
+</table>
 
 
 ---
@@ -517,4 +547,5 @@ This software and all associated files are the exclusive property of the copyrig
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 ```
+
 
