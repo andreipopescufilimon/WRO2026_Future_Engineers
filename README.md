@@ -170,7 +170,7 @@ This repository is organized as follows:
 
 <img src="" width="450">
 
-### **Popescu Filimon Andrei Cosmin** (Left Side)
+### **Popescu Filimon Andrei Cosmin**
 **Age:** 17 <br>
 
 **High School:** International Computer High School Bucharest (ICHB)  
@@ -180,7 +180,7 @@ Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my secon
 
 ---
 
-### **Horia Simion** (Right Side)
+### **Horia Simion**
 **Age:** 16 <br>
 **High School:** National College "Mihai Viteazul" (CNMV)
 
