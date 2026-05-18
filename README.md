@@ -146,7 +146,7 @@ This repository is organized as follows:
 
 
 ```
-📦 WRO2025_Future_Engineers
+📦 WRO2026_Future_Engineers
 ├── 📁 3D-models             # Contains 3D design files for the robot's components
 │   ├── 📁 old-3D-models     # Previous versions of 3D models
 │   └── 📁 step-models       # 3D models in STEP format
@@ -180,6 +180,15 @@ Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my secon
 
 ---
 
+### **Horia Simion** (Right Side)
+**Age:** 16 <br>
+**High School:** National College "Mihai Viteazul" (CNMV)
+
+**Description:**  
+Hi! I’m Horia from Romania, and this is my second WRO season competing alongside Andrei. I have participated in RoboMission multiple times, gaining valuable experience in solving various problems that may arise while building a robot. I have a strong interest in technology and robotics and am always eager to learn and experiment with new ideas.
+
+---
+
 ### **Eduard Alexandru Vasile**
 **Age:** 15 <br>
 **High School:** ...
@@ -191,7 +200,7 @@ Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my secon
 
 ## 🎯 Challenge Overview <a id="challenge-overview"></a>
 
-The **WRO 2025 Future Engineers** challenge pushes teams to develop a **fully autonomous vehicle** capable of navigating a **dynamic and randomized racetrack** using **sensors, computer vision, and advanced control algorithms**. The goal is to complete **multiple laps** while adapting to randomized obstacles, following **strict driving rules**, and successfully executing a **parallel parking maneuver** at the end of the course.
+The **WRO 2026 Future Engineers** challenge pushes teams to develop a **fully autonomous vehicle** capable of navigating a **dynamic and randomized racetrack** using **sensors, computer vision, and advanced control algorithms**. The goal is to complete **multiple laps** while adapting to randomized obstacles, following **strict driving rules**, and successfully executing a **parallel parking maneuver** at the end of the course.
 
 ### 📌 Competition Format 
 
