@@ -396,7 +396,7 @@ The **Arduino Nano ESP32** provides **high-speed processing, built-in Wi-Fi and 
 
 The **Custom BMI088 IMU** is used to **measure the robot's angular velocity and acceleration**, helping it maintain **stability and precise movement control**. It is essential for **calculating turns and avoiding drift**. We decided to customize it to be able to make it more compact.
 
-| <img src="https://image.easyeda.com/oshwhub/pullImage/580630a1f8554f5da3addc13fd826e8b.jpeg" width="300"> | **Specifications** |
+| <img src="https://image.easyeda.com/oshwhub/pullImage/1db8f1f53c984bd58fc7691a401918ca.png" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
 | **Interface:** I2C / SPI | **Supply Voltage:** 3.0V – 3.6V |
