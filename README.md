@@ -315,8 +315,10 @@ During development, multiple robot revisions were designed and tested to improve
 |---|---|---|
 | V1 | Fully 3D-printed chassis was too large, steering precision was poor, and power management was unstable | Redesigned the entire robot structure and moved to a custom PCB chassis |
 | V2 | Robot was reliable but too long for tight turns and obstacle sections | Redesigned steering geometry and optimized wheelbase dimensions |
+| V3 | Current Robot | - |
 
 Each iteration was tested on the track field. Testing focused on steering consistency, obstacle handling, parking precision, and stability during high-speed runs.
+
 ---
 
 ## 🚗 Mobility Management <a id="mobility-management"></a>
