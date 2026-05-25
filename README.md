@@ -197,7 +197,7 @@ Hi! I’m Horia from Romania, and this is my second WRO season competing alongsi
 
 ### **Eduard Alexandru Vasile**
 **Age:** 16 <br>
-**High School:** ...
+**High School:** Liceul Teoretic Alexandru Ioan Cuza
 
 **Description:**  
 **to be completed*
