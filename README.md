@@ -240,6 +240,33 @@ Scoring is based on **accuracy, technical documentation and speed**, rewarding t
 | <p align="center"><b>Front</b></p> | <p align="center"><b>Back</b></p> |
 
 
+Robot Specifications:
+| Parameter | Value |
+|---|---|
+| Robot Length | ~145 mm |
+| Robot Width | ~65 mm |
+| Robot Height | ~55 mm |
+| Total Weight | ~200 g |
+| Wheelbase | ~65 mm |
+| Ground Clearance | ~6 mm |
+| Main Controller | Arduino Nano ESP32 |
+| Vision System | OpenMV RT1062 |
+| Drive System | Rear differential drive |
+| Steering System | Parallel steering |
+| Drive Motor | Pololu 30:1 HPCB Gearmotor |
+| Steering Servo | MG90S |
+| Downforce System | 10000KV BLDC Impeller |
+| Battery | 2S Li-Po 300mAh |
+| Maximum Stable Speed | ~3 m/s |
+| Camera Processing Speed | ~40 FPS |
+| Maximum Steering Angle | ~85° |
+| Peak Current Consumption | ~7 A |
+| Communication Protocols | UART, I2C, PWM |
+| Chassis Type | Custom PCB chassis |
+| Wheel Material | Cast silicone tires |
+
+The robot was designed to prioritize stability, fast steering response, and compact packaging. A lightweight PCB chassis combined with silicone tires and an active downforce system allows the robot to maintain traction and consistency during high-speed autonomous runs.
+
 ---
 
 ## 📊 Performance Metrics <a id="performance-metrics"></a>
@@ -556,6 +583,22 @@ The **D24V50F5** regulates the **11.1V Li-Po battery output** to a **stable 5V**
 |---------------------------|---------------------------|---------------------------|
 | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/SCH_Schematic1_1-P1_2026-05-25.png" width="400"> | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/PCB%20View.png" width="400"> | <img src="" width="400"> |
 
+```txt
+                2S Li-Po Battery
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+   Drive Motor                    Impeller ESC
+        │                               │
+   IFX9201SG                      BLDC Motor
+        │
+   D24V50F5 Regulator
+        │
+ ┌──────┼────────┬────────┬────────┐
+ │      │        │        │        │
+ESP32  OpenMV   IMU    Servo   Distance Sensors
+```
+
 The robot uses a fully custom PCB chassis designed to combine both the electrical system and the structural frame into a single compact platform. This approach reduced weight, improved rigidity, and increased overall reliability during high-speed autonomous runs.
 
 ### **Advantages of the Custom PCB Chassis**
@@ -600,7 +643,7 @@ The robot was designed with power efficiency and peak-current stability in mind.
 
 ## 💻 Components coding <a id="components-coding"></a>
 
-### 🧠 Software Architecture <a id="#software-architecture"></a>
+### 🧠 Software Architecture <a id="software-architecture"></a>
 
 This diagram below, shows how the main software modules interact during a run. The OpenMV RT1062 handles image processing and sends compact commands through UART, while the Arduino Nano ESP32 manages motion control, state logic, steering, motor speed, and parking.
 
