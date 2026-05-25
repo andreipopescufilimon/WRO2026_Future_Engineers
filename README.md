@@ -88,6 +88,9 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 - [👥 The Team](#the-team)
 - [🎯 Challenge Overview](#challenge-overview)
 - [🤖 Our Robot](#our-robot)
+- [📊 Performance Metrics](#performance-metrics)
+- [⚖️ Engineering Trade-Offs](#engineering-tradeoffs)
+- [🔬 Testing & Iterations](#testing-iterations)
 - [⚙️ Mobility Management](#mobility-management)
   - [🚗 Drivebase](#drivebase)
     - [🔧 Drivetrain](#drivetrain)
@@ -117,6 +120,8 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🛠️ PCB Design](#pcb-design)
   - [⚡ Power Consumption](#power-consumption)
 - [💻 Components coding](#components-coding)
+  - [🧠 Software Architecture](#software-architecture)
+  - [🔄 Robot State Machine](#state-machine)
   - [⚡ Drive motor](#drive-motor-coding)
   - [🌪️ Impeller](#impeller-coding)
   - [🎮 Servo motor](#servo-motor-coding)
@@ -235,6 +240,56 @@ Scoring is based on **accuracy, technical documentation and speed**, rewarding t
 | <p align="center"><b>Front</b></p> | <p align="center"><b>Back</b></p> |
 
 
+---
+
+## 📊 Performance Metrics <a id="performance-metrics"></a>
+
+The robot was tested extensively on full-scale WRO-inspired tracks to evaluate stability, obstacle handling, and parking consistency. Multiple runs were performed under different lighting conditions and track layouts to validate reliability and repeatability.
+
+| Metric | Result |
+|---|---:|
+| Maximum stable speed | 3 m/s |
+| Average lap time | 11-12 s |
+| Parking success rate | 90% |
+| Obstacle avoidance success rate | 95% |
+| Average steering correction delay | <10 ms |
+| Camera processing speed | ~40 FPS |
+| Maximum steering angle | 85° |
+| Full system peak current | ~7 A |
+
+The final tuning focused on balancing speed and stability rather than maximizing raw speed alone. Particular attention was given to repeatable obstacle avoidance and consistent parking performance.
+
+---
+
+## ⚖️ Engineering Trade-Offs <a id="engineering-tradeoffs"></a>
+
+Throughout development, several engineering decisions had to balance performance, reliability, complexity, and weight.
+
+| Decision | Chosen Solution | Reason |
+|---|---|---|
+| Main controller | Arduino Nano ESP32 | Compact size, high performance, integrated wireless features, used for debuging |
+| Vision system | OpenMV RT1062 | Lower latency and lower power consumption compared to Raspberry Pi |
+| Chassis structure | PCB chassis | Reduced wiring, improved rigidity, better space optimization |
+| Steering system | Parallel steering | Simpler and lighter than Ackermann steering |
+| Navigation | Gyro-based PD control | More stable heading correction compared to encoder-only control |
+| Tires | Silicone tires | Better grip and more predictable handling |
+| Downforce system | Impeller | Increased traction without adding weight |
+| Obstacle detection | Camera-based detection | Allowed flexible handling of randomized obstacles |
+
+The final robot design focused on achieving reliable autonomous behavior while maintaining a lightweight and compact structure optimized for high-speed operation.
+
+---
+
+## 🔬 Testing & Iterations <a id="testing-iterations"></a>
+
+During development, multiple robot revisions were designed and tested to improve steering precision, reliability, and overall track performance.
+
+| Version | Problem Identified | Improvement Made |
+|---|---|---|
+| V1 | Fully 3D-printed chassis was too large, steering precision was poor, and power management was unstable | Redesigned the entire robot structure and moved to a custom PCB chassis |
+| V2 | Robot was reliable but too long for tight turns and obstacle sections | Redesigned steering geometry and optimized wheelbase dimensions |
+
+Each iteration was tested on the track field. Testing focused on steering consistency, obstacle handling, parking precision, and stability during high-speed runs.
 ---
 
 ## 🚗 Mobility Management <a id="mobility-management"></a>
@@ -544,6 +599,72 @@ The robot was designed with power efficiency and peak-current stability in mind.
 ---
 
 ## 💻 Components coding <a id="components-coding"></a>
+
+### 🧠 Software Architecture <a id="#software-architecture"></a>
+
+This diagram below, shows how the main software modules interact during a run. The OpenMV RT1062 handles image processing and sends compact commands through UART, while the Arduino Nano ESP32 manages motion control, state logic, steering, motor speed, and parking.
+
+The software is split into independent modules so each subsystem can be tested separately. Vision data is used by the obstacle and parking logic, while the gyro PID keeps the robot stable between decisions. Final movement commands are sent to the steering servo and IFX9201SG motor driver.
+
+```text
+          OpenMV RT1062
+        (Vision Processing)
+                 │ UART
+                 ▼
+        Arduino Nano ESP32
+   ┌─────────────┼─────────────┐
+   │             │             │
+ Gyro PID   Obstacle Logic   Parking Logic
+   │             │             │
+   └──────► Steering Control ◄─┘
+                    │
+             MG90S Servo
+                    │
+             Drive Motor PID
+                    │
+              IFX9201SG
+```
+
+### 🔄 Robot State Machine <a id="state-machine"></a>
+
+The robot software is organized as a state machine. Each state has a specific role, and transitions happen only when a clear sensor event or timing condition is detected. This makes the robot easier to debug, safer during runs, and more reliable in the randomized WRO track.
+
+```text
+WAIT_START
+    ↓ start button pressed
+PID_DRIVE
+    ├── cube detected far away ─────► FOLLOW_CUBE
+    ├── black wall / turn point ────► TURN_90
+    ├── 12 turns completed ─────────► PARKING
+    ↓
+FOLLOW_CUBE
+    ├── cube close enough ──────────► AVOID_CUBE
+    └── cube lost timeout ──────────► PID_DRIVE
+    ↓
+AVOID_CUBE
+    ↓ avoidance movement completed
+AFTER_CUBE
+    ↓ robot realigned
+PID_DRIVE
+    ↓ final lap completed
+PARKING
+    ↓ robot fully inside parking area
+STOP
+```
+
+| State | Purpose | Main Inputs | Output |
+|---|---|---|---|
+| `WAIT_START` | Keeps the robot stopped before the round begins | Start button | Starts autonomous run |
+| `PID_DRIVE` | Drives straight using gyro-based PD correction | Gyro, camera line/wall signals | Steering + motor speed |
+| `FOLLOW_CUBE` | Follows the detected red/green cube before avoidance | OpenMV `S±value` command | Servo correction toward cube |
+| `AVOID_CUBE` | Passes the cube on the correct side based on color | OpenMV `RED` / `GREEN` command | Fixed avoidance maneuver |
+| `AFTER_CUBE` | Realigns the robot after avoiding a cube | Gyro angle, timeout | Returns to stable driving |
+| `TURN_90` | Performs a 90° turn when a corner is detected | Black wall signal, turn direction | Updates target gyro angle |
+| `PARKING` | Executes the final parallel parking routine | Distance sensors, gyro | Parks inside the parking area |
+| `STOP` | Ends the run safely | Parking complete | Motor off, steering centered |
+
+
+Using a state machine prevents different behaviors from interfering with each other. For example, while the robot is parking, camera commands are ignored, and while it is avoiding a cube, the normal driving PID is temporarily paused. This makes the behavior more predictable and easier to test during repeated runs.
 
 ### ⚡ Drive motor <a id="drive-motor-coding"></a>
 
@@ -1041,6 +1162,20 @@ uart.write(str(direction) + '\n')
 
 In the final round, we extend our open rount algorithm by adding real‐time cube detection, following, and avoidance algorithms. The OpenMV RT1062 camera handles live frames processing and sends compact UART messages to the Arduino Nano ESP32. On the Arduino, incoming UART messages drive a four‐state algorithm: in **PID**, the robot adjust to hold a straight heading by using a PD on the gyro and turns 90° whenever it receives a **BLACK** signal (lap turning point in each corner). In **FOLLOW_CUBE**, the camera’s **S<corrected_servo>** message directly sets the servo angle to chase the closest visible cube; if no follow message arrives within 250-500 ms, it returns to **PID** as the cube might have been passed or lost from the view. When a proximity trigger (**RED** or **GREEN**, **R** or **G**) arrives, it switches to **AVOID_CUBE**, executes a 37° turn plus an 8 cm clear‐away while holding that heading, then enters **AFTER_CUBE** to reallign on gyro while moving back to center section of each side of the map, and to flush the leftover commands before reverting to **PID**.
 
+**Final Round Flowchart:**
+```txt
+Detect Cube
+     ↓
+Determine Color
+     ↓
+Follow Cube
+     ↓
+Avoid Left/Right
+     ↓
+Recenter Robot
+     ↓
+Return To PID
+```
 ---
 
 ### Arduino Side
@@ -1427,6 +1562,20 @@ if (turn_count == 12 && RUN_MODE == 1) {
 }
 ...
 ```
+
+Parking Sequence flowchart:
+```txt
+Detect Parking Area
+      ↓
+Align To Front Wall
+      ↓
+Reverse With Steering
+      ↓
+Align Parallel
+      ↓
+Stop Inside Parking
+```
+
 
 ---
 
