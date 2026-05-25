@@ -2,7 +2,10 @@
 
 This folder contains the circuit diagrams and wiring layouts for the robot's electronics. Also we added the 3 files needed for PCB production with assembly at JLCPCB.
 
-...
+`PCB Schematics.png` - PCB Schematics, containing all robot connections
+`PCB Routing.png` - Shows PCB Routes
 
 **Production Files:**
-...
+Gerber: `PCBGerber.zip`
+BOM: `BOM_PCB.xlsx`
+Pick And Place: `PickAndPlace_PCB.xlsx`
