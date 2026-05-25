@@ -330,8 +330,7 @@ The robot's mobility is controlled through **a fully PCB chassis, a servo-based 
 The drivetrain uses a custom micro-RC differential at the rear, driven by a **Pololu 30:1 HPCB micro gearmotor** through a **3D printed gear** → **differential input gear**. The motor is held in a 3D-printed support with the battery mounted above, keeping the center of mass centered and low. Rear outputs rotate in bearings seated inside a printed part that contains 4 bearings for the wheel axles, this attachment is mounted using M2 screws to the PCB chassis, minimizing friction and parts count. 
 At the front, the wheels are fully 3D-printed and each wheel runs on two bearings (inner + outer) for a rigid, wobble-free hub that steers precisely.
 
-<img src="" width="600">
-**to add images*
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/differential.jpeg" width="600">
 
 To maximize grip on the track without adding mass, we use a **downforce impeller (10000KV BLDC motor)** that pulls air from under the robot, increasing the normal force. The impeller is PWM-controlled via an **EMAX Bullet 20A ESC**. The drive motor is controlled by an **IFX9201SG driver (PWM + DIR)** with an active brake pulse for precise stopping, while the encoder on the gearmotor provides odometry for short, accurate moves (e.g., avoidance hops, parking nudges).
 
@@ -364,7 +363,6 @@ Our robot uses cast silicone tires on 3D-printed hubs. Silicone provides high, r
 - Tire: Cast silicone ring fitted onto a mechanical bead on the rim (no harsh solvents needed).
 - Fit: Rear wheels mount directly to the diff axle outputs; fronts ride on steering hubs for low friction.
 
-**to add images*
 
 ### 🔌 **IFX9201SG Motor Driver** <a id="motor-driver"></a>
 
@@ -380,8 +378,15 @@ The **IFX9201SG** motor driver is used to control the robot’s high-performance
 
 ### **⚙️ Impeller for downforce** <a id="impeller">
 
-**to be completed*
+The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **1020 coreless DC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
 
+| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/impeller.jpeg" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Type:** BLDC Motor | **Model:** 10000KV |
+| **Voltage:** 2–3S | **Shaft Diameter:** 1.0mm |
+| **No-Load Speed:** ~85,000 RPM @ 3.7V	 | **	Weight:** ~4.5g |
+| **Current Draw (Avg):** ~1A @ 3.7V	 | **Peak Current:** ~2.5A |
+| 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
 
 ---
 
@@ -544,8 +549,16 @@ The **MG90S servo is used for precise steering control**, enabling the robot to 
 ---
 
 ### **⚙️ Impeller for downforce** <a id="impeller">
-**to be completed*
 
+The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **1020 coreless DC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
+
+| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/impeller.jpeg" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Type:** BLDC Motor | **Model:** 10000KV |
+| **Voltage:** 2–3S | **Shaft Diameter:** 1.0mm |
+| **No-Load Speed:** ~85,000 RPM @ 3.7V	 | **	Weight:** ~4.5g |
+| **Current Draw (Avg):** ~1A @ 3.7V	 | **Peak Current:** ~2.5A |
+| 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
 
 ---
 
