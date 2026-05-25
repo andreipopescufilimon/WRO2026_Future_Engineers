@@ -1639,8 +1639,7 @@ Stop Inside Parking
 
 ## 📽️ Performance Video <a id="performance-video"></a>
 
-🔗 **[Click here to watch the video on YouTube(without music)]()** 
-🔗 **[Click here to watch the video on YouTube(with music)]()** 
+🔗 **[Click here to watch the video on YouTube]()** 
 
 ---
 
