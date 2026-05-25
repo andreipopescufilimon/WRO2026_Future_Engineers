@@ -141,7 +141,6 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🖨️ 3D Printing Cost](#3d-printing-cost)
   - [🔩 Other Materials (Screws, Nuts, Miscellaneous)](#other-materials-cost)
   - [💵 Total Cost](#total-cost)
-- [📂 Randomizer](#randomizer)
 - [📂 Resources](#resources)
 - [📜 License](#license)
 
