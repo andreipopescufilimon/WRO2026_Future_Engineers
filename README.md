@@ -409,7 +409,7 @@ The **Custom BMI088 IMU** is used to **measure the robot's angular velocity and 
 
 The **OpenMV Cam RT1062** handles **traffic sign recognition, lane detection, color tracking, and other visual cues** in real time. It includes its own high-performance microcontroller, so the Arduino can focus mainly on movement control while the camera processes images independently.
 
-| <img src="https://openmv.io/cdn/shop/files/openmv-cam-rt1062-angle.jpg" width="300"> | **Specifications** |
+| <img src="https://openmv.io/cdn/shop/files/cam-v5-front-hero-2-web_1000x.jpg?v=1699323324" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Processor:** NXP i.MX RT1062 Cortex-M7 | **Frequency:** 600 MHz |
 | **RAM:** 32 MB SDRAM + 1 MB SRAM | **Flash Memory:** 16 MB QSPI Flash |
