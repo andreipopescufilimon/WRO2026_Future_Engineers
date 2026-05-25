@@ -35,6 +35,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   </a>
 </p>
 
+
 ## ❤️ Sponsors and Partners
 
 <table align="center" cellspacing="12">
@@ -61,7 +62,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
     <img src="https://hyperlinerobotics.com/assets/images/sponsors/FundatiaComunitaraBucuresti.png" height="55">
   </td>
   <td bgcolor="#ffffff" align="center">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/SoBotz.png" height="55">
+    <img src="https://hyperlinerobotics.com/assets/images/sponsors/SoBotz-white.png" height="55">
   </td>
   <td bgcolor="#ffffff" align="center">
     <img src="https://jsumo.com/Data/EditorFiles/jsumo-robot-parts-logo.png" height="55">
