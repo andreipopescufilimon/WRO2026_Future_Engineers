@@ -1689,6 +1689,9 @@ These parts were mainly used for testing and optimization and are not included i
 ---
 
 ### **🖨️ 3D Printing Cost Breakdown** <a id="3d-printing-cost"></a>
+
+For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high quality resing printing we used the 3DP service from JLC.
+
 | 3D Printed Parts                          | Quantity | Unit Price ($) | Total ($)   |
 |-------------------------------------------|----------|----------------|---------------|
 | **1000g Anycubic PLA+ filament**       | 1       | **16.99**      | **16.99**     |
