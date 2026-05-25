@@ -18,7 +18,6 @@ This folder contains 3D design files for the robot's components. These files inc
 
 ### Archive
 - `old-3D-models/`: Contains earlier versions of the robot's 3D models for reference.
-**Currently no old models for this robot version*
 
 ## Usage
 - Download the `.stl` or `.step`(if available) files to fabricate the components using a 3D printer or CNC machine.
