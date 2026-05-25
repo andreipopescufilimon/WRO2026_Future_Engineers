@@ -1724,10 +1724,6 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 
 ## 📂 Resources <a id="resources"></a>
 
-Below is a list of **external images** used in this repository.
-
-## 📂 Resources <a id="resources"></a>
-
 Below is a compact list of **external images** used in this repository.
 
 | Category | Resources |
