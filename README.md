@@ -1727,6 +1727,18 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 
 Below is a list of **external images** used in this repository.
 
+## 📂 Resources <a id="resources"></a>
+
+Below is a compact list of **external images** used in this repository.
+
+| Category | Resources |
+|---|---|
+| Social Badges | [Website](https://img.shields.io/badge/Website-000?style=for-the-badge&logo=google-chrome&logoColor=white), [YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white), [Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white), [X](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white), [Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white), [GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white), [OSHWLab](https://img.shields.io/badge/OSHWLab-0A7DFF?style=for-the-badge&logo=opensourcehardware&logoColor=white) |
+| Sponsor Logos | [OpenMV](https://hyperlinerobotics.com/assets/images/sponsors/openmv.avif), [EasyEDA](https://hyperlinerobotics.com/assets/images/sponsors/EasyEDA_logo.png), [OSHWLab](https://hyperlinerobotics.com/assets/images/sponsors/OSHWLab.png), [LCSC](https://static.lcsc.com/feassets/pc/images/headIcons/logo-s.png), [ING](https://hyperlinerobotics.com/assets/images/sponsors/ING.png), [Fundația Comunitară București](https://hyperlinerobotics.com/assets/images/sponsors/FundatiaComunitaraBucuresti.png), [SoBotz](https://hyperlinerobotics.com/assets/images/sponsors/SoBotz-white.png), [JSumo](https://jsumo.com/Data/EditorFiles/jsumo-robot-parts-logo.png), [Evergreen](https://hyperlinerobotics.com/assets/images/sponsors/evergreen.png), [FAE Drones](https://fae-drones.com/wp-content/uploads/2022/08/logo-vertical-ro.png) |
+| Robot Parts | [Differential](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/differential.jpeg), [Pololu Gearmotor](https://a.pololu-files.com/picture/0J12418.220.jpg?8f026fe1675b1109ea574290d3d26081), [IFX9201SG Driver](https://assets.lcsc.com/images/lcsc/900x900/20230316_Infineon-Technologies-IFX9201SG_C112633_front.jpg), [Impeller](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/impeller.jpeg), [MG90S Servo](https://static.optimusdigital.ro/20565-large_default/mg90s-servomotor.jpg), [Li-Po Battery](https://img-va.myshopline.com/image/store/2000408386/1640672930478/GNB3002S60AHV-(4)_1800x.jpeg?w=1000&h=1000), [Arduino Nano ESP32](https://store.arduino.cc/cdn/shop/files/ABX00092_01.iso_804x603.jpg?v=1727101612), [BMI088 IMU](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/2f218ef03b6aa341f2fc0c9e151cf439fa750abd/other/IMU.png), [OpenMV RT1062](https://openmv.io/cdn/shop/files/cam-v5-front-hero-2-web_1000x.jpg?v=1699323324), [Pololu Distance Sensor](https://a.pololu-files.com/picture/0J11135.1200.jpg?1910ced553e34153046a4c95021a93b3), [Voltage Regulator](https://gomagcdn.ro/domains/robofun.ro/files/product/large/pololu-5v-5a-step-down-voltage-regulator-d24v50f5-633511-832-442353.jpg) |
+| PCB Images | [Electrical Schematic](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/SCH_Schematic1_1-P1_2026-05-25.png), [PCB View](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/PCB%20View.png) |
+
+**Note:** All external images are credited to their original owners and are used only for documentation and component reference purposes.
 
 ---
 
