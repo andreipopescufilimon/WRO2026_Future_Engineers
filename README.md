@@ -424,7 +424,7 @@ The **IFX9201SG** motor driver is used to control the robot’s high-performance
 
 ### **⚙️ Impeller for downforce** <a id="impeller">
 
-The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **1020 coreless DC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
+The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **BLDC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/impeller-fan_technical-drawing.png" width="800">
 
@@ -432,8 +432,8 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 |------------------------------|------------------------------|
 | **Type:** BLDC Motor | **Model:** 10000KV |
 | **Voltage:** 2–3S | **Shaft Diameter:** 1.0mm |
-| **No-Load Speed:** ~85,000 RPM @ 3.7V	 | **	Weight:** ~4.5g |
-| **Current Draw (Avg):** ~1A @ 3.7V	 | **Peak Current:** ~2.5A |
+| **No-Load Speed:** ~85,000 RPM @ 7.4V	 | **	Weight:** ~4.5g |
+| **Current Draw (Avg):** ~1A @ 7.4V	 | **Peak Current:** ~2.5A |
 | 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
 
 ---
@@ -607,7 +607,7 @@ The **Custom BMI088 IMU** is used to **measure the robot's angular velocity and 
 | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/2f218ef03b6aa341f2fc0c9e151cf439fa750abd/other/IMU.png" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
-| **Interface:** I2C / SPI | **Supply Voltage:** 3.0V – 3.6V |
+| **Interface:** I2C | **Supply Voltage:** 3.0V – 3.6V |
 | **Current Draw:** ~3.2mA | **Weight:** ~1g |
 | 🔗 [View Open Source Project Here](https://oshwlab.com/bicicleta11/bmi088-gyro-module) | **Function:** Tracks orientation & motion |
 
@@ -671,14 +671,14 @@ The **MG90S servo is used for precise steering control**, enabling the robot to 
 
 ### **⚙️ Impeller for downforce** <a id="impeller">
 
-The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **1020 coreless DC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
+The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **BLDC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
 
 | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/impeller.jpeg" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Type:** BLDC Motor | **Model:** 10000KV |
 | **Voltage:** 2–3S | **Shaft Diameter:** 1.0mm |
-| **No-Load Speed:** ~85,000 RPM @ 3.7V	 | **	Weight:** ~4.5g |
-| **Current Draw (Avg):** ~1A @ 3.7V	 | **Peak Current:** ~2.5A |
+| **No-Load Speed:** ~85,000 RPM @ 7.4V	 | **	Weight:** ~4.5g |
+| **Current Draw (Avg):** ~1A @ 7.4V	 | **Peak Current:** ~2.5A |
 | 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
 
 ---
@@ -705,7 +705,7 @@ The **D24V50F5** regulates the **11.1V Li-Po battery output** to a **stable 5V**
 |------------------------------|------------------------------|
 | **Model:** D24V50F5 | **Input Voltage:** 6V – 38V |
 | **Output Voltage:** 5V | **Output Current:** 5A |
-| **Efficiency:** Linear Regulator | **Dropout Voltage:** ~2V |
+| **Efficiency:** Buck Converter (Step-down) | **Dropout Voltage:** ~2V |
 | **Protection:** Short-circuit & thermal shutdown | **Mounting Type:** Pins |
 | 🔗 **[Buy Here](https://www.pololu.com/product/2851)** | **Function:** Converts battery voltage to 5V |
 
@@ -900,9 +900,9 @@ float read_cm() {
 
 ### 🌪️ Impeller <a id="impeller-coding"></a>
 
-The impeller is responsible for generating downforce, which increases stability and traction when the robot operates at high speed. To control it, we use an **RFR3411 MOSFET**, wired as a low-side switch. This **MOSFET** can safely handle the high current required by the impeller, while allowing speed control via **PWM** modulation.
+The impeller is responsible for generating downforce, which increases stability and traction when the robot operates at high speed. To control it, we use an **EMAX BULLET ESC**, wired as a low-side switch. This **ESC** can safely handle the high current required by the impeller, while allowing speed control via **PWM** modulation.
 
-Only a single PWM pin from the ESP32 is needed to drive the MOSFET gate. The PWM duty cycle determines how much power is applied to the impeller:
+Only a single PWM pin from the ESP32 is needed to drive the ESC. The PWM duty cycle determines how much power is applied to the impeller:
 
 ```
 0 = off
@@ -1813,11 +1813,13 @@ These parts were mainly used for testing and optimization and are not included i
 ---
 
 ### **🔌 PCB Cost (Manufactured via JLCPCB)** <a id="pcb-cost"></a>
-| PCB Component                  | Quantity | Unit Price ($) | Total ($)    |
-|--------------------------------|----------|----------------|--------------|
-| **PCB Manufacturing (JLCPCB)** | TBD      | **TBD**        | **TBD**      |
-| **PCB Assembly (JLCPCB)**      | TBD      | **TBD**        | **TBD**      |
-| **TOTAL PCB COST**             | TBD      | **TBD**        | **TBD**      |
+| PCB Component                  |    Board    | Quantity | Unit Price ($) | Total ($)    |
+|--------------------------------|-------------|----------|----------------|--------------|
+| **PCB Manufacturing (JLCPCB)** |   Main      |    5     | **1.3**        | **6.5**      |
+|                                |   IMU       |    5     |  **6.644**     | **33.22**    |
+| **PCB Assembly (JLCPCB)**      |   Main      |    5     |   **0.82**     | **4.10**     |
+|                                |   IMU       |    5     |   **21.826**   | **109.13**   |
+| **TOTAL PCB COST**             |    ALL       |   5*2=10 | **30.59**      | **152.95**   |
 
 ---
 
@@ -1846,10 +1848,10 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 | Category                      | Total Cost ($) |
 |-------------------------------|----------------|
 | **Components**                | **363.35**     |
-| **PCB (JLCPCB + Components)** | **TBD**     |
+| **PCB (JLCPCB + Components)** | **30.59**     |
 | **3D Printing**               | **38.98**      |
 | **Other Materials**           | **20.00**       |
-| **TOTAL PROJECT COST**        | **TBD**     |
+| **TOTAL PROJECT COST**        | **452.92**     |
 
 **Prices are approximate, based on current market prices.*
 
