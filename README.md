@@ -95,6 +95,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 - [⚙️ Mobility Management](#mobility-management)
   - [🚗 Drivebase](#drivebase)
     - [🔧 Drivetrain](#drivetrain)
+    - [⚙️ Torque and Speed Reasoning](#torque)
     - [⚙️ Motor](#motor)
     - [🛞 Wheels](#wheels)
     - [🔌 Motor Driver IFX9201SG](#motor-driver)
@@ -134,6 +135,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [⚡ Final Round](#final-round)
   - [🅿️ Start from Parking](#start-from-parking)
   - [🅿️ Parking](#parking)
+- [⚠️ Edge Cases and Failure Handling](#edge-cases)
 - [📽️ Performance Video](#performance-video)
 - [💰 Cost Analysis](#cost-analysis)
   - [📦 Component Costs](#components-costs)
@@ -141,6 +143,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🖨️ 3D Printing Cost](#3d-printing-cost)
   - [🔩 Other Materials (Screws, Nuts, Miscellaneous)](#other-materials-cost)
   - [💵 Total Cost](#total-cost)
+- [🔁 Reproducibility Guide](#reproductibility-guide)
 - [📂 Resources](#resources)
 - [📜 License](#license)
 
@@ -290,20 +293,35 @@ The final tuning focused on balancing speed and stability rather than maximizing
 
 ## ⚖️ Engineering Trade-Offs <a id="engineering-tradeoffs"></a>
 
-Throughout development, several engineering decisions had to balance performance, reliability, complexity, and weight.
+Throughout the development process, every major design choice had to balance speed, stability, reliability, weight, and ease of debugging. The goal was not only to build a fast robot, but to create a compact autonomous vehicle that can perform consistently across different WRO field layouts, lighting conditions, obstacle positions, and parking scenarios.
 
 | Decision | Chosen Solution | Reason |
 |---|---|---|
-| Main controller | Arduino Nano ESP32 | Compact size, high performance, integrated wireless features, used for debuging |
-| Vision system | OpenMV RT1062 | Lower latency and lower power consumption compared to Raspberry Pi |
-| Chassis structure | PCB chassis | Reduced wiring, improved rigidity, better space optimization |
-| Steering system | Parallel steering | Simpler and lighter than Ackermann steering |
-| Navigation | Gyro-based PD control | More stable heading correction compared to encoder-only control |
-| Tires | Silicone tires | Better grip and more predictable handling |
-| Downforce system | Impeller | Increased traction without adding weight |
-| Obstacle detection | Camera-based detection | Allowed flexible handling of randomized obstacles |
+| Main controller | Arduino Nano ESP32 | Compact board with enough processing power for real-time control, integrated wireless features for debugging, and good compatibility with our sensors and actuators |
+| Vision system | OpenMV RT1062 | Lower latency, lower power consumption, and easier real-time color processing compared to a Raspberry Pi-based system |
+| Chassis structure | PCB chassis | Reduces wiring, improves rigidity, saves space, and makes the robot easier to assemble and reproduce |
+| Steering system | Parallel steering | Simpler, lighter, and more compact than Ackermann steering, while still giving predictable steering response |
+| Navigation | Gyro-based PD control | More stable heading correction than relying only on encoder movement, especially during long straights and after obstacle avoidance |
+| Tires | Cast silicone tires | Provide high grip and predictable handling on smooth WRO surfaces |
+| Downforce system | Impeller | Increases traction during acceleration, braking, and cornering without adding static weight |
+| Obstacle detection | Camera-based detection | Allows flexible detection of randomized red and green traffic signs, track lines, and parking elements |
 
-The final robot design focused on achieving reliable autonomous behavior while maintaining a lightweight and compact structure optimized for high-speed operation.
+The final robot design focuses on reliable autonomous behavior in a compact and lightweight structure. Instead of optimizing only one area, such as maximum speed, we designed the mechanical, electrical, and software systems to support each other. The chassis keeps the robot rigid, the tires and impeller improve grip, the camera provides high-level field information, and the gyro helps maintain stable heading control.
+
+### Main Engineering Constraints
+
+During development, several constraints directly influenced the final design. These constraints helped us decide which solutions were practical, reliable, and suitable for competition use.
+
+| Constraint | Design Challenge | Final Solution |
+|---|---|---|
+| Limited robot size | The robot had to remain small enough for tight turns, obstacle avoidance, and parking | Short wheelbase, compact drivetrain, PCB chassis, and low component stacking |
+| Low weight target | Extra weight reduces acceleration, braking performance, and steering response | Lightweight PCB chassis, compact electronics, and 3D-printed structural parts |
+| High current peaks | The impeller, drive motor, and steering servo can create sudden voltage drops | 2S Li-Po battery, dedicated voltage regulation, short power traces, and clean PCB routing |
+| Camera latency | Delayed detection can cause late turns or incorrect obstacle avoidance | OpenMV RT1062 used for fast image processing and direct UART communication with the controller |
+| Steering precision | Small steering errors can accumulate over multiple laps and affect parking accuracy | Servo-based steering combined with gyro correction and camera-based decisions |
+| Mechanical stability | Vibration and chassis flex can affect camera view, sensor readings, and steering accuracy | Rigid PCB chassis, fixed component mounting, and compact mechanical structure |
+
+These constraints shaped the robot as a complete system. The mechanical design provides grip, rigidity, and compact packaging. The power system keeps the electronics stable during current peaks. The sensors give the software reliable information about the track, obstacles, and robot heading. The software then combines this data to make safe and repeatable autonomous decisions. Because of this, the final design is not just a collection of selected components, but a system where each subsystem was chosen to support the others and improve consistency during full autonomous runs.
 
 ---
 
@@ -365,6 +383,27 @@ Our robot uses cast silicone tires on 3D-printed hubs. Silicone provides high, r
 - Tire: Cast silicone ring fitted onto a mechanical bead on the rim (no harsh solvents needed).
 - Fit: Rear wheels mount directly to the diff axle outputs; fronts ride on steering hubs for low friction.
 
+#### ⚙️ **Torque and Speed Reasoning** <a id="torque"></a>
+
+The 30:1 Pololu HPCB gearmotor was selected because it provides a good balance between speed and usable torque. A lower gear ratio would increase the maximum speed, but the robot would lose acceleration and braking control. A higher gear ratio would give more torque, but the robot would become slower on long straight sections.
+
+The goal was not to choose the fastest possible motor, but the fastest motor that could still:
+- accelerate smoothly without wheel slip,
+- brake before turns and obstacles,
+- recover from small steering errors,
+- perform short controlled movements during parking,
+- keep enough torque when the impeller increases downforce.
+- be reliable and not burn
+
+Because the robot uses silicone tires and an active downforce impeller, the wheels can transfer more force to the ground. This means the drivetrain needs enough torque to use the extra grip without stalling or overheating. The 30:1 gear ratio gave the best compromise during testing, especially for repeated starts, obstacle avoidance movements, and parking corrections.
+
+| Option Considered | Advantage | Disadvantage | Decision |
+|---|---|---|---|
+| Lower gear ratio motor | Higher theoretical top speed | Less torque, weaker braking, harder parking control | Rejected |
+| Higher gear ratio motor | More torque and easier low-speed control | Lower speed on long straights | Rejected |
+| 30:1 HPCB gearmotor | Good speed, enough torque, compact size | Needs careful speed control | Selected |
+
+This choice improved the robot’s consistency because the car could drive fast while still keeping predictable control during turns and obstacle sections.
 
 ### 🔌 **IFX9201SG Motor Driver** <a id="motor-driver"></a>
 
@@ -1704,6 +1743,21 @@ Stop Inside Parking
 
 ---
 
+### ⚠️ Edge Cases and Failure Handling <a id="edge-cases"></a>
+
+During testing, several failure cases were identified and handled in software. These protections make the robot more reliable because the program does not depend on every sensor reading being perfect.
+
+| Failure Case | Possible Cause | Software Response |
+|---|---|---|
+| Cube temporarily lost from camera view | Motion blur, lighting, cube outside ROI | Return from FOLLOW_CUBE to PID after timeout |
+| Repeated black line detection | Camera sees the same turn marker multiple times | Cooldown timer prevents repeated 90° turns |
+| Wrong color detection | Reflections or lighting variation | LAB threshold tuning and ROI filtering |
+| Robot drifts after avoidance | Uneven floor, steering error, gyro drift | AFTER_CUBE state re-aligns heading before normal PID |
+| Parking zone not detected immediately | Camera angle, sensors angle or object position | Continue searching after completing required laps |
+| Sudden voltage drop | Impeller or servo current spike | Impeller ramp-up and separated power strategy |
+
+---
+
 ## 📽️ Performance Video <a id="performance-video"></a>
 
 🔗 **[Click here to watch the video on YouTube]()** **to upload*
@@ -1786,6 +1840,42 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 | **TOTAL PROJECT COST**        | **TBD**     |
 
 **Prices are approximate, based on current market prices.*
+
+---
+
+## 🔁 Reproducibility Guide <a id="reproductibility-guide"></a>
+
+Another team or person should be able to rebuild the robot by following the files and documentation in this repository.
+
+### 1. Mechanical Build
+1. Print the parts from the `3D-models` folder.
+2. Use the technical drawings from `technical-draws` to check dimensions and orientation.
+3. Assemble the rear drivetrain, differential, motor mount, and wheel hubs.
+4. Mount the steering servo and front steering hubs.
+5. Install the silicone tires on the wheels.
+6. Mount the impeller and make sure the airflow path is not blocked.
+
+### 2. Electronics Assembly
+1. Use the wiring files from `electrical-schematics`.
+2. Connect the Arduino Nano ESP32, OpenMV camera, motor driver, servo, IMU, distance sensors, and voltage regulator.
+3. Check power polarity before connecting the Li-Po battery.
+4. Test the regulated voltage before connecting sensitive components.
+5. Confirm UART communication between the OpenMV camera and Arduino.
+
+### 3. Software Upload
+1. Upload the Arduino code from the `src` folder to the Arduino Nano ESP32.
+2. Upload the OpenMV Python script to the OpenMV RT1062 camera.
+3. Open serial debug during first tests to verify sensor messages.
+4. Calibrate camera thresholds for the current lighting.
+5. Reset IMU heading before the first autonomous run.
+
+### 4. First Test Run
+1. Test steering center without driving.
+2. Test drive motor direction and braking.
+3. Test camera detection for orange, blue, red, green, black, and magenta.
+4. Test gyro-based 90° turns.
+5. Test cube following and avoidance at low speed.
+6. Test parking only after lane following and obstacle logic are stable.
 
 ---
 
