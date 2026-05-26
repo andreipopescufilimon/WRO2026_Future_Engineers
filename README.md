@@ -421,26 +421,93 @@ To control the steering system, we use an **MG90S micro servo**, known for its h
 
 ## 🏎️ **Chassis & Component Mounting** <a id="chassis"></a>
 
-**to be completed*
+The chassis of our robot is built around a custom PCB structure, which acts both as the electrical base and as the main mechanical frame. This design helps reduce unnecessary wiring, saves space, improves rigidity, and keeps the robot compact enough for fast movement inside the track.
 
+Instead of using a fully 3D-printed frame, we chose a PCB chassis because it gives better precision for mounting electronic components and keeps the wiring much cleaner. The main controller, motor driver, voltage regulator, connectors, IMU, and sensor connections are all integrated directly into the board. This reduces the risk of loose wires during testing and makes the robot easier to repair or debug.
+
+The mechanical parts are mounted directly onto the PCB using M2 screws, nuts, and small 3D-printed supports. Each printed part was designed to match the exact position of the robot components, so the drivetrain, steering system, battery, impeller, and sensors stay fixed during high-speed runs. The drive motor is mounted in a 3D-printed support at the rear of the robot. It transfers motion to the rear differential through a small gear system. The rear axle assembly is supported with bearings to reduce friction and improve stability. This setup allows the rear wheels to rotate smoothly while keeping the drivetrain compact. The steering system is placed at the front of the robot. The MG90S servo is mounted securely on a 3D printed mount that also holds the camera, and its arm controls both front wheels through a parallelogram steering linkage. The front hubs rotate on M2 screws and bearings, allowing the wheels to steer with low friction and good precision.
+
+The battery is mounted close to the center of the robot to keep the center of mass balanced. This helps the robot stay stable when accelerating, braking, or turning. The OpenMV camera is mounted at the front side of the robot via same 3D printed mounting parts used for the steering servo, positioned to clearly detect colored cubes, walls, and track markings. Distance sensors are placed around the robot to assist with wall detection, parking, and starting direction.
+
+The impeller is mounted in the central area of the chassis so it can pull air from under the robot and generate downforce evenly. This improves grip without adding extra weight, which is important for maintaining speed and control during the run. 
+
+Overall, the chassis and mounting system were designed to be lightweight, rigid, compact, and easy to maintain. Every component has a fixed position, making the robot more reliable during repeated tests and competition runs.
 
 ---
 
 ## 🔧 Assembly Process <a id="assembly-process"></a>
 
-🔗 **[Click here to watch the assembly video on YouTube]()** <a id="assembly-process-video"></a>
+🔗 **[Click here to watch the assembly video on YouTube]()** <a id="assembly-process-video"></a> **to upload*
+
+The assembly process was planned so that every subsystem could be mounted and tested step by step. This helped us avoid wiring problems, mechanical misalignment, and difficult debugging later in the build.
 
 ---
 
 ### 2: Assemble the Chassis & Components <a id="assembly"></a>
 
-
 #### 🔧 **Main Assembly Steps**
-...
-...
-...
-**to be completed*
 
+**1. Prepare the PCB Chassis**
+
+The first step is to inspect the custom PCB chassis and make sure all soldered components, connectors, and mounting holes are clean and correctly placed. Before installing mechanical parts, we check the power rails, continuity, and main connector pins to make sure there are no shorts or soldering problems.
+
+**2. Mount the Rear Drivetrain**
+
+The rear drivetrain is assembled by installing the Pololu 30:1 HPCB gearmotor into its 3D-printed motor support. The motor gear is aligned with the differential input gear, making sure the gears mesh smoothly without too much pressure or backlash.
+
+After that, the rear differential and axle support are mounted to the PCB chassis using M2 screws. Bearings are inserted into the rear support to reduce friction and keep the wheel axles stable during movement.
+
+**3. Install the Rear Wheels**
+
+The rear wheels are mounted onto the differential outputs. Each wheel is checked to make sure it spins freely and does not wobble. Proper wheel alignment is important because even small friction or imbalance can affect the robot’s stability at high speed.
+
+**4. Assemble the Front Steering System**
+
+The front steering hubs are mounted onto the chassis using M2 screws and bearings. The front wheels are then installed on the hubs and checked for smooth rotation.
+
+The MG90S servo is mounted in its fixed position on the chassis 3D printet part. The steering linkage is connected between the servo arm and both front hubs. Before final tightening, the servo is centered in software, then the wheels are aligned straight. This ensures that the robot drives forward correctly when the servo is at its center position.
+
+**5. Mount the Battery Holder**
+
+The battery support is installed on top of the motor mount, near the middle of the robot to keep the weight balanced. The 2S Li-Po battery is placed securely so it cannot move during acceleration, braking, or sudden turns.
+
+**6. Install the Impeller System**
+
+The impeller base is mounted in the central area of the chassis. The BLDC motor and fan are installed inside the impeller base, making sure the fan spins freely without touching the PCB.
+The ESC or MOSFET control wires are connected carefully to the PCB. The impeller is tested at low power first to check vibration, airflow, and stability.
+
+**7. Mount the Camera**
+
+The OpenMV RT1062 camera is mounted at the front side of the robot. Its angle is fixed but already adjusted so it can clearly see the colored cubes, track lines, and wall areas. After mounting, the camera view is tested through the OpenMV IDE to make sure the region of interest matches the physical track.
+
+**8. Install the Distance Sensors**
+
+The Pololu PWM distance sensors are mounted around the robot according to their function: front, back, left, and right. Their position is important for parking, wall detection, and starting direction detection.
+
+Each sensor is mounted via a soldered 3 pin header, so it won't be affected by any vibrations.
+
+**9. Connect Electronics**
+
+After all mechanical parts are mounted, the electronic connections are completed. This includes the motor, encoder, servo, impeller control, OpenMV UART lines, IMU, distance sensors, and battery input. Before powering the full system, we verify polarity and check that the 5V regulator output is stable.
+
+**10. Upload and Test Basic Firmware**
+
+The first firmware test checks each subsystem separately:
+
+- Drive motor forward and reverse
+- Steering servo left, right, and center
+- Impeller speed control
+- Distance sensor readings
+- IMU data
+- OpenMV UART communication
+
+Testing each part separately makes debugging easier and prevents one faulty subsystem from affecting the whole robot.
+
+**11. Final Mechanical Check**
+
+Before running the robot on the track, we check that all screws are tight, the wheels spin freely, the steering moves smoothly, and the battery is fixed properly. We also check that no wires can touch the gears, wheels, or impeller.
+
+**Note:** Small changes are made after each test run until the robot behaves consistently and reliably.
 
 ---
 
@@ -1639,7 +1706,7 @@ Stop Inside Parking
 
 ## 📽️ Performance Video <a id="performance-video"></a>
 
-🔗 **[Click here to watch the video on YouTube]()** 
+🔗 **[Click here to watch the video on YouTube]()** **to upload*
 
 ---
 
