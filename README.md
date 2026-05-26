@@ -202,7 +202,10 @@ Hi! I’m Horia from Romania, and this is my third WRO season competing alongsid
 **High School:** Liceul Teoretic Alexandru Ioan Cuza
 
 **Description:**  
-**to be completed*
+Hi! I’m Eduard from Romania. I’m passionate about robotics, especially building and testing competitive robots. I have worked on sumo robots, and recently I started developing line follower robots as well. I also enjoy driving and flight simulators, where I like exploring realistic control, precision, and performance.
+
+Apart from robotics, I love MTB, video games, and cybersecurity. I’m always interested in learning new technologies, improving my skills, and working on projects that challenge me both technically and creatively.
+
 
 ---
 
