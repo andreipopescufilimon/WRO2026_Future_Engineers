@@ -712,7 +712,7 @@ The **D24V50F5** regulates the **11.1V Li-Po battery output** to a **stable 5V**
 
 | **Electrical Schematics** | **PCB Copper Traces** | **Final PCB Chassis** |
 |---------------------------|---------------------------|---------------------------|
-| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/SCH_Schematic1_1-P1_2026-05-25.png" width="400"> | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/PCB%20View.png" width="400"> | <img src="" width="400"> |
+| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/SCH_Schematic1_1-P1_2026-05-25.png" width="400"> | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/PCB%20View.png" width="400"> | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/14d0d9b5735245c1baf6302c3efea01e1c7aedcd/other/top-2.png" width="400"> |
 
 ```txt
                 2S Li-Po Battery
