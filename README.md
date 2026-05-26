@@ -437,6 +437,9 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 | 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
 
 
+---
+
+
 ### **⚙️ ESC Controller for impleller** <a id="ESC">
 
 **The EMAX D-SHOT Bullet 20A ESC controls the BLDC motor that drives the impeller. In this project, it uses a simple servo-style PWM signal, making it easy to interface with the main controller while providing smooth and reliable speed control in a compact, lightweight package.**
@@ -698,6 +701,21 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 | **No-Load Speed:** ~85,000 RPM @ 7.4V	 | **	Weight:** ~4.5g |
 | **Current Draw (Avg):** ~1A @ 7.4V	 | **Peak Current:** ~2.5A |
 | 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
+
+---
+
+### **⚙️ ESC Controller for impleller** <a id="ESC">
+
+**The EMAX D-SHOT Bullet 20A ESC controls the BLDC motor that drives the impeller. In this project, it uses a simple servo-style PWM signal, making it easy to interface with the main controller while providing smooth and reliable speed control in a compact, lightweight package.**
+
+
+| <img src="https://emaxmodel.com/cdn/shop/products/img_6216.png?v=1598533647" width="800"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Type:** ESC For BLDC Motors | **Model:** EMAX D-SHOT  |
+| **Voltage:** 2–4S | **Protections:** Shortcircuit protection & stall protection |
+| **Dimensions (LxW):** 11.9x19.6 mm	 | **Weight(W/O Wires):** ~3.5g |
+| **Burst Max Current**  : ~30A	 | **Max Current:** ~20A |
+| 🔗 **[Buy Here](https://emaxmodel.com/products/emax-d-shot-bullet-series-20a-2-4s-blheli_s-esc-3-5g-support-onshot42-multishot?_pos=5&_sid=e68307242&_ss=r)** | **Function:** Drives the downforce BLDC |
 
 ---
 
