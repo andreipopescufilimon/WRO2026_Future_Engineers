@@ -373,6 +373,8 @@ Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6
 
 Our robot uses cast silicone tires on 3D-printed hubs. Silicone provides high, repeatable static friction on painted boards and vinyl, which pairs perfectly with the rear differential and downforce impeller—more grip when we need it, without adding mass.
 
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/back-wheel_technical-drawing.png" width="450">
+
 **Why silicone?**
 - Grip & consistency: Strong adhesion on smooth surfaces → faster exits and shorter braking distances.
 - Low wear on the map: Softer compound grips without scratching.
@@ -421,6 +423,8 @@ The **IFX9201SG** motor driver is used to control the robot’s high-performance
 
 The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **1020 coreless DC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
 
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/impeller-fan_technical-drawing.png" width="450">
+
 | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/impeller.jpeg" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Type:** BLDC Motor | **Model:** 10000KV |
@@ -440,7 +444,9 @@ The **steering system** is a critical part of the robot, ensuring precise maneuv
 
 Our **steering arm is directly connected to the servo**, which moves the two front wheels simultaneously. This ensures that the turning response is immediate and proportional to the servo's motion. The **wheels are mounted on special mounts hubs**, allowing for smooth and precise movement without excessive friction. To ensure **structural integrity and long-term reliability**, the steering system is **assembled using M2 screws on which the hubs can turn**. 
 
-**to add images*
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/steering-and-camera-mount-hub_technical-drawing.png" width="450">
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/left-steering-hub_technical-drawing.png" width="450">
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/steering-bar_technical-drawing.png" width="450">
 
 ---
 
@@ -466,7 +472,11 @@ Instead of using a fully 3D-printed frame, we chose a PCB chassis because it giv
 
 The mechanical parts are mounted directly onto the PCB using M2 screws, nuts, and small 3D-printed supports. Each printed part was designed to match the exact position of the robot components, so the drivetrain, steering system, battery, impeller, and sensors stay fixed during high-speed runs. The drive motor is mounted in a 3D-printed support at the rear of the robot. It transfers motion to the rear differential through a small gear system. The rear axle assembly is supported with bearings to reduce friction and improve stability. This setup allows the rear wheels to rotate smoothly while keeping the drivetrain compact. The steering system is placed at the front of the robot. The MG90S servo is mounted securely on a 3D printed mount that also holds the camera, and its arm controls both front wheels through a parallelogram steering linkage. The front hubs rotate on M2 screws and bearings, allowing the wheels to steer with low friction and good precision.
 
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/motor-and-wheel-hub(main-drive-hub)_technical-drawing.png" width="450">
+
 The battery is mounted close to the center of the robot to keep the center of mass balanced. This helps the robot stay stable when accelerating, braking, or turning. The OpenMV camera is mounted at the front side of the robot via same 3D printed mounting parts used for the steering servo, positioned to clearly detect colored cubes, walls, and track markings. Distance sensors are placed around the robot to assist with wall detection, parking, and starting direction.
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/battery-support_technical-drawing.png" width="450">
 
 The impeller is mounted in the central area of the chassis so it can pull air from under the robot and generate downforce evenly. This improves grip without adding extra weight, which is important for maintaining speed and control during the run. 
 
@@ -1577,7 +1587,6 @@ if candidates:
 <img src="" width="900">
 
 <img src="" width="900">
-*to add images
 
 ### 🅿️ Starting from Parking <a id="start-from-parking"></a>
 At the start of the round, our robot is placed in the designated parking zone (the parking zone is 1.5x robot lenght). To determine the direction of the first lap (clockwise or counterclockwise), we use the 2 distance sensors placed on left and right side of our robot, the one that sees the wall further away will be the side to exit and do the laps.
