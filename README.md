@@ -445,7 +445,7 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 **The EMAX D-SHOT Bullet 20A ESC controls the BLDC motor that drives the impeller. In this project, it uses a simple servo-style PWM signal, making it easy to interface with the main controller while providing smooth and reliable speed control in a compact, lightweight package.**
 
 
-| <img src="https://emaxmodel.com/cdn/shop/products/img_6216.png?v=1598533647" width="800"> | **Specifications** |
+| <img src="https://emaxmodel.com/cdn/shop/products/img_6216.png?v=1598533647" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Type:** ESC For BLDC Motors | **Model:** EMAX D-SHOT  |
 | **Voltage:** 2–4S | **Protections:** Shortcircuit protection & stall protection |
@@ -709,7 +709,7 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 **The EMAX D-SHOT Bullet 20A ESC controls the BLDC motor that drives the impeller. In this project, it uses a simple servo-style PWM signal, making it easy to interface with the main controller while providing smooth and reliable speed control in a compact, lightweight package.**
 
 
-| <img src="https://emaxmodel.com/cdn/shop/products/img_6216.png?v=1598533647" width="800"> | **Specifications** |
+| <img src="https://emaxmodel.com/cdn/shop/products/img_6216.png?v=1598533647" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Type:** ESC For BLDC Motors | **Model:** EMAX D-SHOT  |
 | **Voltage:** 2–4S | **Protections:** Shortcircuit protection & stall protection |
