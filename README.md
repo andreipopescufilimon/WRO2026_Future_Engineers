@@ -906,6 +906,13 @@ The robot software is organized as a state machine. Each state has a specific ro
 | `STOP` | Ends the run safely | Parking complete | Motor off, steering centered |
 
 
+Some behaviors shown in the high-level software diagram are not implemented as separate `RobotState` enum values because they are simple control phases, not long-running robot modes. For example, the start procedure is implemented as a blocking wait before the main loop starts:
+```cpp
+while (digitalRead(START_BUTTON) == HIGH) {
+  // wait for start signal
+}
+```
+
 Using a state machine prevents different behaviors from interfering with each other. For example, while the robot is parking, camera commands are ignored, and while it is avoiding a cube, the normal driving PID is temporarily paused. This makes the behavior more predictable and easier to test during repeated runs.
 
 ### ⚡ Drive motor <a id="drive-motor-coding"></a>
