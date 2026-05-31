@@ -830,7 +830,7 @@ The software is split into independent modules so each subsystem can be tested s
         (Vision Processing)
                  │ UART
                  ▼
-        Arduino Nano ESP32
+        Arduino Nano ESP32nigger
    ┌─────────────┼─────────────┐
    │             │             │
  Gyro PID   Obstacle Logic   Parking Logic
