@@ -731,6 +731,12 @@ The **Pololu Digital Distance Sensor (PW output, 300 cm max)** uses a short-rang
 | **Dimensions:** 21.6mm × 8.9mm × 3.1mm | **Weight:** 1g |
 | 🔗 [Buy Here](https://www.pololu.com/product/4064) | **Use Case:** Start-line lap direction & close-range obstacle sensing for parking |
 
+
+Here is the positioning and viewing angle of the sensors. 
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/a3925a1f324463df2765be79d80c314f38acec86/other/Sensor%20view%20angle%20diagram.png" width="500">
+
+
 ---
 
 ### **🔌 D24V50F5 Voltage Regulator – Power Management** <a id="voltage-regulator"> 
@@ -1110,6 +1116,11 @@ static inline float pulseToMM(unsigned long pw_us) {
   return mm;
 }
 ```
+
+Below you can see where the laser sensors and camera view fields are:
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/a3925a1f324463df2765be79d80c314f38acec86/other/Sensor%20view%20angle%20diagram.png" width="500">
+
 
 ### 📷 Camera <a id="camera-coding"></a>
 
