@@ -840,7 +840,7 @@ The software is split into independent modules so each subsystem can be tested s
 
 ### 🔄 Robot State Machine <a id="state-machine"></a>
 
-<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/32e3bb7a326fcd5c3425dd7e08af2a319aea9243/other/state-machine.png" width="500">
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/32e3bb7a326fcd5c3425dd7e08af2a319aea9243/other/state-machine.png" width="900">
 
 The robot software is organized as a state machine. Each state has a specific role, and transitions happen only when a clear sensor event or timing condition is detected. This makes the robot easier to debug, safer during runs, and more reliable in the randomized WRO track.
 
