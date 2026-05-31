@@ -176,7 +176,7 @@ This repository is organized as follows:
 
 ## 👥 The Team <a id="the-team"></a>
 
-<img src="" width="450">
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/42d6e5a1cd52bcbd6b493d360703382f0b427a0a/media/team-photos/team.jpeg" width="450">
 
 ### **Popescu Filimon Andrei Cosmin**
 **Age:** 18 <br>
