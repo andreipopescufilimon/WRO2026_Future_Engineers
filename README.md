@@ -92,7 +92,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 - [📊 Performance Metrics](#performance-metrics)
 - [⚖️ Engineering Trade-Offs](#engineering-tradeoffs)
 - [🔬 Testing & Iterations](#testing-iterations)
-    - [Quantitative testing](#quantitative-testing)
+    - [📊 Quantitative testing](#quantitative-testing)
 - [⚙️ Mobility Management](#mobility-management)
   - [🚗 Drivebase](#drivebase)
     - [🔧 Drivetrain](#drivetrain)
@@ -103,7 +103,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
     - [🌪️ Impeller](#impeller)
   - [🔄 Steering](#steering)
     - [🔄 Steering Servo Motor](#servo-motor)
-  - [Sensor Placement](#sensor-placement)
+  - [📡 Sensor Placement](#sensor-placement)
   - [🏎️ Chassis & Component Mounting](#chassis)
     - [✨ Key Features & Advantages](#key-features)
     - [🔧 Assembly Process](#assembly-process)
@@ -123,8 +123,8 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🔌 Voltage Regulator D24V50F5](#voltage-regulator)
   - [🛠️ PCB Design](#pcb-design)
   - [⚡ Power Consumption](#power-consumption)
-  - [Power and Sensor Validation](#power-and-sensor-validation)
-  - [Power failure points and mitigation](#power-failure-points)
+  - [🔋 Power and Sensor Validation](#power-and-sensor-validation)
+  - [⚠️ Power failure points and mitigation](#power-failure-points)
 - [💻 Components coding](#components-coding)
   - [🧠 Software Architecture](#software-architecture)
   - [🔄 Robot State Machine](#state-machine)
@@ -341,7 +341,7 @@ During development, multiple robot revisions were designed and tested to improve
 | V2 | The robot was reliable on straight sections but less stable during parking | Moved the side sensors closer to the PCB and improved rear distance sensing | More stable parking approach |
 | V3 | Obstacle handling needed smoother recovery after passing traffic signs | Added clearer software states for cube following, avoidance, and recovery | More consistent obstacle challenge behavior |
 
-### Quantitative testing <a id="quantitative-testing"></a>
+### 📊 Quantitative testing <a id="quantitative-testing"></a>
 
 | Test | Runs | Success rate | Main failure observed | Improvement made |
 |---|---:|---:|---|---|
@@ -503,7 +503,7 @@ To control the steering system, we use an **MG90S micro servo**, known for its h
 
 ---
 
-## Sensor Placement Reasoning Using Field Geometry <a id="sensor-placement"></a>
+## 📡 Sensor Placement Reasoning Using Field Geometry <a id="sensor-placement"></a>
 
 The front camera is placed at the front of the robot because it must detect traffic signs before the vehicle reaches them. This gives the software enough time to decide whether the robot must pass the object on the left or on the right. The camera is used mainly for color and position detection, while the laser distance sensors are used for distance stability and alignment.
 
@@ -846,7 +846,7 @@ The robot was designed with power efficiency and peak-current stability in mind.
 
 ---
 
-## Power and Sensor Validation  <a id="power-and-sensor-validation"></a>
+## 🔋 Power and Sensor Validation  <a id="power-and-sensor-validation"></a>
 
 To make sure that the robot is reliable during a full run, we tested the complete power system under several operating conditions. The robot uses a 2S Li-Po battery as the main power source. The drive motor and impeller are powered from the battery side, while the logic electronics are powered through the D24V50F5 5V regulator.
 
@@ -863,7 +863,7 @@ The goal of this architecture is to separate high-current discharge loads from s
 
 The lowest measured voltage on the 5V rail was above the safe operating range for the ESP32, OpenMV, IMU, and sensors. During testing, no controller reset was observed. This confirms that the regulator has enough current margin for the logic side of the robot. We also tested the robot with the impeller starting instantly and with ramp-up. Instant start produced larger voltage drops and mechanical instability, so we used a controlled ramp-up in software. This gives the robot smoother acceleration and avoids sudden current spikes.
 
-### Power failure points and mitigation <a id="power-failure-points"></a>
+### ⚠️ Power failure points and mitigation <a id="power-failure-points"></a>
 
 | Possible failure | Cause | Mitigation |
 |---|---|---|
