@@ -178,7 +178,7 @@ This repository is organized as follows:
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/42d6e5a1cd52bcbd6b493d360703382f0b427a0a/media/team-photos/team.jpeg" width="450">
 
-### **Popescu Filimon Andrei Cosmin**
+### **Popescu Filimon Andrei Cosmin** (middle)
 **Age:** 18 <br>
 
 **High School:** International Computer High School Bucharest (ICHB)  
@@ -188,7 +188,7 @@ Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my secon
 
 ---
 
-### **Horia Simion**
+### **Horia Simion** (left)
 **Age:** 17 <br>
 **High School:** National College "Mihai Viteazul" (CNMV)
 
@@ -197,7 +197,7 @@ Hi! I’m Horia from Romania, and this is my third WRO season competing alongsid
 
 ---
 
-### **Eduard Alexandru Vasile**
+### **Eduard Alexandru Vasile** (right)
 **Age:** 16 <br>
 **High School:** Liceul Teoretic Alexandru Ioan Cuza
 
