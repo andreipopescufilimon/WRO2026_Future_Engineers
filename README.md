@@ -741,7 +741,7 @@ Here is the positioning and viewing angle of the sensors.
 
 ### **🔌 D24V50F5 Voltage Regulator – Power Management** <a id="voltage-regulator"> 
 
-The **D24V50F5** regulates the **11.1V Li-Po battery output** to a **stable 5V**, ensuring **safe power delivery** to the **Arduino, sensors, and camera**. It prevents **overvoltage damage** and includes **thermal & short-circuit protection** for reliability.
+The **D24V50F5** regulates the **7.4V Li-Po battery output** to a **stable 5V**, ensuring **safe power delivery** to the **Arduino, sensors, and camera**. It prevents **overvoltage damage** and includes **thermal & short-circuit protection** for reliability.
 
 | <img src="https://gomagcdn.ro/domains/robofun.ro/files/product/large/pololu-5v-5a-step-down-voltage-regulator-d24v50f5-633511-832-442353.jpg" width="300">  | **Specifications** |
 |------------------------------|------------------------------|
