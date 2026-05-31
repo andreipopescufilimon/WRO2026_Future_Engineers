@@ -759,21 +759,7 @@ The **D24V50F5** regulates the **11.1V Li-Po battery output** to a **stable 5V**
 |---------------------------|---------------------------|---------------------------|
 | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/SCH_Schematic1_1-P1_2026-05-25.png" width="400"> | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1dc83879f053fdf2dd824ed671141c196b5ff17/other/PCB%20View.png" width="400"> | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/14d0d9b5735245c1baf6302c3efea01e1c7aedcd/other/top-2.png" width="400"> |
 
-```txt
-                2S Li-Po Battery
-                        │
-        ┌───────────────┴───────────────┐
-        │                               │
-   Drive Motor                    Impeller ESC
-        │                               │
-   IFX9201SG                      BLDC Motor
-        │
-   D24V50F5 Regulator
-        │
- ┌──────┼────────┬────────┬────────┐
- │      │        │        │        │
-ESP32  OpenMV   IMU    Servo   Distance Sensors
-```
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/ddcf77e581128d6dd27f417a140c7249ae2e6b40/other/electronic-arhitecture.png" width="800">
 
 The robot uses a fully custom PCB chassis designed to combine both the electrical system and the structural frame into a single compact platform. This approach reduced weight, improved rigidity, and increased overall reliability during high-speed autonomous runs.
 
@@ -825,24 +811,7 @@ This diagram below, shows how the main software modules interact during a run. T
 
 The software is split into independent modules so each subsystem can be tested separately. Vision data is used by the obstacle and parking logic, while the gyro PID keeps the robot stable between decisions. Final movement commands are sent to the steering servo and IFX9201SG motor driver.
 
-```text
-          OpenMV RT1062
-        (Vision Processing)
-                 │ UART
-                 ▼
-        Arduino Nano ESP32nigger
-   ┌─────────────┼─────────────┐
-   │             │             │
- Gyro PID   Obstacle Logic   Parking Logic
-   │             │             │
-   └──────► Steering Control ◄─┘
-                    │
-             MG90S Servo
-                    │
-             Drive Motor PID
-                    │
-              IFX9201SG
-```
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/ddcf77e581128d6dd27f417a140c7249ae2e6b40/other/code-arhitecture.png" width="900">
 
 ### 🔄 Robot State Machine <a id="state-machine"></a>
 
