@@ -157,7 +157,6 @@ This repository is organized as follows:
 📦 WRO2026_Future_Engineers
 ├── 📁 3D-models             # Contains 3D design files for the robot's components
 │   ├── 📁 old-3D-models     # Previous versions of 3D models
-│   └── 📁 step-models       # 3D models in STEP format
 ├── 📁 electrical-schematics # Circuit diagrams and wiring
 ├── 📁 github-commits        # Commit logs and change tracking details for this repository
 ├── 📁 media                 # Images and videos 
