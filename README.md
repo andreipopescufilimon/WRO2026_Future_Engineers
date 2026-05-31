@@ -884,8 +884,8 @@ This testing showed that the power architecture is reliable under realistic comp
 This diagram below, shows how the main software modules interact during a run. The OpenMV RT1062 handles image processing and sends compact commands through UART, while the Arduino Nano ESP32 manages motion control, state logic, steering, motor speed, and parking.
 
 The software is split into independent modules so each subsystem can be tested separately. Vision data is used by the obstacle and parking logic, while the gyro PID keeps the robot stable between decisions. Final movement commands are sent to the steering servo and IFX9201SG motor driver.
-
-<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/ddcf77e581128d6dd27f417a140c7249ae2e6b40/other/code-arhitecture.png" width="900">
+7
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/ddcf77e581128d6dd27f417a140c7249ae2e6b40/other/code-arhitecture.png" width="700">
 
 ### 🔄 Robot State Machine <a id="state-machine"></a>
 
