@@ -92,6 +92,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 - [📊 Performance Metrics](#performance-metrics)
 - [⚖️ Engineering Trade-Offs](#engineering-tradeoffs)
 - [🔬 Testing & Iterations](#testing-iterations)
+    - [Quantitative testing](#quantitative-testing)
 - [⚙️ Mobility Management](#mobility-management)
   - [🚗 Drivebase](#drivebase)
     - [🔧 Drivetrain](#drivetrain)
@@ -102,6 +103,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
     - [🌪️ Impeller](#impeller)
   - [🔄 Steering](#steering)
     - [🔄 Steering Servo Motor](#servo-motor)
+  - [Sensor Placement](#sensor-placement)
   - [🏎️ Chassis & Component Mounting](#chassis)
     - [✨ Key Features & Advantages](#key-features)
     - [🔧 Assembly Process](#assembly-process)
@@ -121,6 +123,8 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🔌 Voltage Regulator D24V50F5](#voltage-regulator)
   - [🛠️ PCB Design](#pcb-design)
   - [⚡ Power Consumption](#power-consumption)
+  - [Power and Sensor Validation](#power-and-sensor-validation)
+  - [Power failure points and mitigation](#power-failure-points)
 - [💻 Components coding](#components-coding)
   - [🧠 Software Architecture](#software-architecture)
   - [🔄 Robot State Machine](#state-machine)
@@ -329,15 +333,27 @@ These constraints shaped the robot as a complete system. The mechanical design p
 
 ## 🔬 Testing & Iterations <a id="testing-iterations"></a>
 
-During development, multiple robot revisions were designed and tested to improve steering precision, reliability, and overall track performance.
+During development, multiple robot revisions were designed and tested to improve steering precision, reliability, and overall track performance. The robot was developed through several iterations. Each version was tested on the main tasks required by the WRO Future Engineers challenge: stable driving, obstacle handling, cornering, and parking.
 
-| Version | Problem Identified | Improvement Made |
-|---|---|---|
-| V1 | Fully 3D-printed chassis was too large, steering precision was poor, and power management was unstable | Redesigned the entire robot structure and moved to a custom PCB chassis |
-| V2 | Robot was reliable but too long for tight turns and obstacle sections | Redesigned steering geometry and optimized wheelbase dimensions |
-| V3 | Current Robot | - |
+| Version | Main problem found | Change made | Result |
+|---|---|---|---|
+| V1 | The chassis was too large and the steering response was slow | Reduced the chassis size and changed the mechanical layout | Better turning response |
+| V2 | The robot was reliable on straight sections but less stable during parking | Moved the side sensors closer to the PCB and improved rear distance sensing | More stable parking approach |
+| V3 | Obstacle handling needed smoother recovery after passing traffic signs | Added clearer software states for cube following, avoidance, and recovery | More consistent obstacle challenge behavior |
 
-Each iteration was tested on the track field. Testing focused on steering consistency, obstacle handling, parking precision, and stability during high-speed runs.
+### Quantitative testing <a id="quantitative-testing"></a>
+
+| Test | Runs | Success rate | Main failure observed | Improvement made |
+|---|---:|---:|---|---|
+| Open Challenge full lap driving | 20 | 18/20 | Small steering oscillation near corners | Tuned gyro correction and steering gain |
+| Three-lap Open Challenge | 10 | 8/10 | Occasional wide corner exit | Reduced speed during corner entry |
+| Red traffic sign passing | 20 | 18/20 | Late detection in low light | Adjusted OpenMV threshold and ROI |
+| Green traffic sign passing | 20 | 18/20 | Camera noise on reflective surface | Added color filtering and distance confirmation |
+| Obstacle recovery after passing sign | 20 | 17/20 | Robot returned too sharply to the lane | Added smoother recovery state |
+| Parking approach | 20 | 16/20 | Rear alignment sometimes too close to boundary | Adjusted rear sensor stopping distance |
+| Full Obstacle Challenge with parking | 10 | 8/10 | Parking was the least consistent part | Added rear distance correction and slower final movement |
+
+These tests showed that the robot was mechanically capable of completing the challenge, but reliability depended strongly on software tuning and sensor placement. The largest improvements came from reducing steering oscillation, improving camera threshold stability and using the rear distance sensor during parking to not hit any of the parking walls.
 
 ---
 
@@ -484,6 +500,34 @@ To control the steering system, we use an **MG90S micro servo**, known for its h
 | **Current Draw (Avg):** 120mA | **Peak Current:** 500mA |
 | **Weight:** ~13.4g | **Gears:** Plastic |
 | 🔗 **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
+
+---
+
+## Sensor Placement Reasoning Using Field Geometry <a id="sensor-placement"></a>
+
+The front camera is placed at the front of the robot because it must detect traffic signs before the vehicle reaches them. This gives the software enough time to decide whether the robot must pass the object on the left or on the right. The camera is used mainly for color and position detection, while the laser distance sensors are used for distance stability and alignment.
+
+The front laser sensor is placed near the camera because both sensors observe the same forward driving area. The camera gives the color and horizontal position of the obstacle, while the laser gives distance information. This combination reduces false decisions because the robot does not rely only on color detection.
+
+The side laser sensors are placed closer to the PCB and slightly behind the front axle. This position was selected because side distance correction is more stable after the robot begins steering. If the side sensors are placed too far forward, they react too early and can create steering oscillations. If they are placed too far back, the robot reacts too late near corners and parking boundaries. The selected position gives a better balance between early detection and stable correction.
+
+The rear sensor is used mainly during parking. During parallel parking, the robot needs to know when the back of the vehicle is close to the parking limitation. A rear-facing distance sensor gives a direct measurement of this distance and allows the robot to stop before touching the parking lot boundaries.
+
+Each laser sensor has an approximate field of view of 40 degrees. Because of this, the sensors are angled so that their detection cones cover the useful areas around the robot without crossing too much into blind or irrelevant zones. The side sensors cover the lateral wall area, the front sensor covers the forward path, and the rear sensor covers the parking alignment zone.
+
+### Sensor placement trade-offs
+
+| Placement option | Advantage | Problem | Final decision |
+|---|---|---|---|
+| Front-only sensors | Simple wiring and early detection | Weak parking and side alignment | Not used alone |
+| Side sensors very far forward | Detects walls early | Causes oscillation in corners | Rejected |
+| Side sensors close to PCB | Stable correction and easier wiring | Slightly later detection | Selected |
+| Rear sensor removed | Lower weight and simpler wiring | Parking becomes less reliable | Rejected |
+| Camera-only obstacle detection | Detects color and position | Distance estimation is weaker | Combined with laser sensor |
+
+You can see the placement belod:
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/c1e3c13659256ff0e7805cd652889c4b14a2ee5f/other/Sensor%20view%20angle%20diagram.png" width="800">
 
 ---
 
@@ -802,6 +846,37 @@ The robot was designed with power efficiency and peak-current stability in mind.
 
 ---
 
+## Power and Sensor Validation  <a id="power-and-sensor-validation"></a>
+
+To make sure that the robot is reliable during a full run, we tested the complete power system under several operating conditions. The robot uses a 2S Li-Po battery as the main power source. The drive motor and impeller are powered from the battery side, while the logic electronics are powered through the D24V50F5 5V regulator.
+
+The goal of this architecture is to separate high-current discharge loads from sensitive logic components such as the ESP32, OpenMV camera, IMU, and distance sensors. This reduces the risk of voltage drops, camera resets, IMU instability, and wrong sensor readings during acceleration or steering corrections.
+
+| Test condition | 5V rail measured value | Result |
+|---|---:|---|
+| Robot idle, electronics only | 5.03V | Stable |
+| Servo moving left/right continuously | 4.96V | No ESP32 reset |
+| Camera running with UART active | 5.00V | Stable image processing |
+| Drive motor accelerating | 4.92V | No brownout |
+| Impeller ramping up | 4.89V | No ESC reset |
+| Full system active during driving | 4.87V to 5.05V | Stable |
+
+The lowest measured voltage on the 5V rail was above the safe operating range for the ESP32, OpenMV, IMU, and sensors. During testing, no controller reset was observed. This confirms that the regulator has enough current margin for the logic side of the robot. We also tested the robot with the impeller starting instantly and with ramp-up. Instant start produced larger voltage drops and mechanical instability, so we used a controlled ramp-up in software. This gives the robot smoother acceleration and avoids sudden current spikes.
+
+### Power failure points and mitigation <a id="power-failure-points"></a>
+
+| Possible failure | Cause | Mitigation |
+|---|---|---|
+| ESP32 reset | 5V voltage drop during motor acceleration | Logic powered through D24V50F5 regulator |
+| Camera frame instability | Electrical noise or unstable supply | Separate regulated 5V line and common ground |
+| Servo jitter | Current peaks during steering | Short power path and stable regulator output |
+| Wrong distance readings | Voltage fluctuation or sensor noise | Sensor filtering and repeated readings |
+| Impeller current spike | BLDC startup load | Software ramp-up instead of instant full power |
+
+This testing showed that the power architecture is reliable under realistic competition loads.
+
+---
+
 ## 💻 Components coding <a id="components-coding"></a>
 
 ### 🧠 Software Architecture <a id="software-architecture"></a>
@@ -817,7 +892,6 @@ The software is split into independent modules so each subsystem can be tested s
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/32e3bb7a326fcd5c3425dd7e08af2a319aea9243/other/state-machine.png" width="900">
 
 The robot software is organized as a state machine. Each state has a specific role, and transitions happen only when a clear sensor event or timing condition is detected. This makes the robot easier to debug, safer during runs, and more reliable in the randomized WRO track.
-
 
 
 | State | Purpose | Main Inputs | Output |
