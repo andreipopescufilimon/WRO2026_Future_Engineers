@@ -553,7 +553,7 @@ Overall, the chassis and mounting system were designed to be lightweight, rigid,
 
 ## 🔧 Assembly Process <a id="assembly-process"></a>
 
-🔗 **[Click here to watch the assembly video on YouTube]()** <a id="assembly-process-video"></a>
+🔗 **[Click here to watch the assembly video on YouTube](https://youtu.be/HSzWATB6nWQ)** <a id="assembly-process-video"></a>
 
 The assembly process was planned so that every subsystem could be mounted and tested step by step. This helped us avoid wiring problems, mechanical misalignment, and difficult debugging later in the build.
 
@@ -1849,7 +1849,7 @@ During testing, several failure cases were identified and handled in software. T
 
 ## 📽️ Performance Video <a id="performance-video"></a>
 
-🔗 **[Click here to watch the video on YouTube]()** 
+🔗 **[Click here to watch the video on YouTube](https://youtu.be/54tYACWeeq0)** 
 
 ---
 
