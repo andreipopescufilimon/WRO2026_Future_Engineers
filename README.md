@@ -567,11 +567,15 @@ The assembly process was planned so that every subsystem could be mounted and te
 
 The first step is to inspect the custom PCB chassis and make sure all soldered components, connectors, and mounting holes are clean and correctly placed. Before installing mechanical parts, we check the power rails, continuity, and main connector pins to make sure there are no shorts or soldering problems.
 
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/269517e2b03fbb4d234447eee71b66cd3d73db59/other/prepare.png" width="500">
+
 **2. Mount the Rear Drivetrain**
 
 The rear drivetrain is assembled by installing the Pololu 30:1 HPCB gearmotor into its 3D-printed motor support. The motor gear is aligned with the differential input gear, making sure the gears mesh smoothly without too much pressure or backlash.
 
 After that, the rear differential and axle support are mounted to the PCB chassis using M2 screws. Bearings are inserted into the rear support to reduce friction and keep the wheel axles stable during movement.
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/269517e2b03fbb4d234447eee71b66cd3d73db59/other/drivetrain.png" width="500">
 
 **3. Install the Rear Wheels**
 
@@ -582,6 +586,8 @@ The rear wheels are mounted onto the differential outputs. Each wheel is checked
 The front steering hubs are mounted onto the chassis using M2 screws and bearings. The front wheels are then installed on the hubs and checked for smooth rotation.
 
 The MG90S servo is mounted in its fixed position on the chassis 3D printet part. The steering linkage is connected between the servo arm and both front hubs. Before final tightening, the servo is centered in software, then the wheels are aligned straight. This ensures that the robot drives forward correctly when the servo is at its center position.
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/269517e2b03fbb4d234447eee71b66cd3d73db59/other/prepare.png" width="500">
 
 **5. Mount the Battery Holder**
 
@@ -602,6 +608,8 @@ The Pololu PWM distance sensors are mounted around the robot according to their 
 
 Each sensor is mounted via a soldered 3 pin header, so it won't be affected by any vibrations.
 
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/269517e2b03fbb4d234447eee71b66cd3d73db59/other/tof.png" width="500">
+
 **9. Connect Electronics**
 
 After all mechanical parts are mounted, the electronic connections are completed. This includes the motor, encoder, servo, impeller control, OpenMV UART lines, IMU, distance sensors, and battery input. Before powering the full system, we verify polarity and check that the 5V regulator output is stable.
@@ -618,6 +626,8 @@ The first firmware test checks each subsystem separately:
 - OpenMV UART communication
 
 Testing each part separately makes debugging easier and prevents one faulty subsystem from affecting the whole robot.
+
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/269517e2b03fbb4d234447eee71b66cd3d73db59/other/final.png" width="500">
 
 **11. Final Mechanical Check**
 
