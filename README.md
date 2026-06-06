@@ -1419,9 +1419,6 @@ if direction == 0:
 uart.write(str(direction) + '\n')
 ```
 
-<img src="" width="900">
-* to add images
-
 ### ⚡ Final Round <a id="final-round"></a>
 
 In the final round, we extend our open rount algorithm by adding real‐time cube detection, following, and avoidance algorithms. The OpenMV RT1062 camera handles live frames processing and sends compact UART messages to the Arduino Nano ESP32. On the Arduino, incoming UART messages drive a four‐state algorithm: in **PID**, the robot adjust to hold a straight heading by using a PD on the gyro and turns 90° whenever it receives a **BLACK** signal (lap turning point in each corner). In **FOLLOW_CUBE**, the camera’s **S<corrected_servo>** message directly sets the servo angle to chase the closest visible cube; if no follow message arrives within 250-500 ms, it returns to **PID** as the cube might have been passed or lost from the view. When a proximity trigger (**RED** or **GREEN**, **R** or **G**) arrives, it switches to **AVOID_CUBE**, executes a 37° turn plus an 8 cm clear‐away while holding that heading, then enters **AFTER_CUBE** to reallign on gyro while moving back to center section of each side of the map, and to flush the leftover commands before reverting to **PID**.
@@ -1674,9 +1671,9 @@ if candidates:
                   area, follow_threshold))
 ```
 
-<img src="" width="900">
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/425854913627b5729d3b9a42b591704bd873709b/other/greencube.png" width="900">
 
-<img src="" width="900">
+<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/425854913627b5729d3b9a42b591704bd873709b/other/redcube.png" width="900">
 
 ### 🅿️ Starting from Parking <a id="start-from-parking"></a>
 At the start of the round, our robot is placed in the designated parking zone (the parking zone is 1.5x robot lenght). To determine the direction of the first lap (clockwise or counterclockwise), we use the 2 distance sensors placed on left and right side of our robot, the one that sees the wall further away will be the side to exit and do the laps.
