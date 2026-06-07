@@ -1993,18 +1993,39 @@ Below is a compact list of **external images** used in this repository.
 
 ## 📜 License <a id="license"></a>
 ```
-License – All Rights Reserved
+MIT License
 
-Copyright (c) 2026 **Popescu Filimon Andrei Cosmin**
-All rights reserved.
+Copyright (c) 2026 Popescu Filimon Andrei Cosmin
 
-This software and all associated files are the exclusive property of the copyright holder.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, subject to the following conditions:
 
-* You **may not copy, modify, merge, publish, distribute, sublicense, or sell** any part of this software without prior written permission.
-* The software may only be viewed from this repository for personal and educational reference purposes.
-* Any unauthorized use, reproduction, or distribution is prohibited and subject to legal action.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+Competition Fair Use Notice
+
+This project was created for the 2026 WRO Future Engineers competition season.
+
+You may use this repository for learning, testing, studying, and educational
+experimentation. However, you are not allowed to copy, submit, or use this work
+as your own competition solution during the same competition year for which it
+was created, namely 2026.
+
+Using this project to directly compete against the original team in the same
+competition season, without major original modifications and without proper
+credit, is considered unfair use and goes against the spirit of open-source
+sharing, fair play, and engineering ethics.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
 
