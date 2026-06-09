@@ -183,8 +183,8 @@ This repository is organized as follows:
 
 ### **Popescu Filimon Andrei Cosmin** (middle)
 **Age:** 18 <br>
-
 **High School:** International Computer High School Bucharest (ICHB)  
+**View my portofolio**: [https://andreipopescufilimon.com/](https://andreipopescufilimon.com/)
 
 **Description:**  
 Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my second season in Future Engineers, as before I competed in the Robomission category. I am passionate about robotics, especially electronics and the latest algorithms and tech. Over the years, I have worked on multiple robotics projects, including line followers, sumo bots, and air quality modules. I am the founder of HyperLine Robotics Team, where I build and develop advanced robotics projects with my team. Apart from robotics, I also enjoy cybersecurity, programming, and cycling.
