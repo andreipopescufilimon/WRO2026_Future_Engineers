@@ -1856,7 +1856,7 @@ During testing, several failure cases were identified and handled in software. T
 
 ## 📽️ Performance Video <a id="performance-video"></a>
 
-🔗 **[Click here to watch the video on YouTube](https://youtu.be/54tYACWeeq0)** 
+🔗 **[Click here to watch the video on YouTube](https://youtu.be/KqqNKDIjEpA)** 
 
 ---
 
