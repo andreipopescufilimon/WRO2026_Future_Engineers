@@ -148,6 +148,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🔩 Other Materials (Screws, Nuts, Miscellaneous)](#other-materials-cost)
   - [💵 Total Cost](#total-cost)
 - [🔁 Reproducibility Guide](#reproductibility-guide)
+- [🎲 Randomizer](#randomizer)
 - [📂 Resources](#resources)
 - [📜 License](#license)
 
