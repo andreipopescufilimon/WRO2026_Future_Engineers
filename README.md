@@ -1856,7 +1856,7 @@ During testing, several failure cases were identified and handled in software. T
 
 ## 📽️ Performance Video <a id="performance-video"></a>
 
-🔗 **[Click here to watch the video on YouTube](https://youtu.be/KqqNKDIjEpA)** 
+🔗 **[Click here to watch the video on YouTube](https://www.youtube.com/watch?v=bg92ulHXomw)** 
 
 ---
 
@@ -1974,6 +1974,24 @@ Another team or person should be able to rebuild the robot by following the file
 4. Test gyro-based 90° turns.
 5. Test cube following and avoidance at low speed.
 6. Test parking only after lane following and obstacle logic are stable.
+
+---
+
+## 🎲 Randomizer <a id="randomizer"></a>
+
+To make testing more realistic and closer to the official WRO Future Engineers format, we built our own custom **WRO Future Engineers Randomizer**.
+
+🔗 **Available here:** [https://wro-fe-randomizer.hyperlinerobotics.com/](https://wro-fe-randomizer.hyperlinerobotics.com/)
+
+The randomizer helps us quickly generate valid challenge layouts for both practice and robot testing. Instead of manually choosing cube positions, parking walls, starting positions, and field elements, the tool automatically creates randomized configurations based on the competition rules.
+
+This is useful during development because the robot must be able to adapt to many possible field layouts, not only one fixed setup. By using the randomizer, we can test different cases repeatedly and improve the reliability of our algorithms for:
+
+* Open Challenge starting positions
+* Final Round cube placement
+* Repeated full-run practice under randomized conditions
+
+The randomizer became an important part of our testing workflow because it allows us to train and debug the robot in conditions that are much closer to the real competition environment.
 
 ---
 
