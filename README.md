@@ -56,28 +56,17 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 
 <tr>
   <td bgcolor="#ffffff" align="center">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/ING.png" height="45">
-  </td>
-  <td bgcolor="#ffffff" align="center">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/FundatiaComunitaraBucuresti.png" height="55">
-  </td>
-  <td bgcolor="#ffffff" align="center">
     <img src="https://hyperlinerobotics.com/assets/images/sponsors/SoBotz-white.png" height="55">
   </td>
   <td bgcolor="#ffffff" align="center">
     <img src="https://jsumo.com/Data/EditorFiles/jsumo-robot-parts-logo.png" height="55">
   </td>
-</tr>
-
-<tr>
   <td bgcolor="#ffffff" align="center">
     <img src="https://hyperlinerobotics.com/assets/images/sponsors/evergreen.png" height="50">
   </td>
   <td bgcolor="#ffffff" align="center">
     <img src="https://fae-drones.com/wp-content/uploads/2022/08/logo-vertical-ro.png" height="55">
   </td>
-  <td></td>
-  <td></td>
 </tr>
 </table>
 
