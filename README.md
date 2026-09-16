@@ -65,7 +65,7 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
     <img src="https://hyperlinerobotics.com/assets/images/sponsors/evergreen.png" height="50">
   </td>
   <td bgcolor="#ffffff" align="center">
-    <img src="https://fae-drones.com/wp-content/uploads/2022/08/logo-vertical-ro.png" height="55">
+    <img src="https://fae-drones.com/assets/img/fae-drones-logo-128.png" height="55">
   </td>
 </tr>
 </table>
