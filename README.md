@@ -1,6 +1,8 @@
 # WRO2026 Future Engineers – HyperLine Robotics Team
 ---
 
+*Note: Undergoing documetation updates for the World Final.
+
 Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (WRO) 2026**, Future Engineers category. 
 
 ### 🔗 Links
