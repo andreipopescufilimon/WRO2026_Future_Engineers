@@ -55,7 +55,6 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
     - [⚙️ Motor](#motor)
     - [🛞 Wheels](#wheels)
     - [🔌 Motor Driver IFX9201SG](#motor-driver)
-    - [🌪️ Impeller](#impeller)
   - [🔄 Steering](#steering)
     - [🔄 Steering Servo Motor](#servo-motor)
   - [📡 Sensor Placement](#sensor-placement)
@@ -73,7 +72,6 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [⚙️ Drive Motor](#drive-motor)
   - [⚙️ Motor Driver IFX9201SG](#motor-driver)
   - [🔄 Steering Servo MG90S](#steering-servo)
-  - [⚙️ Impeller](#impeller)
   - [📏 Pololu PWM Distance Sensor](#distance-sensors)
   - [🔌 Voltage Regulator D24V50F5](#voltage-regulator)
   - [🛠️ PCB Design](#pcb-design)
@@ -84,7 +82,6 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   - [🧠 Software Architecture](#software-architecture)
   - [🔄 Robot State Machine](#state-machine)
   - [⚡ Drive motor](#drive-motor-coding)
-  - [🌪️ Impeller](#impeller-coding)
   - [🎮 Servo motor](#servo-motor-coding)
   - [🧭 IMU](#imu-coding)
   - [📡 Distance sensors](#distance-sensors-coding)
@@ -220,7 +217,6 @@ Robot Specifications:
 | Steering System | Parallel steering |
 | Drive Motor | Pololu 30:1 HPCB Gearmotor |
 | Steering Servo | MG90S |
-| Downforce System | 10000KV BLDC Impeller |
 | Battery | 2S Li-Po 300mAh |
 | Maximum Stable Speed | ~3 m/s |
 | Camera Processing Speed | ~40 FPS |
@@ -265,7 +261,6 @@ Throughout the development process, every major design choice had to balance spe
 | Steering system | Parallel steering | Simpler, lighter, and more compact than Ackermann steering, while still giving predictable steering response |
 | Navigation | Gyro-based PD control | More stable heading correction than relying only on encoder movement, especially during long straights and after obstacle avoidance |
 | Tires | Cast silicone tires | Provide high grip and predictable handling on smooth WRO surfaces |
-| Downforce system | Impeller | Increases traction during acceleration, braking, and cornering without adding static weight |
 | Obstacle detection | Camera-based detection | Allows flexible detection of randomized red and green traffic signs, track lines, and parking elements |
 
 The final robot design focuses on reliable autonomous behavior in a compact and lightweight structure. Instead of optimizing only one area, such as maximum speed, we designed the mechanical, electrical, and software systems to support each other. The chassis keeps the robot rigid, the tires and impeller improve grip, the camera provides high-level field information, and the gyro helps maintain stable heading control.
@@ -278,7 +273,6 @@ During development, several constraints directly influenced the final design. Th
 |---|---|---|
 | Limited robot size | The robot had to remain small enough for tight turns, obstacle avoidance, and parking | Short wheelbase, compact drivetrain, PCB chassis, and low component stacking |
 | Low weight target | Extra weight reduces acceleration, braking performance, and steering response | Lightweight PCB chassis, compact electronics, and 3D-printed structural parts |
-| High current peaks | The impeller, drive motor, and steering servo can create sudden voltage drops | 2S Li-Po battery, dedicated voltage regulation, short power traces, and clean PCB routing |
 | Camera latency | Delayed detection can cause late turns or incorrect obstacle avoidance | OpenMV RT1062 used for fast image processing and direct UART communication with the controller |
 | Steering precision | Small steering errors can accumulate over multiple laps and affect parking accuracy | Servo-based steering combined with gyro correction and camera-based decisions |
 | Mechanical stability | Vibration and chassis flex can affect camera view, sensor readings, and steering accuracy | Rigid PCB chassis, fixed component mounting, and compact mechanical structure |
@@ -326,7 +320,7 @@ At the front, the wheels are fully 3D-printed and each wheel runs on two bearing
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/differential.jpeg" width="800">
 
-To maximize grip on the track without adding mass, we use a **downforce impeller (10000KV BLDC motor)** that pulls air from under the robot, increasing the normal force. The impeller is PWM-controlled via an **EMAX Bullet 20A ESC**. The drive motor is controlled by an **IFX9201SG driver (PWM + DIR)** with an active brake pulse for precise stopping, while the encoder on the gearmotor provides odometry for short, accurate moves (e.g., avoidance hops, parking nudges).
+To maximize grip on the track we've made the wheel rims out of 45# steel. The drive motor is controlled by an **IFX9201SG driver (PWM + DIR)** with an active brake pulse for precise stopping, while the encoder on the gearmotor provides odometry for short, accurate moves (e.g., avoidance hops, parking nudges).
 
 ### ⚙️ **Motor – 30:1 Micro Metal Pololu Gearmotor HPCB** <a id="motor"></a>
 
@@ -392,40 +386,6 @@ The **IFX9201SG** motor driver is used to control the robot’s high-performance
 | **Max Continuous Current:** 5A | **Max Peak Current:** 8A per channel |
 | **Control Interface:** PWM + Direction pins | **Built-in Protections:** Overtemperature, Overcurrent, Undervoltage, Short-to-GND/Battery |
 | 🔗 **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
-
-### **⚙️ Impeller for downforce** <a id="impeller">
-
-The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **BLDC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
-
-<img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/impeller-fan_technical-drawing.png" width="800">
-
-| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/impeller.jpeg" width="300"> | **Specifications** |
-|------------------------------|------------------------------|
-| **Type:** BLDC Motor | **Model:** 10000KV |
-| **Voltage:** 2–3S | **Shaft Diameter:** 1.0mm |
-| **No-Load Speed:** ~85,000 RPM @ 7.4V	 | **	Weight:** ~4.5g |
-| **Current Draw (Avg):** ~1A @ 7.4V	 | **Peak Current:** ~2.5A |
-| 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
-
-
----
-
-
-### **⚙️ ESC Controller for impleller** <a id="ESC">
-
-**The EMAX D-SHOT Bullet 20A ESC controls the BLDC motor that drives the impeller. In this project, it uses a simple servo-style PWM signal, making it easy to interface with the main controller while providing smooth and reliable speed control in a compact, lightweight package.**
-
-
-| <img src="https://emaxmodel.com/cdn/shop/products/img_6216.png?v=1598533647" width="300"> | **Specifications** |
-|------------------------------|------------------------------|
-| **Type:** ESC For BLDC Motors | **Model:** EMAX D-SHOT  |
-| **Voltage:** 2–4S | **Protections:** Shortcircuit protection & stall protection |
-| **Dimensions (LxW):** 11.9x19.6 mm	 | **Weight(W/O Wires):** ~3.5g |
-| **Burst Max Current**  : ~30A	 | **Max Current:** ~20A |
-| 🔗 **[Buy Here](https://emaxmodel.com/products/emax-d-shot-bullet-series-20a-2-4s-blheli_s-esc-3-5g-support-onshot42-multishot?_pos=5&_sid=e68307242&_ss=r)** | **Function:** Drives the downforce BLDC |
-
-
-
 
 
 ---
