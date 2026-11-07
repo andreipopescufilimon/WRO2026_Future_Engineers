@@ -68,8 +68,6 @@ The following table identifies the principal assemblies used by V4.1. Exact part
 | Battery | 2S LiPo power system | [Power architecture](03-power-sensors.md) |
 | Printed supports | Camera, sensor, steering and battery mounts | [3D models](../3D-models/) |
 
-**Small parts and exact variants matter.** When ordering components, use the dimensions in the CAD and technical drawings for shaft sizes, bearings, gears. Check the exact motor variant, servo model, battery dimensions, connector types, PCB component placements and wheel specifications against the selected V4.1 revision before purchase. Those specifications should be included in a complete BOM or the corresponding hardware chapter rather than inferred from the table above.
-
 ### Mechanical CAD and assembly reference
 
 The STEP files in [`3D-models/`](../3D-models/) can be inspected in compatible CAD software to understand component geometry and how the assemblies fit together. The [technical drawings](technical-drawings/) provide dimensions, while the vehicle [photographs](../v-photos/) show the assembled orientation and cable routing.
@@ -138,13 +136,13 @@ The Nano ESP32 and OpenMV N6 use different development environments.
 
 The documented sketch uses the following libraries with their latest version:
 
-| Dependency | Reproduction instruction |
-| --- | --- |
-| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version |
-| `ESP32Encoder` | Use the copy supplied with the project, if available, or the matching installed library |
-| `ESP32Servo` | Use the copy supplied with the project, if available, or the matching installed library |
-| `SoftwareSerial` | Verify the library supports the selected ESP32 core and matches the source |
-| `BMI088.h` | Match the exact BMI088 implementation expected by the sketch |
+| Dependency | Reproduction instruction | Library version |
+| --- | --- | --- |
+| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version | - |
+| `ESP32Encoder` | Use the copy supplied with the project, if available, or the matching installed library | v5.0.0 |
+| `ESP32Servo` | Use the copy supplied with the project, if available, or the matching installed library | v3.2.1 |
+| `SoftwareSerial` | Verify the library supports the selected ESP32 core and matches the source | v2.0.1 |
+| `BMI088.h` | Match the exact BMI088 implementation expected by the sketch | v1.0.1 |
 
 ### 4. Flash the Arduino Nano ESP32
 
@@ -160,11 +158,9 @@ The Arduino Nano ESP32 executes the vehicle control software. Its entry point is
 8. Raise the driving wheels off the floor, select **Upload**, then restart the controller.
 9. Open **Serial Monitor** at **115200 baud** for the documented sketch and check that startup completes without persistent errors.
 
-**Version compatibility:** The current V4.1 build should use the latest firmware revision available on or github. If an older source revision is selected, do not assume it contains the same web features or pin assignments and sensor code. Inspect the selected code and match it to the hardware before running the vehicle.
-
 ### 5. Flash the OpenMV N6
 
-The OpenMV N6 performs image capture and detection of coloured obstacles. The project camera source is [`src/camera.py`](../src/camera.py). The selected camera script must be compatible with the **N6**, not an earlier OpenMV board's pin or UART configuration.
+The OpenMV N6 performs image capture and detection of coloured obstacles. The project camera source is [`src/camera.py`](../src/camera.py).
 
 1. Install **OpenMV IDE** and connect the **OpenMV N6** through a USB data cable.
 2. Connect to the camera in OpenMV IDE and complete any required camera firmware initialization.
