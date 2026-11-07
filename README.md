@@ -1,11 +1,12 @@
+
 # WRO2026 Future Engineers – HyperLine Robotics Team
 ---
 
 *Note: Undergoing documetation updates for the World Final.
 
-Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (WRO) 2026**, Future Engineers category. 
+Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (WRO) 2026**, Future Engineers category.
 
-### 🔗 Links
+### Links
 
 <p align="left">
   <a href="https://hyperlinerobotics.com/" target="_blank">
@@ -39,107 +40,107 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
 
 ---
 
-## 📚 Table of Contents
+## Table of Contents
 
-- [👥 The Team](#the-team)
-- [🎯 Challenge Overview](#challenge-overview)
-- [🤖 Our Robot](#our-robot)
-- [📊 Performance Metrics](#performance-metrics)
-- [⚖️ Engineering Trade-Offs](#engineering-tradeoffs)
-- [🔬 Testing & Iterations](#testing-iterations)
-    - [📊 Quantitative testing](#quantitative-testing)
-- [⚙️ Mobility Management](#mobility-management)
-  - [🚗 Drivebase](#drivebase)
-    - [🔧 Drivetrain](#drivetrain)
-    - [⚙️ Torque and Speed Reasoning](#torque)
-    - [⚙️ Motor](#motor)
-    - [🛞 Wheels](#wheels)
-    - [🔌 Motor Driver IFX9201SG](#motor-driver)
-  - [🔄 Steering](#steering)
-    - [🔄 Steering Servo Motor](#servo-motor)
-  - [📡 Sensor Placement](#sensor-placement)
-  - [🏎️ Chassis & Component Mounting](#chassis)
-    - [✨ Key Features & Advantages](#key-features)
-    - [🔧 Assembly Process](#assembly-process)
-      - [🔧 Assembly Process Video](#assembly-process-video)
-      - [🔧 3D print the parts](#3d-print-the-parts)
-      - [🔧 Assemble the robot](#assembly)
-- [🛠️ Power and Sense Management](#power-and-sense-management)
-  - [🔋 Li-Po Battery](#li-po-battery)
-  - [🖥️ Arduino Nano ESP32](#arduino-nano-esp32)
-  - [🧭 IMU Sensor BMI088](#imu-sensor-bmi088)
-  - [📷 OpenMV RT1062 Camera](#openmv-rt1062-camera)
-  - [⚙️ Drive Motor](#drive-motor)
-  - [⚙️ Motor Driver IFX9201SG](#motor-driver)
-  - [🔄 Steering Servo MG90S](#steering-servo)
-  - [📏 Pololu PWM Distance Sensor](#distance-sensors)
-  - [🔌 Voltage Regulator D24V50F5](#voltage-regulator)
-  - [🛠️ PCB Design](#pcb-design)
-  - [⚡ Power Consumption](#power-consumption)
-  - [🔋 Power and Sensor Validation](#power-and-sensor-validation)
-  - [⚠️ Power failure points and mitigation](#power-failure-points)
-- [💻 Components coding](#components-coding)
-  - [🧠 Software Architecture](#software-architecture)
-  - [🔄 Robot State Machine](#state-machine)
-  - [⚡ Drive motor](#drive-motor-coding)
-  - [🎮 Servo motor](#servo-motor-coding)
-  - [🧭 IMU](#imu-coding)
-  - [📡 Distance sensors](#distance-sensors-coding)
-  - [📷 Camera](#camera-coding)
-- [📝 Obstacle Management](#obstacle-management)
-  - [🏁 Open Round](#open-round) 
-  - [⚡ Final Round](#final-round)
-  - [🅿️ Start from Parking](#start-from-parking)
-  - [🅿️ Parking](#parking)
-- [⚠️ Edge Cases and Failure Handling](#edge-cases)
-- [📽️ Performance Video](#performance-video)
-- [💰 Cost Analysis](#cost-analysis)
-  - [📦 Component Costs](#components-costs)
-  - [🔌 PCB Manufacturing Cost](#pcb-cost)
-  - [🖨️ 3D Printing Cost](#3d-printing-cost)
-  - [🔩 Other Materials (Screws, Nuts, Miscellaneous)](#other-materials-cost)
-  - [💵 Total Cost](#total-cost)
-- [🔁 Reproducibility Guide](#reproductibility-guide)
-- [🎲 Randomizer](#randomizer)
-- [📂 Resources](#resources)
-- [📜 License](#license)
+- [ The Team](#the-team)
+- [ Challenge Overview](#challenge-overview)
+- [ Our Robot](#our-robot)
+- [ Performance Metrics](#performance-metrics)
+- [ Engineering Trade-Offs](#engineering-tradeoffs)
+- [ Testing & Iterations](#testing-iterations)
+    - [ Quantitative testing](#quantitative-testing)
+- [ Mobility Management](#mobility-management)
+  - [ Drivebase](#drivebase)
+    - [ Drivetrain](#drivetrain)
+    - [ Torque and Speed Reasoning](#torque)
+    - [ Motor](#motor)
+    - [ Wheels](#wheels)
+    - [ Motor Driver IFX9201SG](#motor-driver)
+  - [ Steering](#steering)
+    - [ Steering Servo Motor](#servo-motor)
+  - [ Sensor Placement](#sensor-placement)
+  - [ Chassis & Component Mounting](#chassis)
+    - [ Key Features & Advantages](#key-features)
+    - [ Assembly Process](#assembly-process)
+      - [ Assembly Process Video](#assembly-process-video)
+      - [ 3D print the parts](#3d-print-the-parts)
+      - [ Assemble the robot](#assembly)
+- [ Power and Sense Management](#power-and-sense-management)
+  - [ Li-Po Battery](#li-po-battery)
+  - [ Arduino Nano ESP32](#arduino-nano-esp32)
+  - [ IMU Sensor BMI088](#imu-sensor-bmi088)
+  - [ OpenMV RT1062 Camera](#openmv-rt1062-camera)
+  - [ Drive Motor](#drive-motor)
+  - [ Motor Driver IFX9201SG](#motor-driver)
+  - [ Steering Servo MG90S](#steering-servo)
+  - [ Pololu PWM Distance Sensor](#distance-sensors)
+  - [ Voltage Regulator D24V50F5](#voltage-regulator)
+  - [ PCB Design](#pcb-design)
+  - [ Power Consumption](#power-consumption)
+  - [ Power and Sensor Validation](#power-and-sensor-validation)
+  - [ Power failure points and mitigation](#power-failure-points)
+- [ Components coding](#components-coding)
+  - [ Software Architecture](#software-architecture)
+  - [ Robot State Machine](#state-machine)
+  - [ Drive motor](#drive-motor-coding)
+  - [ Servo motor](#servo-motor-coding)
+  - [ IMU](#imu-coding)
+  - [ Distance sensors](#distance-sensors-coding)
+  - [ Camera](#camera-coding)
+- [ Obstacle Management](#obstacle-management)
+  - [ Open Round](#open-round)
+  - [ Final Round](#final-round)
+  - [ Start from Parking](#start-from-parking)
+  - [ Parking](#parking)
+- [ Edge Cases and Failure Handling](#edge-cases)
+- [ Performance Video](#performance-video)
+- [ Cost Analysis](#cost-analysis)
+  - [ Component Costs](#components-costs)
+  - [ PCB Manufacturing Cost](#pcb-cost)
+  - [ 3D Printing Cost](#3d-printing-cost)
+  - [ Other Materials (Screws, Nuts, Miscellaneous)](#other-materials-cost)
+  - [ Total Cost](#total-cost)
+- [ Reproducibility Guide](#reproductibility-guide)
+- [ Randomizer](#randomizer)
+- [ Resources](#resources)
+- [ License](#license)
 
-## 📂 Folder Structure
+## Folder Structure
 
 
 This repository is organized as follows:
 
 
 ```
-📦 WRO2026_Future_Engineers
-├── 📁 3D-models             # Contains 3D design files for the robot's components
-│   ├── 📁 old-3D-models     # Previous versions of 3D models
-├── 📁 electrical-schematics # Circuit diagrams and wiring
-├── 📁 github-commits        # Commit logs and change tracking details for this repository
-├── 📁 media                 # Images and videos 
-│   ├── 📁 robot-photos      # Photos of the robot
-│   ├── 📁 team-photos       # Pictures of team members and teamwork
-│   └── 📁 video             # Recorded testing
-├── 📁 other                 # Contains files that do not fit into other categories
-├── 📁 src                   # Main source code for the robot
-├── 📁 technical-draws       # Technical drawings and mechanical blueprints
-├── 📁 video                 # Videos of our robot
-├── 📄 LICENSE               # MIT License for the project
-└── 📄 README.md             # Main documentation for the project
+ WRO2026_Future_Engineers
+├──  3D-models             # Contains 3D design files for the robot's components
+│   ├──  old-3D-models     # Previous versions of 3D models
+├──  electrical-schematics # Circuit diagrams and wiring
+├──  github-commits        # Commit logs and change tracking details for this repository
+├──  media                 # Images and videos
+│   ├──  robot-photos      # Photos of the robot
+│   ├──  team-photos       # Pictures of team members and teamwork
+│   └──  video             # Recorded testing
+├──  other                 # Contains files that do not fit into other categories
+├──  src                   # Main source code for the robot
+├──  technical-draws       # Technical drawings and mechanical blueprints
+├──  video                 # Videos of our robot
+├──  LICENSE               # MIT License for the project
+└──  README.md             # Main documentation for the project
 ```
 
 ---
 
-## 👥 The Team <a id="the-team"></a>
+## The Team <a id="the-team"></a>
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/42d6e5a1cd52bcbd6b493d360703382f0b427a0a/media/team-photos/team.jpeg" width="450">
 
 ### **Popescu Filimon Andrei Cosmin** (middle)
 **Age:** 18 <br>
-**High School:** International Computer High School Bucharest (ICHB)  
+**High School:** International Computer High School Bucharest (ICHB)
 **View my portofolio**: [https://andreipopescufilimon.com/](https://andreipopescufilimon.com/)
 
-**Description:**  
+**Description:**
 Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my second season in Future Engineers, as before I competed in the Robomission category. I am passionate about robotics, especially electronics and the latest algorithms and tech. Over the years, I have worked on multiple robotics projects, including line followers, sumo bots, and air quality modules. I am the founder of HyperLine Robotics Team, where I build and develop advanced robotics projects with my team. Apart from robotics, I also enjoy cybersecurity, programming, and cycling.
 
 ---
@@ -148,7 +149,7 @@ Hi! I’m Andrei from Romania, and this is my sixth WRO season. This is my secon
 **Age:** 17 <br>
 **High School:** National College "Mihai Viteazul" (CNMV)
 
-**Description:**  
+**Description:**
 Hi! I’m Horia from Romania, and this is my third WRO season competing alongside Andrei. I have participated in RoboMission multiple times, gaining valuable experience in solving various problems that may arise while building a robot. I have a strong interest in technology and robotics and am always eager to learn and experiment with new ideas!
 
 ---
@@ -157,7 +158,7 @@ Hi! I’m Horia from Romania, and this is my third WRO season competing alongsid
 **Age:** 16 <br>
 **High School:** Liceul Teoretic Alexandru Ioan Cuza
 
-**Description:**  
+**Description:**
 Hi! I’m Eduard from Romania. I’m passionate about robotics, especially building and testing competitive robots. I have worked on sumo robots, and recently I started developing line follower robots as well. I also enjoy driving and flight simulators, where I like exploring realistic control, precision, and performance.
 
 Apart from robotics, I love MTB, video games, and cybersecurity. I’m always interested in learning new technologies, improving my skills, and working on projects that challenge me both technically and creatively.
@@ -165,30 +166,30 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 
 ---
 
-## 🎯 Challenge Overview <a id="challenge-overview"></a>
+## Challenge Overview <a id="challenge-overview"></a>
 
 The **WRO 2026 Future Engineers** challenge pushes teams to develop a **fully autonomous vehicle** capable of navigating a **dynamic and randomized racetrack** using **sensors, computer vision, and advanced control algorithms**. The goal is to complete **multiple laps** while adapting to randomized obstacles, following **strict driving rules**, and successfully executing a **parallel parking maneuver** at the end of the course.
 
-### 📌 Competition Format 
+### Competition Format
 
-- **🏁 Open Challenge**: The vehicle must complete **three (3) laps** on a track with **randomly placed inside walls**.
+- ** Open Challenge**: The vehicle must complete **three (3) laps** on a track with **randomly placed inside walls**.
 
-- **🚦 Obstacle Challenge**: The vehicle must complete **three (3) laps** while detecting and responding to **randomly placed red and green traffic signs**:
-  - 🟥 **Red markers** ➜ The vehicle must stay on the **right side of the lane**.
-  - 🟩 **Green markers** ➜ The vehicle must stay on the **left side of the lane**.
-  
+- ** Obstacle Challenge**: The vehicle must complete **three (3) laps** while detecting and responding to **randomly placed red and green traffic signs**:
+  -  **Red markers** ➜ The vehicle must stay on the **right side of the lane**.
+  -  **Green markers** ➜ The vehicle must stay on the **left side of the lane**.
+
   After completing the three laps, the vehicle must **locate the designated parking zone** and perform a **precise parallel parking maneuver** within a limited space, adding an extra layer of difficulty.
-  
-- **📑 Documentation**: Each team must maintain a **public GitHub repository** showcasing their **engineering process, vehicle design, and source code**.
 
-### 🏆 Scoring & Evaluation
+- ** Documentation**: Each team must maintain a **public GitHub repository** showcasing their **engineering process, vehicle design, and source code**.
+
+### Scoring & Evaluation
 Scoring is based on **accuracy, technical documentation and speed**, rewarding teams that balance **efficiency, adaptability, and innovation**. This challenge not only tests **robotics and programming skills** but also promotes **problem-solving, teamwork, and engineering creativity**.
 
-🔗 **Find out more about the challenge [here](https://wro-association.org/wp-content/uploads/WRO-2026-Future-Engineers-Self-Driving-Cars-General-Rules.pdf).** 🚀
+ **Find out more about the challenge [here](https://wro-association.org/wp-content/uploads/WRO-2026-Future-Engineers-Self-Driving-Cars-General-Rules.pdf).**
 
 ---
 
-## 🤖 Our Robot <a id="our-robot"></a>
+## Our Robot <a id="our-robot"></a>
 | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5f4072d596f9771e1168e6d9f6c43632f88357e8/media/robot-photos/top.png" width="300">         | <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5f4072d596f9771e1168e6d9f6c43632f88357e8/media/robot-photos/bottom.png" width="300">            |
 |----------------------------------|-------------------------------------|
 | <p align="center"><b>Top</b></p> | <p align="center"><b>Bottom</b></p> |
@@ -230,7 +231,7 @@ The robot was designed to prioritize stability, fast steering response, and comp
 
 ---
 
-## 📊 Performance Metrics <a id="performance-metrics"></a>
+## Performance Metrics <a id="performance-metrics"></a>
 
 The robot was tested extensively on full-scale WRO-inspired tracks to evaluate stability, obstacle handling, and parking consistency. Multiple runs were performed under different lighting conditions and track layouts to validate reliability and repeatability.
 
@@ -249,7 +250,7 @@ The final tuning focused on balancing speed and stability rather than maximizing
 
 ---
 
-## ⚖️ Engineering Trade-Offs <a id="engineering-tradeoffs"></a>
+## Engineering Trade-Offs <a id="engineering-tradeoffs"></a>
 
 Throughout the development process, every major design choice had to balance speed, stability, reliability, weight, and ease of debugging. The goal was not only to build a fast robot, but to create a compact autonomous vehicle that can perform consistently across different WRO field layouts, lighting conditions, obstacle positions, and parking scenarios.
 
@@ -281,7 +282,7 @@ These constraints shaped the robot as a complete system. The mechanical design p
 
 ---
 
-## 🔬 Testing & Iterations <a id="testing-iterations"></a>
+## Testing & Iterations <a id="testing-iterations"></a>
 
 During development, multiple robot revisions were designed and tested to improve steering precision, reliability, and overall track performance. The robot was developed through several iterations. Each version was tested on the main tasks required by the WRO Future Engineers challenge: stable driving, obstacle handling, cornering, and parking.
 
@@ -291,7 +292,7 @@ During development, multiple robot revisions were designed and tested to improve
 | V2 | The robot was reliable on straight sections but less stable during parking | Moved the side sensors closer to the PCB and improved rear distance sensing | More stable parking approach |
 | V3 | Obstacle handling needed smoother recovery after passing traffic signs | Added clearer software states for cube following, avoidance, and recovery | More consistent obstacle challenge behavior |
 
-### 📊 Quantitative testing <a id="quantitative-testing"></a>
+### Quantitative testing <a id="quantitative-testing"></a>
 
 | Test | Runs | Success rate | Main failure observed | Improvement made |
 |---|---:|---:|---|---|
@@ -307,22 +308,22 @@ These tests showed that the robot was mechanically capable of completing the cha
 
 ---
 
-## 🚗 Mobility Management <a id="mobility-management"></a>
+## Mobility Management <a id="mobility-management"></a>
 
 The robot's mobility is controlled through **a fully PCB chassis, a servo-based steering system, and a drivetrain featuring a custom differential and axes**. These components work together to ensure smooth, **precise movement with optimized traction, stability, and efficient power management**.
 
-## ⚙️ **Drivebase** <a id="drivebase"></a>
+## **Drivebase** <a id="drivebase"></a>
 
-### 🔧 **Drivetrain** <a id="drivetrain"></a>
+### **Drivetrain** <a id="drivetrain"></a>
 
-The drivetrain uses a custom micro-RC differential at the rear, driven by a **Pololu 30:1 HPCB micro gearmotor** through a **3D printed gear** → **differential input gear**. The motor is held in a 3D-printed support with the battery mounted above, keeping the center of mass centered and low. Rear outputs rotate in bearings seated inside a printed part that contains 4 bearings for the wheel axles, this attachment is mounted using M2 screws to the PCB chassis, minimizing friction and parts count. 
+The drivetrain uses a custom micro-RC differential at the rear, driven by a **Pololu 30:1 HPCB micro gearmotor** through a **3D printed gear** → **differential input gear**. The motor is held in a 3D-printed support with the battery mounted above, keeping the center of mass centered and low. Rear outputs rotate in bearings seated inside a printed part that contains 4 bearings for the wheel axles, this attachment is mounted using M2 screws to the PCB chassis, minimizing friction and parts count.
 At the front, the wheels are fully 3D-printed and each wheel runs on two bearings (inner + outer) for a rigid, wobble-free hub that steers precisely.
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/bd5e65719f69d3f668c65852b8c334ef36fecc77/other/differential.jpeg" width="800">
 
 To maximize grip on the track we've made the wheel rims out of 45# steel. The drive motor is controlled by an **IFX9201SG driver (PWM + DIR)** with an active brake pulse for precise stopping, while the encoder on the gearmotor provides odometry for short, accurate moves (e.g., avoidance hops, parking nudges).
 
-### ⚙️ **Motor – 30:1 Micro Metal Pololu Gearmotor HPCB** <a id="motor"></a>
+### **Motor – 30:1 Micro Metal Pololu Gearmotor HPCB** <a id="motor"></a>
 
 Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6V)** for the drive system. This motor provides an **optimal balance of speed and torque**, allowing the robot to maintain stability while navigating turns.
 
@@ -331,13 +332,13 @@ Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6
 | **Model:** 30:1 HPCB | **Voltage:** 6V |
 | **No-load Speed:** 1000 RPM | **No-load Current:** 120mA |
 | **Stall Torque:** ~0.45 kg·cm | **Stall Current:** 1.6A |
-| 🔗 **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
+|  **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
 
-**Why We Chose This Motor?**  
-**- Gear ratio provides sufficient torque** without sacrificing efficiency.  
+**Why We Chose This Motor?**
+**- Gear ratio provides sufficient torque** without sacrificing efficiency.
 **- Compact and lightweight design**, allowing integration into a lightweight robot.
 
-### 🛞 Wheels & Tires (Silicone) <a id="wheels"></a>
+### Wheels & Tires (Silicone) <a id="wheels"></a>
 
 Our robot uses cast silicone tires on 3D-printed hubs. Silicone provides high, repeatable static friction on painted boards and vinyl, which pairs perfectly with the rear differential and downforce impeller—more grip when we need it, without adding mass.
 
@@ -353,7 +354,7 @@ Our robot uses cast silicone tires on 3D-printed hubs. Silicone provides high, r
 - Tire: Cast silicone ring fitted onto a mechanical bead on the rim (no harsh solvents needed).
 - Fit: Rear wheels mount directly to the diff axle outputs; fronts ride on steering hubs for low friction.
 
-#### ⚙️ **Torque and Speed Reasoning** <a id="torque"></a>
+#### **Torque and Speed Reasoning** <a id="torque"></a>
 
 The 30:1 Pololu HPCB gearmotor was selected because it provides a good balance between speed and usable torque. A lower gear ratio would increase the maximum speed, but the robot would lose acceleration and braking control. A higher gear ratio would give more torque, but the robot would become slower on long straight sections.
 
@@ -375,7 +376,7 @@ Because the robot uses silicone tires and an active downforce impeller, the whee
 
 This choice improved the robot’s consistency because the car could drive fast while still keeping predictable control during turns and obstacle sections.
 
-### 🔌 **IFX9201SG Motor Driver** <a id="motor-driver"></a>
+### **IFX9201SG Motor Driver** <a id="motor-driver"></a>
 
 The **IFX9201SG** motor driver is used to control the robot’s high-performance drive or impeller motor with precision and efficiency. It supports PWM-based speed control and direction control while integrating advanced protection features, making it ideal for demanding robotics applications. The IFX9201SG is directly integrated into our PCB, ensuring compact design and reliable communication with the Arduino Nano ESP32.
 
@@ -385,19 +386,19 @@ The **IFX9201SG** motor driver is used to control the robot’s high-performance
 | **Logic Voltage:** 3.3V / 5V compatible | **PWM Frequency:** Up to 20 kHz |
 | **Max Continuous Current:** 5A | **Max Peak Current:** 8A per channel |
 | **Control Interface:** PWM + Direction pins | **Built-in Protections:** Overtemperature, Overcurrent, Undervoltage, Short-to-GND/Battery |
-| 🔗 **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
+|  **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
 
 
 ---
 
 
-## 🔄 **Steering** <a id="steering"></a>
+## **Steering** <a id="steering"></a>
 
 The **steering system** is a critical part of the robot, ensuring precise maneuverability and smooth turns. Our design is based on a **parallelogram steering mechanism**, where both front wheels turn at the same angle through a single servo-controlled linkage. This setup provides predictable and stable steering, making it easy to use for an autonomous vehicle. Instead of using an **Ackermann steering system**, which requires more complex calculations and linkages, we opted for a **simpler and more lightweight solution** that offers consistent control. Our steering system allows for a maximum turning angle of 80 degrees in both the left and right directions. This range provides precise maneuverability, enabling the robot to navigate sharp turns efficiently while maintaining stability.
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/7127f1dabd068adfad747dd9a046f9f305c5eda3/other/steering.gif" width="500">
 
-Our **steering arm is directly connected to the servo**, which moves the two front wheels simultaneously. This ensures that the turning response is immediate and proportional to the servo's motion. The **wheels are mounted on special mounts hubs**, allowing for smooth and precise movement without excessive friction. To ensure **structural integrity and long-term reliability**, the steering system is **assembled using M2 screws on which the hubs can turn**. 
+Our **steering arm is directly connected to the servo**, which moves the two front wheels simultaneously. This ensures that the turning response is immediate and proportional to the servo's motion. The **wheels are mounted on special mounts hubs**, allowing for smooth and precise movement without excessive friction. To ensure **structural integrity and long-term reliability**, the steering system is **assembled using M2 screws on which the hubs can turn**.
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/steering-and-camera-mount-hub_technical-drawing.png" width="800">
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/left-steering-hub_technical-drawing.png" width="800">
@@ -405,7 +406,7 @@ Our **steering arm is directly connected to the servo**, which moves the two fro
 
 ---
 
-### **🔄 Steering Servo – MG90S** <a id="servo-motor"></a>
+### ** Steering Servo – MG90S** <a id="servo-motor"></a>
 
 To control the steering system, we use an **MG90S micro servo**, known for its high torque and fast response. This servo enables quick and precise adjustments while maintaining a compact and lightweight design. Featuring **metal gears**, it ensures durability and reliability over extended use. The servo is securely mounted onto the chassis with two screws, and the steering arm is directly attached to its output shaft, providing smooth and efficient motion transfer for accurate steering.
 
@@ -415,11 +416,11 @@ To control the steering system, we use an **MG90S micro servo**, known for its h
 | **Torque:** 2.2kg/cm | **Signal Type:** PWM |
 | **Current Draw (Avg):** 120mA | **Peak Current:** 500mA |
 | **Weight:** ~13.4g | **Gears:** Plastic |
-| 🔗 **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
+|  **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
 
 ---
 
-## 📡 Sensor Placement Reasoning Using Field Geometry <a id="sensor-placement"></a>
+## Sensor Placement Reasoning Using Field Geometry <a id="sensor-placement"></a>
 
 The front camera is placed at the front of the robot because it must detect traffic signs before the vehicle reaches them. This gives the software enough time to decide whether the robot must pass the object on the left or on the right. The camera is used mainly for color and position detection, while the laser distance sensors are used for distance stability and alignment.
 
@@ -447,7 +448,7 @@ You can see the placement belod:
 
 ---
 
-## 🏎️ **Chassis & Component Mounting** <a id="chassis"></a>
+## **Chassis & Component Mounting** <a id="chassis"></a>
 
 The chassis of our robot is built around a custom PCB structure, which acts both as the electrical base and as the main mechanical frame. This design helps reduce unnecessary wiring, saves space, improves rigidity, and keeps the robot compact enough for fast movement inside the track.
 
@@ -461,15 +462,15 @@ The battery is mounted close to the center of the robot to keep the center of ma
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/battery-support_technical-drawing.png" width="800">
 
-The impeller is mounted in the central area of the chassis so it can pull air from under the robot and generate downforce evenly. This improves grip without adding extra weight, which is important for maintaining speed and control during the run. 
+The impeller is mounted in the central area of the chassis so it can pull air from under the robot and generate downforce evenly. This improves grip without adding extra weight, which is important for maintaining speed and control during the run.
 
 Overall, the chassis and mounting system were designed to be lightweight, rigid, compact, and easy to maintain. Every component has a fixed position, making the robot more reliable during repeated tests and competition runs.
 
 ---
 
-## 🔧 Assembly Process <a id="assembly-process"></a>
+## Assembly Process <a id="assembly-process"></a>
 
-🔗 **[Click here to watch the assembly video on YouTube](https://youtu.be/HSzWATB6nWQ)** <a id="assembly-process-video"></a>
+ **[Click here to watch the assembly video on YouTube](https://youtu.be/HSzWATB6nWQ)** <a id="assembly-process-video"></a>
 
 The assembly process was planned so that every subsystem could be mounted and tested step by step. This helped us avoid wiring problems, mechanical misalignment, and difficult debugging later in the build.
 
@@ -477,7 +478,7 @@ The assembly process was planned so that every subsystem could be mounted and te
 
 ### 2: Assemble the Chassis & Components <a id="assembly"></a>
 
-#### 🔧 **Main Assembly Steps**
+#### **Main Assembly Steps**
 
 **1. Prepare the PCB Chassis**
 
@@ -553,15 +554,15 @@ Before running the robot on the track, we check that all screws are tight, the w
 
 ---
 
-## 🛠️ Power and Sense Management <a id="power-and-sense-management"></a>
+## Power and Sense Management <a id="power-and-sense-management"></a>
 
-The robot's **power and sensing system** is designed for **efficiency, precision, and adaptability**. It consists of an **Arduino Nano ESP32, a Li-Po battery, custom BMI088 IMU, OpenMV RT1062 Camera, motors(drive motor and servo motor), and a voltage regulator**, all working together to ensure **stable operation and accurate navigation**.  
+The robot's **power and sensing system** is designed for **efficiency, precision, and adaptability**. It consists of an **Arduino Nano ESP32, a Li-Po battery, custom BMI088 IMU, OpenMV RT1062 Camera, motors(drive motor and servo motor), and a voltage regulator**, all working together to ensure **stable operation and accurate navigation**.
 
 Each component has been carefully selected to provide **optimal performance**, minimize power consumption, and ensure **reliability in competition environments**.
 
 ---
 
-### **🔋 Li-Po Battery – 2S 300mAh** <a id="li-po-battery"></a>
+### ** Li-Po Battery – 2S 300mAh** <a id="li-po-battery"></a>
 
 The **Li-Po battery** provides a **compact, lightweight, and high-discharge** power source, making it ideal for our robot. The **7.4V output** is suitable for running our **motors and voltage regulator**, ensuring stable power delivery.
 
@@ -571,12 +572,12 @@ The **Li-Po battery** provides a **compact, lightweight, and high-discharge** po
 | **Voltage:** 7.4V | **Discharge Rate:** 60C |
 | **Weight:** 12g | **Size:** 13.8 x 12 x 52.5mm |
 | **Output Current:** Varies by load | **Connector Type:** JST |
-| 🔗 **[Buy Here](https://www.gaoneng.shop/products/gaoneng-gnb-lihv-2s-7.6v-300mah-60c-jst-lipo-battery)** | **Function:** Powers the entire robot |
+|  **[Buy Here](https://www.gaoneng.shop/products/gaoneng-gnb-lihv-2s-7.6v-300mah-60c-jst-lipo-battery)** | **Function:** Powers the entire robot |
 
 
 ---
 
-### **🖥️ Arduino Nano ESP32 – Main Controller** <a id="arduino-nano-esp32">
+### ** Arduino Nano ESP32 – Main Controller** <a id="arduino-nano-esp32">
 
 The **Arduino Nano ESP32** provides **high-speed processing, built-in Wi-Fi and Bluetooth, and extensive GPIO capabilities** in a **compact form**. This allows it to handle **sensor data, motor control, and vision processing efficiently**.
 
@@ -586,11 +587,11 @@ The **Arduino Nano ESP32** provides **high-speed processing, built-in Wi-Fi and 
 | **SRAM:** 520KB | **Frequency:** 240MHz |
 | **Pins:** 22 | **Input Voltage:** 5V |
 | **Current Draw (Avg):** 200mA | **Peak Current:** 500mA |
-| 🔗 **[Buy Here](https://store.arduino.cc/en-ro/products/nano-esp32)** | **Function:** Controls all robot components |
+|  **[Buy Here](https://store.arduino.cc/en-ro/products/nano-esp32)** | **Function:** Controls all robot components |
 
 ---
 
-### 🧭 Custom IMU Sensor – BMI088 <a id="imu-sensor-bmi088"></a>
+### Custom IMU Sensor – BMI088 <a id="imu-sensor-bmi088"></a>
 
 The **Custom BMI088 IMU** is used to **measure the robot's angular velocity and acceleration**, helping it maintain **stability and precise movement control**. It is essential for **calculating turns and avoiding drift**. We decided to customize it to be able to make it more compact.
 
@@ -599,11 +600,11 @@ The **Custom BMI088 IMU** is used to **measure the robot's angular velocity and 
 | **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
 | **Interface:** I2C | **Supply Voltage:** 3.0V – 3.6V |
 | **Current Draw:** ~3.2mA | **Weight:** ~1g |
-| 🔗 [View Open Source Project Here](https://oshwlab.com/bicicleta11/bmi088-gyro-module) | **Function:** Tracks orientation & motion |
+|  [View Open Source Project Here](https://oshwlab.com/bicicleta11/bmi088-gyro-module) | **Function:** Tracks orientation & motion |
 
 ---
 
-### **📷 OpenMV RT1062 Camera – Vision Processing** <a id="openmv-rt1062-camera">
+### ** OpenMV RT1062 Camera – Vision Processing** <a id="openmv-rt1062-camera">
 
 The **OpenMV Cam RT1062** handles **traffic sign recognition, lane detection, color tracking, and other visual cues** in real time. It includes its own high-performance microcontroller, so the Arduino can focus mainly on movement control while the camera processes images independently.
 
@@ -614,11 +615,11 @@ The **OpenMV Cam RT1062** handles **traffic sign recognition, lane detection, co
 | **Camera Sensor:** OV5640 | **Resolution:** 2592 × 1944, 5 MP |
 | **Typical Vision Speed:** ~40 FPS at QVGA | **Interfaces:** UART, I2C, SPI, CAN, USB-C |
 | **Connectivity:** Wi-Fi, Bluetooth 5.1, Ethernet | **I/O Voltage:** 3.3 V only |
-| 🔗 **[Buy Here](https://openmv.io/collections/cameras/products/openmv-cam-rt?variant=42269003743326)** | **Function:** Detects traffic signs, lanes, and visual markers |
+|  **[Buy Here](https://openmv.io/collections/cameras/products/openmv-cam-rt?variant=42269003743326)** | **Function:** Detects traffic signs, lanes, and visual markers |
 
 ---
 
-### **⚙️ Drive Motor – 30:1 Micro Metal Gearmotor HPCB 6V with Encoder** <a id="drive-motor">
+### ** Drive Motor – 30:1 Micro Metal Gearmotor HPCB 6V with Encoder** <a id="drive-motor">
 
 The **drive motor is responsible for propelling the robot forward**. The **30:1 gearbox** provides an excellent **balance of speed and torque**, while the **built-in encoder** allows for **precise speed control**.
 
@@ -627,11 +628,11 @@ The **drive motor is responsible for propelling the robot forward**. The **30:1 
 | **Model:** 30:1 HPCB | **Voltage:** 6V |
 | **No-load Speed:** 1000 RPM | **No-load Current:** 120mA |
 | **Stall Torque:** ~0.45 kg·cm | **Stall Current:** 1.6A |
-| 🔗 **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
+|  **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
 
 ---
 
-### **⚙️ IFX9201SG Motor Driver** <a id="motor-driver"></a>
+### ** IFX9201SG Motor Driver** <a id="motor-driver"></a>
 
 The **IFX9201SG** motor driver is used to control the robot’s high-performance drive or impeller motor with precision and efficiency. It supports PWM-based speed control and direction control while integrating advanced protection features, making it ideal for demanding robotics applications. The IFX9201SG is directly integrated into our PCB, ensuring compact design and reliable communication with the Arduino Nano ESP32.
 
@@ -641,11 +642,11 @@ The **IFX9201SG** motor driver is used to control the robot’s high-performance
 | **Logic Voltage:** 3.3V / 5V compatible | **PWM Frequency:** Up to 20 kHz |
 | **Max Continuous Current:** 5A | **Max Peak Current:** 8A per channel |
 | **Control Interface:** PWM + Direction pins | **Built-in Protections:** Overtemperature, Overcurrent, Undervoltage, Short-to-GND/Battery |
-| 🔗 **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
+|  **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
 
 ---
 
-### **🔄 Steering Servo – MG90S** <a id="steering-servo">
+### ** Steering Servo – MG90S** <a id="steering-servo">
 
 The **MG90S servo is used for precise steering control**, enabling the robot to **navigate turns with accuracy**. It provides **high torque output in a compact size**.
 
@@ -655,11 +656,11 @@ The **MG90S servo is used for precise steering control**, enabling the robot to 
 | **Torque:** 2.2kg/cm | **Signal Type:** PWM |
 | **Current Draw (Avg):** 120mA | **Peak Current:** 500mA |
 | **Weight:** ~13.4g | **Gears:** Plastic |
-| 🔗 **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
+|  **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
 
 ---
 
-### **⚙️ Impeller for downforce** <a id="impeller">
+### ** Impeller for downforce** <a id="impeller">
 
 The **impeller** generates downforce to improve the robot’s grip on the track at high speeds. Powered by a **BLDC motor**, it delivers extremely high RPM with minimal weight, making it ideal for competitive line follower and robotracer builds. Its low rotor inertia ensures instant acceleration, while the compact size allows for easy integration.
 
@@ -669,11 +670,11 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 | **Voltage:** 2–3S | **Shaft Diameter:** 1.0mm |
 | **No-Load Speed:** ~85,000 RPM @ 7.4V	 | **	Weight:** ~4.5g |
 | **Current Draw (Avg):** ~1A @ 7.4V	 | **Peak Current:** ~2.5A |
-| 🔗 **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
+|  **[Buy Here](https://www.aliexpress.com/item/1005010313915123.html)** | **Function:** Drives the downforce impeller |
 
 ---
 
-### **⚙️ ESC Controller for impleller** <a id="ESC">
+### ** ESC Controller for impleller** <a id="ESC">
 
 **The EMAX D-SHOT Bullet 20A ESC controls the BLDC motor that drives the impeller. In this project, it uses a simple servo-style PWM signal, making it easy to interface with the main controller while providing smooth and reliable speed control in a compact, lightweight package.**
 
@@ -684,11 +685,11 @@ The **impeller** generates downforce to improve the robot’s grip on the track 
 | **Voltage:** 2–4S | **Protections:** Shortcircuit protection & stall protection |
 | **Dimensions (LxW):** 11.9x19.6 mm	 | **Weight(W/O Wires):** ~3.5g |
 | **Burst Max Current**  : ~30A	 | **Max Current:** ~20A |
-| 🔗 **[Buy Here](https://emaxmodel.com/products/emax-d-shot-bullet-series-20a-2-4s-blheli_s-esc-3-5g-support-onshot42-multishot?_pos=5&_sid=e68307242&_ss=r)** | **Function:** Drives the downforce BLDC |
+|  **[Buy Here](https://emaxmodel.com/products/emax-d-shot-bullet-series-20a-2-4s-blheli_s-esc-3-5g-support-onshot42-multishot?_pos=5&_sid=e68307242&_ss=r)** | **Function:** Drives the downforce BLDC |
 
 ---
 
-### 📏 Distance Sensor – Pololu PWM Distance Sensor <a id="distance-sensors"></a>
+### Distance Sensor – Pololu PWM Distance Sensor <a id="distance-sensors"></a>
 
 The **Pololu Digital Distance Sensor (PW output, 300 cm max)** uses a short-range lidar module and reports distance as the width of a digital pulse (similar to a hobby-servo signal). It’s ideal for reliable, fast obstacle detection and gives you an actual distance reading (3 mm resolution), perfect for lap direction detection at start and for close-range wall sensing.
 
@@ -698,17 +699,17 @@ The **Pololu Digital Distance Sensor (PW output, 300 cm max)** uses a short-rang
 | **Voltage Supply:** 3.0V – 5.5V | **Current Draw:** ~30 mA enabled, ~0.4 mA disabled (EN low) |
 | **Resolution:** 3 mm (≈ 4 µs per 3 mm)	 | **Update Rate:** ~50–110 Hz (period ~20–9 ms) |
 | **Dimensions:** 21.6mm × 8.9mm × 3.1mm | **Weight:** 1g |
-| 🔗 [Buy Here](https://www.pololu.com/product/4064) | **Use Case:** Start-line lap direction & close-range obstacle sensing for parking |
+|  [Buy Here](https://www.pololu.com/product/4064) | **Use Case:** Start-line lap direction & close-range obstacle sensing for parking |
 
 
-Here is the positioning and viewing angle of the sensors. 
+Here is the positioning and viewing angle of the sensors.
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/a3925a1f324463df2765be79d80c314f38acec86/other/Sensor%20view%20angle%20diagram.png" width="500">
 
 
 ---
 
-### **🔌 D24V50F5 Voltage Regulator – Power Management** <a id="voltage-regulator"> 
+### ** D24V50F5 Voltage Regulator – Power Management** <a id="voltage-regulator">
 
 The **D24V50F5** regulates the **7.4V Li-Po battery output** to a **stable 5V**, ensuring **safe power delivery** to the **Arduino, sensors, and camera**. It prevents **overvoltage damage** and includes **thermal & short-circuit protection** for reliability.
 
@@ -718,11 +719,11 @@ The **D24V50F5** regulates the **7.4V Li-Po battery output** to a **stable 5V**,
 | **Output Voltage:** 5V | **Output Current:** 5A |
 | **Efficiency:** Buck Converter (Step-down) | **Dropout Voltage:** ~2V |
 | **Protection:** Short-circuit & thermal shutdown | **Mounting Type:** Pins |
-| 🔗 **[Buy Here](https://www.pololu.com/product/2851)** | **Function:** Converts battery voltage to 5V |
+|  **[Buy Here](https://www.pololu.com/product/2851)** | **Function:** Converts battery voltage to 5V |
 
 ---
 
-### **🛠️ PCB Design & Electrical Architecture** <a id="pcb-design"></a>
+### ** PCB Design & Electrical Architecture** <a id="pcb-design"></a>
 
 | **Electrical Schematics** | **PCB Copper Traces** | **Final PCB Chassis** |
 |---------------------------|---------------------------|---------------------------|
@@ -733,14 +734,14 @@ The **D24V50F5** regulates the **7.4V Li-Po battery output** to a **stable 5V**,
 The robot uses a fully custom PCB chassis designed to combine both the electrical system and the structural frame into a single compact platform. This approach reduced weight, improved rigidity, and increased overall reliability during high-speed autonomous runs.
 
 ### **Advantages of the Custom PCB Chassis**
-- Cleaner construction with fewer wires and connectors  
-- More stable power delivery for motors and sensors  
-- Better reliability during high-speed runs  
-- Compact design with improved weight distribution  
-- Reduced electrical interference on communication lines  
+- Cleaner construction with fewer wires and connectors
+- More stable power delivery for motors and sensors
+- Better reliability during high-speed runs
+- Compact design with improved weight distribution
+- Reduced electrical interference on communication lines
 - Stronger and more rigid compared to multi-part printed structures
 
-### **🔧 Engineering Decisions**
+### ** Engineering Decisions**
 The PCB was designed with separated high-current and logic-power areas to reduce electrical noise generated by the motors and impeller system. Large copper pours were also used to improve current handling and passive heat dissipation.
 
 Several PCB revisions were tested before the final version, improving:
@@ -752,7 +753,7 @@ Several PCB revisions were tested before the final version, improving:
 
 ---
 
-### **⚡ Power Consumption Summary** <a id="power-consumption"></a>
+### ** Power Consumption Summary** <a id="power-consumption"></a>
 
 | Item / Designators | Part | Supply | Typical Current | Peak Current | Notes |
 |------------------------------------|-------------------------------|----------------|------------------|----------------|---------------------------------------------|
@@ -772,7 +773,7 @@ The robot was designed with power efficiency and peak-current stability in mind.
 
 ---
 
-## 🔋 Power and Sensor Validation  <a id="power-and-sensor-validation"></a>
+## Power and Sensor Validation  <a id="power-and-sensor-validation"></a>
 
 To make sure that the robot is reliable during a full run, we tested the complete power system under several operating conditions. The robot uses a 2S Li-Po battery as the main power source. The drive motor and impeller are powered from the battery side, while the logic electronics are powered through the D24V50F5 5V regulator.
 
@@ -789,7 +790,7 @@ The goal of this architecture is to separate high-current discharge loads from s
 
 The lowest measured voltage on the 5V rail was above the safe operating range for the ESP32, OpenMV, IMU, and sensors. During testing, no controller reset was observed. This confirms that the regulator has enough current margin for the logic side of the robot. We also tested the robot with the impeller starting instantly and with ramp-up. Instant start produced larger voltage drops and mechanical instability, so we used a controlled ramp-up in software. This gives the robot smoother acceleration and avoids sudden current spikes.
 
-### ⚠️ Power failure points and mitigation <a id="power-failure-points"></a>
+### Power failure points and mitigation <a id="power-failure-points"></a>
 
 | Possible failure | Cause | Mitigation |
 |---|---|---|
@@ -803,9 +804,9 @@ This testing showed that the power architecture is reliable under realistic comp
 
 ---
 
-## 💻 Components coding <a id="components-coding"></a>
+## Components coding <a id="components-coding"></a>
 
-### 🧠 Software Architecture <a id="software-architecture"></a>
+### Software Architecture <a id="software-architecture"></a>
 
 This diagram below, shows how the main software modules interact during a run. The OpenMV RT1062 handles image processing and sends compact commands through UART, while the Arduino Nano ESP32 manages motion control, state logic, steering, motor speed, and parking.
 
@@ -813,7 +814,7 @@ The software is split into independent modules so each subsystem can be tested s
 7
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/ddcf77e581128d6dd27f417a140c7249ae2e6b40/other/code-arhitecture.png" width="700">
 
-### 🔄 Robot State Machine <a id="state-machine"></a>
+### Robot State Machine <a id="state-machine"></a>
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/32e3bb7a326fcd5c3425dd7e08af2a319aea9243/other/state-machine.png" width="900">
 
@@ -841,7 +842,7 @@ while (digitalRead(START_BUTTON) == HIGH) {
 
 Using a state machine prevents different behaviors from interfering with each other. For example, while the robot is parking, camera commands are ignored, and while it is avoiding a cube, the normal driving PID is temporarily paused. This makes the behavior more predictable and easier to test during repeated runs.
 
-### ⚡ Drive motor <a id="drive-motor-coding"></a>
+### Drive motor <a id="drive-motor-coding"></a>
 
 The motor driver is based on the **Infineon IFX9201SG**, which allows us to directly manage the motor with only two control signals: a **PWM** pin that regulates speed, and a direction pin that selects forward or reverse rotation. Thanks to this chip’s integrated design, no external library was required for motor control.
 
@@ -896,7 +897,7 @@ float read_cm() {
 }
 ```
 
-### 🌪️ Impeller <a id="impeller-coding"></a>
+### Impeller <a id="impeller-coding"></a>
 
 The impeller is responsible for generating downforce, which increases stability and traction when the robot operates at high speed. To control it, we use an **EMAX BULLET ESC**, wired as a low-side switch. This **ESC** can safely handle the high current required by the impeller, while allowing speed control via **PWM** modulation.
 
@@ -921,7 +922,7 @@ void setImpeller(int _pwm) {
 }
 ```
 
-### 🎮 Servo motor <a id="servo-motor-coding"></a>
+### Servo motor <a id="servo-motor-coding"></a>
 
 The steering system is controlled by a **MG90S servo**, which adjusts the angle of the front wheels. This enables the robot to follow precise paths while maintaining stability during turns.
 
@@ -971,7 +972,7 @@ void steer(double steering_angle) {
 }
 ```
 
-### 🧭 IMU <a id="imu-coding"></a>
+### IMU <a id="imu-coding"></a>
 
 To keep the robot on a straight path and execute precise turns, we rely on the **Bosch BMI088 Inertial Measurement Unit (IMU)**. This sensor combines a high-resolution accelerometer and gyroscope, and in our case we primarily use the **Z-axis** gyroscope for yaw angle estimation.
 
@@ -1023,7 +1024,7 @@ void gyro_setup() {
   // reset integration
   gz = 0;
   gyro_last_read_time = millis();
-} 
+}
 ```
 
 The function `read_gyro_data()` must be called continuously in the control loop. It computes the elapsed time **dt**, reads the current angular rate from the **BMI088**, subtracts the drift offset, and integrates the result into **gz**, which represents the robot’s absolute yaw angle in degrees. This value is used directly in the **PID controller** for heading correction.
@@ -1032,7 +1033,7 @@ The function `read_gyro_data()` must be called continuously in the control loop.
 void read_gyro_data() {
   // call this frequently (e.g. every loop)
   double now = millis();
-  double dt  = (now - gyro_last_read_time) * 0.001; // s          
+  double dt  = (now - gyro_last_read_time) * 0.001; // s
   float rate = imu.getGyroscopeZ();              // °/s
   double corrected = rate - drifts_z;               // drift-compensated
   gz += corrected * dt;                             // integrate to degrees
@@ -1046,7 +1047,7 @@ void read_gyro_data() {
 ```
 
 
-### 📡 Distance sensors <a id="distance-sensors-coding"></a>
+### Distance sensors <a id="distance-sensors-coding"></a>
 
 The robot integrates four **Pololu PWM distance sensors**, placed on the **front, back, left, and right sides** of the chassis. Each sensor outputs a pulse width signal, where the duration is proportional to the measured distance. This gives us precise range data without requiring complex communication protocols.
 
@@ -1097,7 +1098,7 @@ Below you can see where the laser sensors and camera view fields are:
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/a3925a1f324463df2765be79d80c314f38acec86/other/Sensor%20view%20angle%20diagram.png" width="500">
 
 
-### 📷 Camera <a id="camera-coding"></a>
+### Camera <a id="camera-coding"></a>
 
 Once the robot can move and steer, it also needs to see and react to the environment. For this, we use an **OpenMV camera module**, connected via **UART protocol**. This allows the camera to handle the heavy work of image processing and only send compact messages (like colors, cubes, or angles) to the **ESP32**.
 
@@ -1303,9 +1304,9 @@ while True:
 
 ---
 
-## 📝 Obstacle Management <a id="obstacle-management"></a>
+## Obstacle Management <a id="obstacle-management"></a>
 
-### 🏁 Open Round <a id="open-round"></a>
+### Open Round <a id="open-round"></a>
 During the **Open Round**, our robot follows a **straight trajectory using a PID controller based on gyro yaw**, ensuring stable movement. To determine turns, the **camera detects Orange and Blue lines** on the track:
 - **Orange Line ➜ Right Turn**
 - **Blue Line ➜ Left Turn**
@@ -1335,7 +1336,7 @@ if direction == 0:
 uart.write(str(direction) + '\n')
 ```
 
-### ⚡ Final Round <a id="final-round"></a>
+### Final Round <a id="final-round"></a>
 
 In the final round, we extend our open rount algorithm by adding real‐time cube detection, following, and avoidance algorithms. The OpenMV RT1062 camera handles live frames processing and sends compact UART messages to the Arduino Nano ESP32. On the Arduino, incoming UART messages drive a four‐state algorithm: in **PID**, the robot adjust to hold a straight heading by using a PD on the gyro and turns 90° whenever it receives a **BLACK** signal (lap turning point in each corner). In **FOLLOW_CUBE**, the camera’s **S<corrected_servo>** message directly sets the servo angle to chase the closest visible cube; if no follow message arrives within 250-500 ms, it returns to **PID** as the cube might have been passed or lost from the view. When a proximity trigger (**RED** or **GREEN**, **R** or **G**) arrives, it switches to **AVOID_CUBE**, executes a 37° turn plus an 8 cm clear‐away while holding that heading, then enters **AFTER_CUBE** to reallign on gyro while moving back to center section of each side of the map, and to flush the leftover commands before reverting to **PID**.
 
@@ -1431,13 +1432,13 @@ switch (currentState) {
 
 **AVOID_CUBE:**
 - Calls `pass_cube(cube_avoid_direction)`, which executes a turn to left or right based on the cube color. This code sequence is hard coded.
-  
+
 **AFTER_CUBE:**
 - Return to **PID** after getting to be straight again, while ignoring all commands.
 
 
  #### UART Command Parser (execute_command())
- 
+
 This function is called whenever a complete line arrives over **UART**. It selects which state to enter (**PID**, **FOLLOW_CUBE**, **AVOID_CUBE**) or adjusts gyro target angle on a **BLACK** message by adding or removing 90 degrees, based on the turn direction.
 
 ```cpp
@@ -1591,7 +1592,7 @@ if candidates:
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/425854913627b5729d3b9a42b591704bd873709b/other/redcube.png" width="900">
 
-### 🅿️ Starting from Parking <a id="start-from-parking"></a>
+### Starting from Parking <a id="start-from-parking"></a>
 At the start of the round, our robot is placed in the designated parking zone (the parking zone is 1.5x robot lenght). To determine the direction of the first lap (clockwise or counterclockwise), we use the 2 distance sensors placed on left and right side of our robot, the one that sees the wall further away will be the side to exit and do the laps.
 
 Once the direction is determined, the robot performs an initial steering exit maneuver (to left or right) using our custom PD-based turning function:
@@ -1630,7 +1631,7 @@ The robot turns ~75° toward the main track depending on the detected direction.
 - When no cube is detected, it enters **PID** mode, in which it simply navigates straight using the gyro—just as in qualification runs.
 
 
-### 🅿️ Parking <a id="parking"></a>
+### Parking <a id="parking"></a>
 
 At the end of the run, once the robot has completed **12 turns in RUN\_MODE 1** (final run mode), it transitions into the **parallel parking sequence**. This routine is fully deterministic and relies on both **front and back distance sensors** together with the **gyro angle** to achieve a repeatable and precise result. The sequence consists of four main phases:
 
@@ -1755,7 +1756,7 @@ Stop Inside Parking
 
 ---
 
-### ⚠️ Edge Cases and Failure Handling <a id="edge-cases"></a>
+### Edge Cases and Failure Handling <a id="edge-cases"></a>
 
 During testing, several failure cases were identified and handled in software. These protections make the robot more reliable because the program does not depend on every sensor reading being perfect.
 
@@ -1770,20 +1771,20 @@ During testing, several failure cases were identified and handled in software. T
 
 ---
 
-## 📽️ Performance Video <a id="performance-video"></a>
+## Performance Video <a id="performance-video"></a>
 
-🔗 **[Click here to watch the video on YouTube](https://www.youtube.com/watch?v=bg92ulHXomw)** 
+ **[Click here to watch the video on YouTube](https://www.youtube.com/watch?v=bg92ulHXomw)**
 
 ---
 
-## 💰 Cost Analysis <a id="cost-analysis"></a>
+## Cost Analysis <a id="cost-analysis"></a>
 
 We optimized the robot for a balance between **high performance, reliability, and cost efficiency**. The total cost includes electronics, motors, sensors, PCB manufacturing, 3D printed parts, and mechanical hardware used during both development and the final competition-ready version.
 
-### 📦 **Components Costs** <a id="components-costs"></a>
+### **Components Costs** <a id="components-costs"></a>
 
 **Note:** Many of the components used in this project were provided through sponsorships and partnerships. The prices listed above represent the standard market prices without sponsor discounts, in order to reflect the real estimated value of the robot.
-> 
+>
 | Component | Quantity | Unit Price ($) | Total ($) |
 |---------------------------------------------|----------|----------------|-------------|
 | Arduino Nano ESP32 | 1 | 21.42 | 21.42 |
@@ -1800,7 +1801,7 @@ We optimized the robot for a balance between **high performance, reliability, an
 | Experimental Parts | - | 35.00 | 35.00 |
 | **TOTAL COMPONENT COST** | - | **-** | **363.35** |
 
-### 🧪 Experimental Parts & Development Iterations
+### Experimental Parts & Development Iterations
 
 During development, multiple experimental parts and prototype versions were tested before reaching the final design. These included:
 - Different wheel compounds and tire designs
@@ -1812,7 +1813,7 @@ These parts were mainly used for testing and optimization and are not included i
 
 ---
 
-### **🔌 PCB Cost (Manufactured via JLCPCB)** <a id="pcb-cost"></a>
+### ** PCB Cost (Manufactured via JLCPCB)** <a id="pcb-cost"></a>
 | PCB Component                  |    Board    | Quantity | Unit Price ($) | Total ($)    |
 |--------------------------------|-------------|----------|----------------|--------------|
 | **PCB Manufacturing (JLCPCB)** |   Main      |    5     | **1.3**        | **6.5**      |
@@ -1823,7 +1824,7 @@ These parts were mainly used for testing and optimization and are not included i
 
 ---
 
-### **🖨️ 3D Printing Cost Breakdown** <a id="3d-printing-cost"></a>
+### ** 3D Printing Cost Breakdown** <a id="3d-printing-cost"></a>
 
 For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high quality resing printing we used the 3DP service from JLC.
 
@@ -1835,7 +1836,7 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 
 ---
 
-### **🔩 Other Materials (Screws, Nuts, and Miscellaneous)** <a id="other-materials-cost"></a>
+### ** Other Materials (Screws, Nuts, and Miscellaneous)** <a id="other-materials-cost"></a>
 | Material                       | Quantity | Unit Price ($) | Total ($)   |
 |--------------------------------|----------|--------------|---------------|
 | **M2/M3 Screws & Nuts**       | -      | **-**      | **10.00**       |
@@ -1844,7 +1845,7 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 
 ---
 
-### **💵 TOTAL** <a id="total-cost"></a>
+### ** TOTAL** <a id="total-cost"></a>
 | Category                      | Total Cost ($) |
 |-------------------------------|----------------|
 | **Components**                | **363.35**     |
@@ -1857,7 +1858,7 @@ For 3D Printing we used Anycubic Kobra S1 Printer, and as well for some high qua
 
 ---
 
-## 🔁 Reproducibility Guide <a id="reproductibility-guide"></a>
+## Reproducibility Guide <a id="reproductibility-guide"></a>
 
 Another team or person should be able to rebuild the robot by following the files and documentation in this repository.
 
@@ -1893,11 +1894,11 @@ Another team or person should be able to rebuild the robot by following the file
 
 ---
 
-## 🎲 Randomizer <a id="randomizer"></a>
+## Randomizer <a id="randomizer"></a>
 
 To make testing more realistic and closer to the official WRO Future Engineers format, we built our own custom **WRO Future Engineers Randomizer**.
 
-🔗 **Available here:** [https://wro-fe-randomizer.hyperlinerobotics.com/](https://wro-fe-randomizer.hyperlinerobotics.com/)
+ **Available here:** [https://wro-fe-randomizer.hyperlinerobotics.com/](https://wro-fe-randomizer.hyperlinerobotics.com/)
 
 The randomizer helps us quickly generate valid challenge layouts for both practice and robot testing. Instead of manually choosing cube positions, parking walls, starting positions, and field elements, the tool automatically creates randomized configurations based on the competition rules.
 
@@ -1911,7 +1912,7 @@ The randomizer became an important part of our testing workflow because it allow
 
 ---
 
-## 📂 Resources <a id="resources"></a>
+## Resources <a id="resources"></a>
 
 Below is a compact list of **external images** used in this repository.
 
@@ -1925,7 +1926,7 @@ Below is a compact list of **external images** used in this repository.
 
 ---
 
-## 📜 License <a id="license"></a>
+## License <a id="license"></a>
 ```
 MIT License
 
