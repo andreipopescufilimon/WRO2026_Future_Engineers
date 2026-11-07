@@ -6,7 +6,7 @@
 | Clear project structure | [Repository structure](#repository-structure) | Directories for mechanical parts, electronics, firmware, photos, tests and technical journal |
 | CAD, code and wiring | [Repository structure](#repository-structure) | Published STEP components, main PCB/IMU/ToF manufacturing files and firmware sources; electrical description in [chapter 03](03-power-sensors.md) |
 | Documented test workflow | [Testing workflow](#testing-workflow) | Isolated subsystem tests, on-vehicle telemetry and on-track verification |
-| Meaningful development history | [Versions](#versions) | V4 national robot versus V4.1 current robot, older models and repository commits |
+| Meaningful development history | [Versions](#versions) | V4 national robot versus V4.1 current robot, older models and repository commits, contains over 200commits during 2026 season |
 
 The robot can be examined as separate 3 subsystems: mechanical, electronic and software. Our current V4.1 design uses the **Arduino Nano ESP32** for vehicle control and the **OpenMV N6** for vision. V4.1 introduces improved, faster ToF sensing, a higher-torque drive motor and heavier wheel rims compared with V4, the national competition version. Mechanical reasoning is in [chapter 02](02-mobility.md), electronics in [chapter 03](03-power-sensors.md), driving software in [chapter 04](04-software.md), and system testing in [chapter 05](05-systems.md).
 
