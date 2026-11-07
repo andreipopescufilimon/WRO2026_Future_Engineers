@@ -217,6 +217,6 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 ## Video demonstrations
 
 | Demonstration | Link |
-|---|---|---|
+|---|---|
 | Driving demonstration | [Watch the recorded performance](https://www.youtube.com/watch?v=bg92ulHXomw) |
 | Assembly demonstration | [Watch the assembly](https://youtu.be/HSzWATB6nWQ) |
