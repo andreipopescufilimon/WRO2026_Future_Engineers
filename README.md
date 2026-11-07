@@ -42,12 +42,12 @@ This engineering journal documents how we designed, built and tested our autonom
 
 | WRO documentation area | Chapter | What to find there |
 |---|---|---|
-| Overview | [01 - Overview](01-overview.md) | Project Overview | 
-| Mobility and mechanical design | [02 - Mobility](02-mobility.md) | Chassis, rear differential, drivetrain, wheel design, steering geometry, mechanical calculations |
-| Power and sensor management | [03 - Power & sensors](03-power-sensors.md) | Battery, custom PCBs, camera, IMU, ToF sensors, electrical architecture, validation |
-| Software and autonomous operation | [04 - Software](04-software.md) | Software used for vision, navigation, control, communication, open challenge, obstacle challenge, parking |
-| Engineering process and testing | [05 - Systems](05-systems.md) | V1 to V4.1 decisions, subsystem integration, trade-offs, measurements, test results |
-| Reproducibility | [06 - Reproducibility](06-reproducibility.md) | CAD, manufacturing files, wiring, assembly guide, firmware setup, calibration |
+| Overview | [01 - Overview](/docs/01-overview.md) | Project Overview | 
+| Mobility and mechanical design | [02 - Mobility](/docs/02-mobility.md) | Chassis, rear differential, drivetrain, wheel design, steering geometry, mechanical calculations |
+| Power and sensor management | [03 - Power & sensors](/docs/03-power-sensors.md) | Battery, custom PCBs, camera, IMU, ToF sensors, electrical architecture, validation |
+| Software and autonomous operation | [04 - Software](/docs/04-software.md) | Software used for vision, navigation, control, communication, open challenge, obstacle challenge, parking |
+| Engineering process and testing | [05 - Systems](/docs/05-systems.md) | V1 to V4.1 decisions, subsystem integration, trade-offs, measurements, test results |
+| Reproducibility | [06 - Reproducibility](/docs/06-reproducibility.md) | CAD, manufacturing files, wiring, assembly guide, firmware setup, calibration |
 
 ---
 
@@ -79,18 +79,18 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 
 | Parameter | V4.1 design | Supporting evidence |
 |---|---|---|
-| Configuration | Front steering, rear drive with differential | [Mobility](02-mobility.md), [3D models](../3D-models/) |
+| Configuration | Front steering, rear drive with differential | [Mobility](/docs/02-mobility.md), [3D models](../3D-models/) |
 | Main structure | Custom PCB chassis and printed mounts | [Electrical schematics](../electrical-schematics/), [3D models](../3D-models/) |
-| Main controller | Arduino Nano ESP32 | [Power and sensors](03-power-sensors.md), [firmware](../src/) |
-| Vision processor | OpenMV N6 | [Camera software](../src/camera.py), [software](04-software.md) |
-| Inertial sensing | Custom BMI088 IMU | [Power and sensors](03-power-sensors.md) |
-| Distance sensors | Custom VL53L5CXV0GC ToF sensors | [Power and sensors](03-power-sensors.md), [ToF board files](../electrical-schematics/TOF%20sensors/production-files/) |
-| Propulsion | Updated higher-torque geared motor driving rear axle | [Mobility](02-mobility.md) |
-| Steering | Servo-driven parallel front steering | [Mobility](02-mobility.md), [CAD](../3D-models/) |
-| Wheels | Silicone tyres with revised, heavier rims | [Mobility](02-mobility.md), [wheel CAD](../3D-models/wheel%20with%20silicone.step) |
-| Power source | 2S Li-Po in documented design; confirm installed pack | [Power and sensors](03-power-sensors.md) |
+| Main controller | Arduino Nano ESP32 | [Power and sensors](/docs/03-power-sensors.md), [firmware](../src/) |
+| Vision processor | OpenMV N6 | [Camera software](../src/camera.py), [software](/docs/04-software.md) |
+| Inertial sensing | Custom BMI088 IMU | [Power and sensors](/docs/03-power-sensors.md) |
+| Distance sensors | Custom VL53L5CXV0GC ToF sensors | [Power and sensors](/docs/03-power-sensors.md), [ToF board files](../electrical-schematics/TOF%20sensors/production-files/) |
+| Propulsion | Updated higher-torque geared motor driving rear axle | [Mobility](/docs/02-mobility.md) |
+| Steering | Servo-driven parallel front steering | [Mobility](/docs/02-mobility.md), [CAD](../3D-models/) |
+| Wheels | Silicone tyres with revised, heavier rims | [Mobility](/docs/02-mobility.md), [wheel CAD](../3D-models/wheel%20with%20silicone.step) |
+| Power source | 2S Li-Po in documented design; confirm installed pack | [Power and sensors](/docs/03-power-sensors.md) |
 | Fan / fan ESC | Not installed on V4.1 | Current CAD and wiring |
-| Dimensions, mass, speed and power draw | **Re-measure on complete V4.1 assembly** | [Systems and testing](05-systems.md) |
+| Dimensions, mass, speed and power draw | **Re-measure on complete V4.1 assembly** | [Systems and testing](/docs/05-systems.md) |
 
 ---
 
@@ -100,11 +100,11 @@ The **Open Challenge** requires the robot to navigate the course autonomously fo
 
 | Competition task | Our approach | Detailed explanation |
 |---|---|---|
-| Follow the course and complete laps | Inertial feedback from the IMU and distance sensing with controlled steering | [Software](04-software.md) |
-| Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](04-software.md), [camera code](../src/camera.py) |
-| Pass obstacles and recover | Separate approach, avoidance and recovery behaviours | [Software](04-software.md) |
-| Park accurately | Slow manoeuvres with distance feedback | [Software](04-software.md) |
-| Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](05-systems.md), [Reproducibility](06-reproducibility.md) |
+| Follow the course and complete laps | Inertial feedback from the IMU and distance sensing with controlled steering | [Software](/docs/04-software.md) |
+| Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](/docs/04-software.md), [camera code](../src/camera.py) |
+| Pass obstacles and recover | Separate approach, avoidance and recovery behaviours | [Software](/docs/04-software.md) |
+| Park accurately | Slow manoeuvres with distance feedback | [Software](/docs/04-software.md) |
+| Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](/docs/05-systems.md), [Reproducibility](06-reproducibility.md) |
 
 ---
 
@@ -151,7 +151,7 @@ WRO2026_Future_Engineers/
 | Resource | Repository location | Use |
 |---|---|---|
 | Mechanical CAD | [3D-models](../3D-models/) | Examine or manufacture the steering, wheel and mounting components |
-| Mechanical drawings | [docs/technical-drawings](technical-drawings/) | Check geometry and dimensions |
+| Mechanical drawings | [docs/technical-drawings](/docs/technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
 | Robot firmware | [src/HLR_FE](../src/HLR_FE/) | Study the controller and navigation implementation |
 | Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
