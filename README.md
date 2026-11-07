@@ -124,15 +124,15 @@ The **WRO 2026 Future Engineers** challenge pushes teams to develop a **fully au
 
 ### Competition Format
 
-- ** Open Challenge**: The vehicle must complete **three (3) laps** on a track with **randomly placed inside walls**.
+- **Open Challenge**: The vehicle must complete **three (3) laps** on a track with **randomly placed inside walls**.
 
-- ** Obstacle Challenge**: The vehicle must complete **three (3) laps** while detecting and responding to **randomly placed red and green traffic signs**:
+- **Obstacle Challenge**: The vehicle must complete **three (3) laps** while detecting and responding to **randomly placed red and green traffic signs**:
   -  **Red markers** ➜ The vehicle must stay on the **right side of the lane**.
   -  **Green markers** ➜ The vehicle must stay on the **left side of the lane**.
 
   After completing the three laps, the vehicle must **locate the designated parking zone** and perform a **precise parallel parking maneuver** within a limited space, adding an extra layer of difficulty.
 
-- ** Documentation**: Each team must maintain a **public GitHub repository** showcasing their **engineering process, vehicle design, and source code**.
+- **Documentation**: Each team must maintain a **public GitHub repository** showcasing their **engineering process, vehicle design, and source code**.
 
 ### Scoring & Evaluation
 Scoring is based on **accuracy, technical documentation and speed**, rewarding teams that balance **efficiency, adaptability, and innovation**. This challenge not only tests **robotics and programming skills** but also promotes **problem-solving, teamwork, and engineering creativity**.
