@@ -15,7 +15,7 @@ This engineering journal documents how we designed, built and tested our autonom
 | Power and sensor management | [03 - Power & sensors](03-power-sensors.md) | Battery, custom PCBs, camera, IMU, ToF sensors, electrical architecture, validation |
 | Software and autonomous operation | [04 - Software](04-software.md) | Software used for vision, navigation, control, communication, open challenge, obstacle challenge, parking |
 | Engineering process and testing | [05 - Systems](05-systems.md) | V1 to V4.1 decisions, subsystem integration, trade-offs, measurements, test results |
-| Reproductibility | [06 - Reproductibility](06-reproductibility.md) | CAD, manufacturing files, wiring, assembly guide, firmware setup, calibration |
+| reproducibility | [06 - reproducibility](06-reproducibility.md) | CAD, manufacturing files, wiring, assembly guide, firmware setup, calibration |
 
 ---
 
@@ -72,7 +72,7 @@ The **Open Challenge** requires the robot to navigate the course autonomously fo
 | Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](04-software.md), [camera code](../src/camera.py) |
 | Pass obstacles and recover | Separate approach, avoidance and recovery behaviours | [Software](04-software.md) |
 | Park accurately | Slow manoeuvres with distance feedback | [Software](04-software.md) |
-| Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](05-systems.md), [Reproductibility](06-reproductibility.md) |
+| Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](05-systems.md), [reproducibility](06-reproducibility.md) |
 
 ---
 
@@ -94,7 +94,7 @@ WRO2026_Future_Engineers/
 │   ├── 03-power-sensors.md
 │   ├── 04-software.md
 │   ├── 05-systems.md
-│   ├── 06-Reproductibility.md
+│   ├── 06-reproducibility.md
 │   └── README.md
 ├── electrical-schematics/
 │   ├── IMU/production-files/
