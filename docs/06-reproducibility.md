@@ -1,163 +1,279 @@
 # 06. Reproducibility
 
-| The rubric asks for | Section | Evidence |
+| WRO documentation criterion | Where it is covered | Evidence |
 | --- | --- | --- |
-| Fully reproducible vehicle | [Building and flashing](#building-and-flashing) | Mechanical step by step assembly video, CAD, electronics production files, Arduino Nano ESP32 and OpenMV N6 installation |
-| Clear project structure | [Repository structure](#repository-structure) | Directories for mechanical parts, electronics, firmware, photos, tests and technical journal |
-| CAD, code and wiring | [Repository structure](#repository-structure) | Published STEP components, main PCB/IMU/ToF manufacturing files and firmware sources; electrical description in [chapter 03](03-power-sensors.md) |
-| Documented test workflow | [Testing workflow](#testing-workflow) | Isolated subsystem tests, on-vehicle telemetry and on-track verification |
-| Meaningful development history | [Versions](#versions) | V4 national robot versus V4.1 current robot, older models and repository commits, contains over 200commits during 2026 season |
+| Fully reproducible vehicle | [Parts and manufacturing](#parts-and-manufacturing), [Building and flashing](#building-and-flashing) | Components, CAD, PCB production files, assembly demonstration and setup procedures |
+| Clear project structure | [Repository structure](#repository-structure) | Separate mechanical, electronic, software, test and documentation directories |
+| CAD, code and wiring | [Repository structure](#repository-structure), [Parts and manufacturing](#parts-and-manufacturing) | STEP models, electrical files, Arduino source and OpenMV source |
+| Documented testing workflow | [Testing workflow](#testing-workflow) | Isolated tests, live diagnostics, expected behavior and full-field validation |
+| Meaningful development history | [Versions and development history](#versions-and-development-history) | V4 and V4.1 differences, older CAD, project-wide Git history and revision matching |
 
-The robot can be examined as separate 3 subsystems: mechanical, electronic and software. Our current V4.1 design uses the **Arduino Nano ESP32** for vehicle control and the **OpenMV N6** for vision. V4.1 introduces improved, faster ToF sensing, a higher-torque drive motor and heavier wheel rims compared with V4, the national competition version. Mechanical reasoning is in [chapter 02](02-mobility.md), electronics in [chapter 03](03-power-sensors.md), driving software in [chapter 04](04-software.md), and system testing in [chapter 05](05-systems.md).
+The vehicle combines three connected subsystems: **mechanics**, **electronics** and **software**. Its front wheels are servo-steered; a geared motor powers the rear wheels through a differential. A custom PCB forms the principal chassis structure. The **Arduino Nano ESP32** is the main vehicle controller, and the **OpenMV N6** handles camera processing. The robot also uses a **BMI088-based IMU** and custom **VL53L5CX ToF sensor boards**. V4.1 builds on our V4 national competition robot with revised sensing, propulsion and wheel construction.
 
 ---
 
 ## Repository structure
 
-All paths below are relative to the repository root. The documentation chapters are directly under `docs/`.
+All paths in this chapter are relative to the repository root. The six engineering journal chapters are stored in `docs/`.
 
 | Path | Content |
 | --- | --- |
-| [`README.md`](../README.md) | Main repository entry, project introduction and navigation |
-| [`docs/`](.) | Six journal chapters, supporting diagrams, technical drawings and figures |
-| [`docs/docs-media/`](docs-media/) | Figures and screenshots referenced for the journal |
-| [`docs/technical-drawings/`](technical-drawings/) | Mechanical dimensions and component drawings |
-| [`3D-models/`](../3D-models/) | STEP files for battery, drive train, steering, wheels and sensor mounts |
-| [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) | Earlier mechanical designs retained for comparison |
-| [`electrical-schematics/`](../electrical-schematics/) | PCB documentation and manufacturing outputs |
-| [`electrical-schematics/Main PCB/production-files/`](../electrical-schematics/Main%20PCB/production-files/) | Main structural/electrical PCB manufacturing data |
-| [`electrical-schematics/IMU/production-files/`](../electrical-schematics/IMU/production-files/) | IMU board production files |
-| [`electrical-schematics/TOF sensors/production-files/`](../electrical-schematics/TOF%20sensors/production-files/) | ToF sensor PCB production files |
-| [`src/HLR_FE/`](../src/HLR_FE/) | Arduino Nano ESP32 vehicle firmware and supporting tabs |
-| [`src/camera.py`](../src/camera.py) | Camera-side Python source in the repository; the N6 must use its matching updated revision |
-| [`src/tests/`](../src/tests/) | Independent tests for actuators, sensors and communication |
-| [`v-photos/`](../v-photos/) | Top, bottom, front, rear, left and right vehicle photographs |
+| [`README.md`](../README.md) | Main entry point and project navigation |
+| [`docs/`](.) | Six technical chapters |
+| [`docs/docs-media/`](docs-media/) | Journal illustrations, camera view and dashboard screenshots |
+| [`docs/technical-drawings/`](technical-drawings/) | Component and assembly dimensions |
+| [`3D-models/`](../3D-models/) | Mechanical STEP models for the chassis assembly, drivetrain, steering, wheels and mounts |
+| [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) | Earlier designs preserved for comparison |
+| [`electrical-schematics/`](../electrical-schematics/) | PCB schematics, board documentation and manufacturing outputs |
+| [`electrical-schematics/Main PCB/production-files/`](../electrical-schematics/Main%20PCB/production-files/) | Main PCB production files |
+| [`electrical-schematics/IMU/production-files/`](../electrical-schematics/IMU/production-files/) | IMU PCB production files |
+| [`electrical-schematics/TOF sensors/production-files/`](../electrical-schematics/TOF%20sensors/production-files/) | ToF PCB production files |
+| [`src/HLR_FE/`](../src/HLR_FE/) | Arduino Nano ESP32 program and its supporting `.ino` files |
+| [`src/camera.py`](../src/camera.py) | Camera-side Python source; ensure the selected revision targets OpenMV N6 |
+| [`src/libraries/`](../src/libraries/) | Project-supplied library copies, where included |
+| [`src/tests/`](../src/tests/) | Motor, steering, IMU, straight-driving and communication tests |
+| [`v-photos/`](../v-photos/) | Vehicle photographs from all sides |
 | [`t-photos/`](../t-photos/) | Team photograph |
-| [`video/`](../video/) | Driving recordings and challenge videos |
+| [`video/`](../video/) | Driving and challenge recordings |
 | [`other/`](../other/) | Additional development resources |
 
-The Arduino sketch is split into tabs that the Arduino IDE builds together:
+The Arduino sketch is divided into multiple tabs, which the Arduino IDE compiles together. Keep them in the same `HLR_FE` directory.
 
 | File | Responsibility |
 | --- | --- |
-| [`HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino) | Main setup, robot state machine, configuration and run logic |
+| [`HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino) | Main initialization, vehicle states, configuration and autonomous operation |
 | [`functions.ino`](../src/HLR_FE/functions.ino) | Movement sequences, distance handling and shared routines |
-| [`gyro-code.ino`](../src/HLR_FE/gyro-code.ino) | IMU acquisition and heading estimation |
+| [`gyro-code.ino`](../src/HLR_FE/gyro-code.ino) | IMU acquisition and heading calculations |
 | [`motors-code.ino`](../src/HLR_FE/motors-code.ino) | Motor, encoder and steering control |
 
-The [`src/tests/`](../src/tests/) directory groups the **motor test**, **gyro test**, **servo steering**, **straight-on-gyro**, and **Arduino/OpenMV serial communication** experiments. They let a reproduced robot be checked before the full autonomous program is run.
+The separate programs in [`src/tests/`](../src/tests/) are intended for testing one function at a time. They are not replacements for the complete driving program.
+
+## Parts and manufacturing
+
+### Main components
+
+The following table identifies the principal assemblies used by V4.1. Exact part variants, quantities and manufacturing details must agree with the [electrical schematics](../electrical-schematics/), [mechanical CAD](../3D-models/) and [power and sensor documentation](03-power-sensors.md). This is a subsystem-level list, not a claim that every screw and electronic component is listed here.
+
+| Assembly | Component or source | Reproduction reference |
+| --- | --- | --- |
+| Main controller | Arduino Nano ESP32 | [Controller firmware](../src/HLR_FE/) |
+| Vision | OpenMV N6 | [Camera script](../src/camera.py) |
+| Main structure | Custom PCB chassis | [Main PCB manufacturing files](../electrical-schematics/Main%20PCB/production-files/) |
+| Drive | Pololu 50:1 HPCB geared motor, V4.1 configuration | [Mechanical design](02-mobility.md) and motor mounting CAD |
+| Rear axle | Geared drivetrain with mechanical differential | [3D models](../3D-models/) |
+| Steering | Front steering servo, hubs and parallel linkage | [3D models](../3D-models/) |
+| IMU | Custom board based on BMI088 | [IMU manufacturing files](../electrical-schematics/IMU/production-files/) |
+| Distance sensing | Custom VL53L5CX ToF sensor boards | [ToF manufacturing files](../electrical-schematics/TOF%20sensors/production-files/) |
+| Wheels | Silicone tyres and custom steel rims | [Wheel and mechanical CAD](../3D-models/) |
+| Battery | 2S LiPo power system | [Power architecture](03-power-sensors.md) |
+| Printed supports | Camera, sensor, steering and battery mounts | [3D models](../3D-models/) |
+
+**Small parts and exact variants matter.** When ordering components, use the dimensions in the CAD and technical drawings for shaft sizes, bearings, gears. Check the exact motor variant, servo model, battery dimensions, connector types, PCB component placements and wheel specifications against the selected V4.1 revision before purchase. Those specifications should be included in a complete BOM or the corresponding hardware chapter rather than inferred from the table above.
+
+### Mechanical CAD and assembly reference
+
+The STEP files in [`3D-models/`](../3D-models/) can be inspected in compatible CAD software to understand component geometry and how the assemblies fit together. The [technical drawings](technical-drawings/) provide dimensions, while the vehicle [photographs](../v-photos/) show the assembled orientation and cable routing.
+
+The principal assembly reference is our recorded demonstration:
+
+**[Watch the HyperLine Robotics assembly video](https://youtu.be/HSzWATB6nWQ).**
+
+### PCB fabrication and electrical preparation
+
+The electronics are organized into three manufacturing groups:
+
+1. [Main PCB](../electrical-schematics/Main%20PCB/production-files/), which also serves as the structural chassis.
+2. [IMU PCB](../electrical-schematics/IMU/production-files/) for inertial measurements.
+3. [ToF sensor PCB](../electrical-schematics/TOF%20sensors/production-files/) for distance sensing.
+
+Fabricate each board using the corresponding production package and populate it according to its schematic and board revision. The electronic files and [chapter 03](03-power-sensors.md) should be consulted together because board fabrication files do not, by themselves, describe every connection between separate modules.
+
+Before applying battery power, inspect solder joints, power polarity, connector orientation and continuity. Check that there is no unintended short between supply rails and ground. Confirm the expected regulated voltages before connecting sensitive modules. Disconnect power before modifying wiring.
+
+---
 
 ## Building and flashing
 
-**Getting the sources.** Clone the repository or download its ZIP from GitHub. Use a single commit for all firmware, CAD and wiring files so that different revisions are not mixed.
+### 1. Obtain one matching project revision
+
+Clone the project or use GitHub's ZIP download:
 
 ```bash
 git clone https://github.com/andreipopescufilimon/WRO2026_Future_Engineers.git
 cd WRO2026_Future_Engineers
 ```
 
-**Mechanical assembly.** The individual STEP models in [`3D-models/`](../3D-models/) show the mechanical parts and their geometry. The full assembly video demonstrates how the PCB chassis, rear drivetrain, wheel hubs, steering linkage, camera support, sensor boards and battery mount fit together:
+The [GitHub commit history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) records the development of the **whole repository**, not just the V4.1 robot. For a reproduction attempt, use CAD, firmware and PCB files from a **single compatible revision**. Avoid combining old V4 models with V4.1 electronic and software revisions unless the relevant changes have been checked.
 
-**[Watch our robot assembly video on YouTube](https://youtu.be/HSzWATB6nWQ).**
+To record the exact revision used on a reproduced build, run:
 
-The assembly proceeds from the main PCB chassis to the drivetrain and differential, rear wheels, front steering hubs and steering bar, centered steering servo, battery holder, OpenMV N6 mounting and ToF boards. Before fastening the final screws, check free wheel rotation, gear engagement and the full steering range without interference. Mount the battery securely in the designated support.
+```bash
+git rev-parse HEAD
+```
 
-**Electronic manufacturing.** The PCB manufacturing files are organized separately for the [main board](../electrical-schematics/Main%20PCB/production-files/), [IMU board](../electrical-schematics/IMU/production-files/) and [ToF boards](../electrical-schematics/TOF%20sensors/production-files/). Populate each board according to its matching schematic and board revision. Before the first connection of the battery, check the power-input polarity, absence of supply-to-ground shorts and the regulated logic voltage. Keep the wheels lifted during initial motor tests. Wiring and power architecture are described in [chapter 03](03-power-sensors.md).
+Keep this commit identifier with your test results. If the repository contains a dedicated V4.1 tag or release, use its associated files. A tag is not required to clone the project, but a fixed revision makes later results easier to compare.
 
-### Flashing the Arduino Nano ESP32
+### 2. Assemble the mechanics
 
-The Nano ESP32 runs the motion-control program. We use the Arduino IDE to compile the sketch from [`src/HLR_FE/HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino). The other `.ino` files in the same folder are compiled as part of the sketch; they must remain together.
+The [assembly video](https://youtu.be/HSzWATB6nWQ) gives the visual sequence. The following checks explain what must be confirmed at each stage:
 
-1. Install [Arduino IDE 2](https://www.arduino.cc/en/software). In **Boards Manager**, install the board package supporting **Arduino Nano ESP32**.
-2. Connect the Nano ESP32 by a **USB-C data cable**. Select **Tools → Board → Arduino Nano ESP32**, then select the USB port under **Tools → Port**.
-3. Open `src/HLR_FE/HLR_FE.ino` and confirm that the `functions.ino`, `gyro-code.ino` and `motors-code.ino` tabs are visible.
-4. Install any libraries requested by the selected sketch in **Library Manager**. The publicly available legacy sketch uses `ESP32Encoder`, `ESP32Servo`, `SoftwareSerial` and a `BMI088.h` library in addition to Arduino's standard headers. Match the BMI088 library to the source version you are compiling. You can find the same library versions we use in `../src/libraries/`
-5. Set the appropriate challenge mode and inspect the steering calibration, motor direction, encoder parameters and speed values before uploading. Click **Verify** to compile.
-6. With the wheels off the floor, click **Upload**. After the IDE reports a successful upload, restart the board and inspect its startup output in **Serial Monitor** at the baud rate specified by the firmware (it uses `115200`).
+1. **Main chassis:** Prepare the fabricated structural PCB and attach its mechanical supports using the corresponding [STEP models](../3D-models/) and [drawings](technical-drawings/) for positioning.
+2. **Rear drivetrain:** Install the drive motor, its gear transmission and the differential. Rotate the rear axle by hand to confirm that gears mesh and there is no interference or excessive binding.
+3. **Rear wheels:** Fit the wheel assemblies and verify that each wheel is secured, aligned and free to rotate as intended by the differential.
+4. **Front steering:** Install the hubs and parallel linkage. Center the steering servo using the steering test before fixing the servo horn, then check both steering directions and both mechanical limits.
+5. **Battery and supports:** Mount the battery securely so it cannot shift into the drivetrain or steering linkage. Check clearance against the CAD model.
+6. **Vision and distance sensing:** Install the OpenMV N6 and ToF modules in their designated mounts. Check camera orientation, field of view and unobstructed sensor openings.
+7. **Final inspection:** Route and secure cables clear of gears and steering parts. Confirm that all wheel and steering movements remain unobstructed before powering the vehicle.
 
-### Flashing the OpenMV N6
+The servo's calibrated neutral position, linkage geometry, wheelbase and other dimensions are described in [02. Mobility](02-mobility.md) and the [technical drawings](technical-drawings/). Mechanical alignment must be checked before software tuning because assembly errors can appear as control errors on the track.
 
-The camera performs image acquisition and color/region-of-interest processing independently of the main controller. Its source entry point is [`src/camera.py`](../src/camera.py), with the board-specific **OpenMV N6** version required for V4.1.
+### 3. Prepare the software environment
 
-1. Install [OpenMV IDE](https://openmv.io/pages/download) and connect the **N6** with a USB data cable.
-2. Select **Connect** in OpenMV IDE, choose the detected N6 and complete any supported firmware initialization if prompted.
-3. Open the **N6-compatible** `camera.py` and click **Run**. Inspect the frame buffer while presenting red and green obstacles and track markings in front of the mounted camera.
-4. Verify that the expected detection overlays appear in the correct regions of interest and that the serial messages reach the Nano ESP32. Camera transmit must connect to the correct Nano receive pin; grounds must be common and the baud rates must match.
-5. Once the script operates correctly, use **Tools → Save open script to OpenMV Cam** in OpenMV IDE, so the camera starts the program from its on-device `main.py` after reboot. Restart the camera and check that the vision program starts without the IDE.
+The Nano ESP32 and OpenMV N6 use different development environments.
 
-<img src="docs-media/openmv-n6-camera-view.png"
-       alt="Camera view"
-       width="32%">
+| Device | Software | Source |
+| --- | --- | --- |
+| Arduino Nano ESP32 | [Arduino IDE 2](https://www.arduino.cc/en/software), with the appropriate Nano ESP32 board package | [`src/HLR_FE/`](../src/HLR_FE/) |
+| OpenMV N6 | [OpenMV IDE](https://openmv.io/pages/download) and compatible camera firmware | [`src/camera.py`](../src/camera.py) |
 
-*Figure 6.1. OpenMV N6 live camera output in OpenMV IDE. The frame buffer is useful for checking image orientation, ROI placement, color thresholds and obstacle detection before driving.*
+The documented sketch uses the following libraries with their latest version:
+
+| Dependency | Reproduction instruction |
+| --- | --- |
+| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version |
+| `ESP32Encoder` | Use the copy supplied with the project, if available, or the matching installed library |
+| `ESP32Servo` | Use the copy supplied with the project, if available, or the matching installed library |
+| `SoftwareSerial` | Verify the library supports the selected ESP32 core and matches the source |
+| `BMI088.h` | Match the exact BMI088 implementation expected by the sketch |
+
+### 4. Flash the Arduino Nano ESP32
+
+The Arduino Nano ESP32 executes the vehicle control software. Its entry point is [`src/HLR_FE/HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino).
+
+1. Install Arduino IDE and the **Arduino Nano ESP32** board support package through **Boards Manager**.
+2. Connect the controller using a **USB-C data cable**.
+3. Open `src/HLR_FE/HLR_FE.ino`. Confirm that `functions.ino`, `gyro-code.ino` and `motors-code.ino` open as tabs in the same sketch.
+4. Install the dependencies needed by the selected revision. Use the supplied library copies where appropriate and check for compilation conflicts.
+5. Select **Tools → Board → Arduino Nano ESP32**, then choose the correct port in **Tools → Port**.
+6. Inspect the source configuration for challenge mode, motor direction, steering limits, encoder parameters, IMU settings, camera communication and driving speeds. These settings must match the assembled hardware.
+7. Select **Verify** and resolve compile errors before uploading.
+8. Raise the driving wheels off the floor, select **Upload**, then restart the controller.
+9. Open **Serial Monitor** at **115200 baud** for the documented sketch and check that startup completes without persistent errors.
+
+**Version compatibility:** The current V4.1 build should use the latest firmware revision available on or github. If an older source revision is selected, do not assume it contains the same web features or pin assignments and sensor code. Inspect the selected code and match it to the hardware before running the vehicle.
+
+### 5. Flash the OpenMV N6
+
+The OpenMV N6 performs image capture and detection of coloured obstacles. The project camera source is [`src/camera.py`](../src/camera.py). The selected camera script must be compatible with the **N6**, not an earlier OpenMV board's pin or UART configuration.
+
+1. Install **OpenMV IDE** and connect the **OpenMV N6** through a USB data cable.
+2. Connect to the camera in OpenMV IDE and complete any required camera firmware initialization.
+3. Open the N6-compatible `camera.py`, select **Run**, and inspect the image in the IDE frame buffer.
+4. Present red and green traffic signs within the field of view. Check the image orientation, region of interest, colour classification and detection overlays.
+5. Verify the communication link to the Nano ESP32. Camera transmit must reach the appropriate controller receive connection; the controllers must share a common ground and use a matching baud rate and message format. Use the [Arduino/OpenMV communication test](../src/tests/arduino_openmv_serial_communication/) to check the connection independently of driving.
+6. When the script runs correctly, use **Tools → Save open script to OpenMV Cam** so that it is saved as the camera's startup program. Restart the N6 without the IDE and verify that detection and communication resume.
+
+Camera-to-controller pin assignments and the exact serial protocol are implementation-specific. They should be checked in the selected firmware and [chapter 04](04-software.md), rather than copied from an earlier OpenMV generation.
+
+<img src="docs-media/openmv-n6-camera-view.png" alt="OpenMV N6 camera frame showing the image used for obstacle detection" width="32%">
+
+*Figure 6.1. OpenMV N6 frame buffer used to verify image orientation, detection thresholds and the active region of interest.*
+
+---
 
 ## Running the vehicle
 
-After both devices are programmed, disconnect the programming cables as required by the robot's power setup, secure the battery and switch on the vehicle. Allow the Nano ESP32, IMU, ToF modules and OpenMV N6 to initialize. Confirm that steering responds correctly and that the camera sends valid observations before placing the robot on the competition field. 
+After programming both devices, disconnect programming cables as appropriate for the power setup, mount and secure the battery, and switch on the robot. Allow the Nano ESP32, IMU, ToF sensors and N6 to initialize. Check basic actuator direction and sensor operation before attempting an autonomous run.
 
-For configuration and diagnostics, the V4.1 robot exposes a **local Wi-Fi access point with a built-in web interface**. To use it:
+### Connect to the local web interface
 
-1. Power the robot with its V4.1 Wi-Fi-enabled firmware installed.
-2. On a computer or phone, open **Wi-Fi settings** and join the wireless network broadcast by the robot, using the network credentials configured in the controller firmware.
-3. While connected to the robot's network, open **[http://192.168.4.1](http://192.168.4.1)** in a browser.
-4. The dashboard shows live telemetry and the available configuration controls. The phone or computer does not need external internet access to reach this local address.
+The V4.1 firmware includes a Wi-Fi access point and a browser-based interface for live measurements and configuration.
 
-The web interface is particularly useful during bench checks and tuning because it avoids repeatedly connecting a USB cable or rebuilding firmware for every driving parameter adjustment. The robot is tested stationary first and then at reduced speed on the track.
+1. Power the robot using the Wi-Fi-enabled V4.1 firmware.
+2. On a phone or computer, join the Wi-Fi network broadcast by the robot. The network name and credentials are configured in the controller firmware.
+3. While connected to this network, open **[http://192.168.4.1](http://192.168.4.1)** in a browser.
+4. Use the dashboard to inspect telemetry and change the available driving parameters. No external internet connection is required.
 
-### Evaluation in the web dashboard
+The dashboard allows us to inspect the internal state while testing. It is intended for setup and debugging, not as a substitute for checking what the physical vehicle is doing.
 
-The dashboard is our equivalent of a live diagnostic view: it exposes the internal sensor readings and driving parameters while the controller is operating. We use it to compare what the robot *believes* is happening against its actual behavior.
+### Live distance sensor checks
 
-**Distance sensors.** The live ToF readouts let us check whether the front, side and rear sensors respond to walls and nearby obstacles. During testing we move an object toward and away from each sensor and compare the displayed distance to a ruler. A stuck or implausible value is easier to identify here than by observing the robot's movement alone.
+The ToF telemetry is used to observe the distances reported by the installed sensors. Place a flat target in front of a sensor, move it to a few known distances and compare the reported measurements with a ruler. Check each sensor separately. If readings do not change, fluctuate unexpectedly or disagree strongly with the target position, inspect the sensor orientation, wiring, configuration and field of view before tuning driving behavior.
 
-**IMU.** The IMU view lets us inspect the reported orientation and angular motion. With the robot stationary, we look for large offsets or drift. When the robot is rotated manually, the heading change should follow the actual rotation with the expected sign.
+### IMU and heading checks
 
-<img src="docs-media/telemetry-debug.jpeg"
-       alt="Robot telemetry"
-       width="32%">
+With the vehicle stationary, observe the IMU readings and look for unexpected offset or rapid drift. Rotate the robot manually in a known direction and check that the reported heading changes consistently with the physical rotation. Repeat in the opposite direction to detect an inverted sign or incorrect axis mapping.
 
-*Figure 6.1. IMU debugging view used to check motion readings and heading behavior.*
+<img src="docs-media/telemetry-debug.jpeg" alt="Web dashboard displaying live robot telemetry and IMU debugging values" width="32%">
 
-**Speed and tuning.** The settings interface lets us adjust the available speed parameters for driving and maneuvers without editing the source for every iteration. We begin at a conservative setting, test a repeatable route and then change only one parameter at a time. A setting shown in the web interface should be treated as the active session's configuration unless the firmware explicitly confirms that it is saved persistently.
+*Figure 6.2. Live telemetry used to inspect IMU and sensor behavior before on-track testing.*
 
+### Speed and configuration controls
 
+The settings page provides runtime adjustments for the driving and maneuvering parameters exposed by the firmware. For controlled experiments, we start conservatively, keep the same track setup and change **one parameter at a time**. Each setting should be recorded with the test run so that a performance difference can be associated with a specific change.
 
 <div align="center">
-  <img src="docs-media/robot-adjust-1.jpeg"
-       alt="Robot configuration controls 1"
-       width="32%">
-  <img src="docs-media/robot-adjust-2.jpeg"
-       alt="Robot configuration controls 2"
-       width="32%">
-  <img src="docs-media/robot-adjust-3.jpeg"
-       alt="Robot configuration controls 3"
-       width="32%">
+  <img src="docs-media/robot-adjust-1.jpeg" alt="Robot web interface configuration panel, screenshot 1" width="32%">
+  <img src="docs-media/robot-adjust-2.jpeg" alt="Robot web interface configuration panel, screenshot 2" width="32%">
+  <img src="docs-media/robot-adjust-3.jpeg" alt="Robot web interface configuration panel, screenshot 3" width="32%">
 </div>
 
+*Figures 6.3, 6.4 and 6.5. Configuration views for speed, steering and subsystem adjustments.*
 
-
-*Figures 6.5, 6.6, 6.7. Runtime configuration view used during speed tuning and subsystem checks.*
-
+---
 
 ## Testing workflow
 
-We validate each change at three levels, from the smallest subsystem to the complete challenge. The test sources are organized under [`src/tests/`](../src/tests/); system-level behavior and results are discussed in [chapter 05](05-systems.md).
+We test the robot in three stages: individual subsystems, integrated stationary operation and full autonomous runs. This prevents a mechanical or electrical fault from being mistaken for a navigation problem.
 
-**1. Independent subsystem tests.** We begin with the dedicated examples: [`motor_test`](../src/tests/motor_test/), [`servo_steering`](../src/tests/servo_steering/), [`gyro_test`](../src/tests/gyro_test/), [`move_straight_on_gyro`](../src/tests/move_straight_on_gyro/) and [`arduino_openmv_serial_communication`](../src/tests/arduino_openmv_serial_communication/). These isolate drive direction, steering response, IMU sign and drift, straight-line correction and the communication channel. The motors are first tested with wheels raised; steering is checked at center and both limits. Each sensor is checked without simultaneously changing multiple parameters.
+### 1. Independent subsystem tests
 
-**2. Bench checks with telemetry.** The V4.1 web interface at `192.168.4.1` provides the live ToF values and IMU data needed to compare readings with known distances and manual rotations. The OpenMV IDE frame buffer separately verifies scene acquisition and color detection. Only after these checks do we tune speed, steering limits and obstacle handling with the robot moving.
+The test code is organized under [`src/tests/`](../src/tests/). Each test isolates a part of the vehicle before it is used together with the other systems.
 
-**3. Full-field driving.** We run the Open Challenge and Obstacle Challenge on a correctly sized field, with attention to lap direction, wall clearance, red/green obstacle response, recovery after maneuvers and parking. We compare runs using the same track configuration and speed settings before changing a parameter. The resulting driving videos are collected under [`video/`](../video/), and external photographs of the assembled vehicle under [`v-photos/`](../v-photos/).
-
-The separation between these levels matters. A robot may turn correctly on the bench but still drift on the field because of wheel grip, steering asymmetry, inertia or incorrect interpretation of sensor observations. For that reason we check the mechanics, controller and visual detections together, rather than interpreting one successful lap as proof of a reliable setup.
-
-## Versions
-
-| Version | Role | Engineering difference |
+| Test | Source | What a successful check looks like |
 | --- | --- | --- |
-| **V4** | National winning competition robot | Previous distance-sensing hardware, previous drive motor and lighter wheel rims |
-| **V4.1** | Current robot | Faster/improved ToF sensors, higher-torque drive motor and heavier wheel rims; no impeller or ESC |
+| Drive motor | [`motor_test`](../src/tests/motor_test/) | A forward command produces the intended wheel direction; there is no binding or unexpected restart |
+| Steering | [`servo_steering`](../src/tests/servo_steering/) | Wheels return to neutral and move in both steering directions without hitting mechanical stops |
+| IMU | [`gyro_test`](../src/tests/gyro_test/) | Readings respond to manual rotation with the correct sign and do not show an obvious stationary fault |
+| Straight-line controller | [`move_straight_on_gyro`](../src/tests/move_straight_on_gyro/) | The correction acts against a heading deviation rather than increasing it |
+| Camera communication | [`arduino_openmv_serial_communication`](../src/tests/arduino_openmv_serial_communication/) | Nano receives valid, correctly formatted messages from the N6 |
+| ToF sensor checks | [Live web dashboard](#live-distance-sensor-checks) | Each installed sensor responds to a target moving through its field of view |
+| Camera classification | [OpenMV frame buffer](#5-flash-the-openmv-n6) | Red and green objects in the configured ROI are identified consistently |
 
-The [repository commit history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) records changes to code, documentation and design files. Earlier mechanical models remain in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so that previous designs can be inspected without confusing them with the current assembly. No particular commit count or release tag is claimed here without a corresponding verified GitHub reference.
+Use raised wheels for the first drive and steering tests. The table intentionally describes observable pass/fail behavior rather than unsupported numerical accuracy claims. Numerical tolerances and repeatability results should come from measured tests in [05. Systems and testing](05-systems.md).
 
-*Note: For reproducibility, **the matching set of V4.1 files is essential**: main-controller firmware, N6-compatible camera code, actual PCB/sensor revision and chassis CAD must represent the same physical vehicle.*
+### 2. Bench verification with telemetry
+
+Once individual components pass, run the controller and camera together while the robot remains stationary. Use the [web interface](#connect-to-the-local-web-interface) to read ToF and IMU data, and the OpenMV IDE frame buffer to verify visual detection. Also check that the camera's serial messages reach the Nano ESP32 and that the robot initializes without unexpected motion.
+
+A useful bench sequence is to rotate the robot by hand, move targets past the distance sensors and show red and green pillars to the camera. If the physical input changes but the reported state does not, investigate the relevant subsystem before changing the autonomous strategy.
+
+### 3. Full-field verification
+
+With subsystem checks completed, test the robot on a field matching the competition geometry. First use conservative speeds and a repeatable layout. Verify wall following, both travel directions, cornering and stable lap completion. Then test obstacle detection, correct passing side for red and green pillars, recovery and parallel parking as applicable to the selected challenge.
+
+For meaningful comparisons, record the same field layout, battery condition, firmware revision and speed settings. Compare repeated attempts rather than selecting only the fastest result. The recordings are collected under [`video/`](../video/), while measured results and engineering decisions are discussed in [05. Systems and testing](05-systems.md).
+
+### Final verification checklist
+
+- [ ] Mechanical parts match the selected CAD revision and move freely.
+- [ ] Battery polarity, regulated voltages and board connections have been checked.
+- [ ] Arduino Nano ESP32 sketch compiles and starts correctly.
+- [ ] N6 script runs independently after the camera is restarted.
+- [ ] Camera-to-controller serial communication is working.
+- [ ] Drive direction and steering neutral/limits are correct.
+- [ ] IMU heading direction and ToF readings respond to known physical inputs.
+- [ ] Robot Wi-Fi network appears and `http://192.168.4.1` loads the live dashboard.
+- [ ] Driving settings and the project revision are recorded for the test.
+- [ ] Autonomous behavior has been checked on the field in both challenge configurations.
+
+---
+
+## Versions and development history
+
+| Version | Role | Main engineering differences |
+| --- | --- | --- |
+| **V4** | National competition robot | Earlier distance-sensing hardware, drive motor and lighter wheel rims |
+| **V4.1** | Current development | Revised ToF sensing, higher-torque 50:1 drive motor and heavier steel wheel rims; fan and ESC removed |
+
+Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the **full WRO 2026 repository**, including software, CAD, electrical design and documentation updates, rather than a V4.1-only series of commits. The project has undergone many iterations throughout the season. Old mechanical revisions are kept in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so the evolution of the design can be inspected without mistaking previous components for current ones.
