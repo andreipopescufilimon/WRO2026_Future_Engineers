@@ -59,7 +59,7 @@ The **Arduino Nano ESP32** handles navigation and motion control. The **OpenMV N
 
 ### V4.1 CAD model
 
-![CAD rendering of HyperLine Robotics V4.1 showing the PCB chassis, camera, wheels, drivetrain, battery and sensor mounts](docs-media/robot-v4-1-cad.png)
+![CAD rendering of HyperLine Robotics V4.1 showing the PCB chassis, camera, wheels, drivetrain, battery and sensor mounts](/docs/docs-media/robot-v4-1-cad.png)
 
 *Figure 1. CAD view of the V4.1 vehicle*
 
