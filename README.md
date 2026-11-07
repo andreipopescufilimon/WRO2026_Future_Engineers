@@ -37,42 +37,6 @@ Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (W
   </a>
 </p>
 
-
-## ❤️ Sponsors and Partners
-
-<table align="center" cellspacing="12">
-<tr>
-  <td bgcolor="#ffffff" align="center" width="200">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/openmv.avif" height="55">
-  </td>
-  <td bgcolor="#ffffff" align="center" width="200">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/EasyEDA_logo.png" height="55">
-  </td>
-  <td bgcolor="#ffffff" align="center" width="200">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/OSHWLab.png" height="55">
-  </td>
-  <td bgcolor="#ffffff" align="center" width="200">
-    <img src="https://static.lcsc.com/feassets/pc/images/headIcons/logo-s.png" height="55">
-  </td>
-</tr>
-
-<tr>
-  <td bgcolor="#ffffff" align="center">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/SoBotz-white.png" height="55">
-  </td>
-  <td bgcolor="#ffffff" align="center">
-    <img src="https://jsumo.com/Data/EditorFiles/jsumo-robot-parts-logo.png" height="55">
-  </td>
-  <td bgcolor="#ffffff" align="center">
-    <img src="https://hyperlinerobotics.com/assets/images/sponsors/evergreen.png" height="50">
-  </td>
-  <td bgcolor="#ffffff" align="center">
-    <img src="https://fae-drones.com/assets/img/fae-drones-logo-128.png" height="55">
-  </td>
-</tr>
-</table>
-
-
 ---
 
 ## 📚 Table of Contents
