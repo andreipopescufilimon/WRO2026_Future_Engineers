@@ -58,7 +58,7 @@ Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6
 - Stable handling: Predictable breakaway, so PD/PID steering stays smooth.
 
 **Construction:**
-- Rims: 3D-printed hubs with dual bearings (inner + outer) for a rigid, wobble-free wheel.
+- Rims: Lathe-turned steel wheel hubs with dual bearings (inner + outer) for a rigid, wobble-free wheel.
 - Tire: Cast silicone ring fitted onto a mechanical bead on the rim (no harsh solvents needed).
 - Fit: Rear wheels mount directly to the diff axle outputs; fronts ride on steering hubs for low friction.
 
