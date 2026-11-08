@@ -81,6 +81,29 @@ The goal was not to choose the fastest possible motor, but the fastest motor tha
 | 30:1 HPCB gearmotor | Good speed, enough torque, compact size | Needs careful speed control | Selected |
 
 This choice improved the robot’s consistency because the car could drive fast while still keeping predictable control during turns and obstacle sections.
+
+### **IFX9201SG Motor Driver** <a id="motor-driver"></a>
+
+The **IFX9201SG** motor driver is used to control the robot’s high-performance drive with precision and efficiency. It supports PWM-based speed control and direction control while integrating advanced protection features, making it ideal for demanding robotics applications. The IFX9201SG is directly integrated into our PCB, ensuring compact design and reliable communication with the Arduino Nano ESP32.
+
+| <img src="https://assets.lcsc.com/images/lcsc/900x900/20230316_Infineon-Technologies-IFX9201SG_C112633_front.jpg" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** IFX9201SG | **Operating Voltage:** 5.5V – 45V |
+| **Logic Voltage:** 3.3V / 5V compatible | **PWM Frequency:** Up to 20 kHz |
+| **Max Continuous Current:** 6A | **Max Peak Current:** 8A per channel |
+| **Control Interface:** PWM + Direction pins | **Built-in Protections:** Overtemperature, Overcurrent, Undervoltage, Short-to-GND/Battery |
+|  **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
+
+### Why did we chose this motor driver
+
+We selected the **Infineon IFX9201SG** as our motor driver because it offers a balance between precise motor control, compact PCB integration and price.
+
+Another factor was the reliability of this motor driver. The IFX9201SG integrates current limiting, short-circuit protection, thermal shutdown, and undervoltage protection. These features help protect the electronics against electrical faults and unexpected motor loads.
+
+Its compatibility with 3.3 V control signals also simplifies integration with our ESP32-based controller. Additionally, the integrated MOSFET design and compact package allowed us to incorporate the driver directly into our custom PCB instead of relying on a separate motor-driver module.
+
+Overall, we selected the IFX9201SG to achieve reliable, responsive, and space-efficient motor control while keeping the electrical architecture relatively simple.
+
 ## **Steering** <a id="steering"></a>
 
 The **steering system** is a critical part of the robot, ensuring precise maneuverability and smooth turns. Our design is based on a **parallelogram steering mechanism**, where both front wheels turn at the same angle through a single servo-controlled linkage. This setup provides predictable and stable steering, making it easy to use for an autonomous vehicle. Instead of using an **Ackermann steering system**, which requires more complex calculations and linkages, we opted for a **simpler and more lightweight solution** that offers consistent control. Our steering system allows for a maximum turning angle of 80 degrees in both the left and right directions. This range provides precise maneuverability, enabling the robot to navigate sharp turns efficiently while maintaining stability.
