@@ -8,8 +8,7 @@
 | Documented testing workflow | [Testing workflow](#testing-workflow) | Isolated tests, live diagnostics, expected behavior and full-field validation |
 | Meaningful development history | [Versions and development history](#versions-and-development-history) | V4 and V4.1 differences, older CAD, project-wide Git history and revision matching |
 
-The vehicle combines three connected subsystems: **mechanics**, **electronics** and **software**. Its front wheels are servo-steered; a geared motor powers the rear wheels through a differential. A custom PCB forms the principal chassis structure. The **Arduino Nano ESP32** is the main vehicle controller, and the **OpenMV N6** handles camera processing. The robot also uses a **BMI088-based IMU** and custom **VL53L5CX ToF sensor boards**. V4.1 builds on our V4 national competition robot with revised sensing, propulsion and wheel construction.
-
+Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the **full WRO 2026 repository**, including software, CAD, electrical design and documentation updates, rather than a V4.1-only series of commits. The project has undergone many iterations throughout the season. Old mechanical revisions are kept in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so the evolution of the design can be inspected without mistaking previous components for current ones.
 ---
 
 ## Repository structure
@@ -272,4 +271,14 @@ For meaningful comparisons, record the same field layout, battery condition, fir
 | **V4** | National competition robot | Earlier distance-sensing hardware, drive motor and lighter wheel rims |
 | **V4.1** | Current development | Revised ToF sensing, higher-torque 50:1 drive motor and heavier steel wheel rims; fan and ESC removed |
 
-Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the **full WRO 2026 repository**, including software, CAD, electrical design and documentation updates, rather than a V4.1-only series of commits. The project has undergone many iterations throughout the season. Old mechanical revisions are kept in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so the evolution of the design can be inspected without mistaking previous components for current ones.
+
+### Version-specific GitHub commits
+
+To make both versions of our robot reproducible, the following table identifies the GitHub revisions corresponding to each major hardware and software configuration. Each commit links to a snapshot of the repository at that stage of development.
+
+| Robot version | GitHub commit | Description |
+| --- | --- | --- |
+| **V4** | [View V4 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/7e1b0b5b707511563fd0250af08e68c7288d2966) | National competition configuration, including the original drivetrain, distance sensors and wheel assemblies |
+| **V4.1** | [View V4.1 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/INSERT_V41_HASH) | Updated configuration with VL53L5CX ToF sensors, a 50:1 geared motor, steel wheel rims and revised software |
+
+These commits provide reference points for reproducing each robot version. CAD models, PCB files and software should be taken from the same corresponding revision to avoid compatibility issues.
