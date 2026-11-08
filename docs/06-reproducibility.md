@@ -28,7 +28,7 @@ All paths in this chapter are relative to the repository root. The six engineeri
 | [`electrical-schematics/IMU/production-files/`](../electrical-schematics/IMU/production-files/) | IMU PCB production files |
 | [`electrical-schematics/TOF sensors/production-files/`](../electrical-schematics/TOF%20sensors/production-files/) | ToF PCB production files |
 | [`src/HLR_FE/`](../src/HLR_FE/) | Arduino Nano ESP32 program and its supporting `.ino` files |
-| [`src/camera.py`](../src/camera.py) | Camera-side Python source; ensure the selected revision targets OpenMV N6 |
+| [`src/camera.py`](../src/camera.py) | Camera-side Python source; ensure the selected revision targets OpenMV RT1062 |
 | [`src/libraries/`](../src/libraries/) | Project-supplied library copies, where included |
 | [`src/tests/`](../src/tests/) | Motor, steering, IMU, straight-driving and communication tests |
 | [`v-photos/`](../v-photos/) | Vehicle photographs from all sides |
@@ -56,7 +56,7 @@ The following table identifies the principal assemblies used by V4.1. Exact part
 | Assembly | Component or source | Reproduction reference |
 | --- | --- | --- |
 | Main controller | Arduino Nano ESP32 | [Controller firmware](../src/HLR_FE/) |
-| Vision | OpenMV N6 | [Camera script](../src/camera.py) |
+| Vision | OpenMV RT1062 | [Camera script](../src/camera.py) |
 | Main structure | Custom PCB chassis | [Main PCB manufacturing files](../electrical-schematics/Main%20PCB/production-files/) |
 | Drive | Pololu 50:1 HPCB geared motor, V4.1 configuration | [Mechanical design](02-mobility.md) and motor mounting CAD |
 | Rear axle | Geared drivetrain with mechanical differential | [3D models](../3D-models/) |
@@ -119,25 +119,25 @@ The [assembly video](https://youtu.be/HSzWATB6nWQ) gives the visual sequence. Th
 3. **Rear wheels:** Fit the wheel assemblies and verify that each wheel is secured, aligned and free to rotate as intended by the differential.
 4. **Front steering:** Install the hubs and parallel linkage. Center the steering servo using the steering test before fixing the servo horn, then check both steering directions and both mechanical limits.
 5. **Battery and supports:** Mount the battery securely so it cannot shift into the drivetrain or steering linkage. Check clearance against the CAD model.
-6. **Vision and distance sensing:** Install the OpenMV N6 and ToF modules in their designated mounts. Check camera orientation, field of view and unobstructed sensor openings.
+6. **Vision and distance sensing:** Install the OpenMV RT1062 and ToF modules in their designated mounts. Check camera orientation, field of view and unobstructed sensor openings.
 7. **Final inspection:** Route and secure cables clear of gears and steering parts. Confirm that all wheel and steering movements remain unobstructed before powering the vehicle.
 
 The servo's calibrated neutral position, linkage geometry, wheelbase and other dimensions are described in [02. Mobility](02-mobility.md) and the [technical drawings](technical-drawings/). Mechanical alignment must be checked before software tuning because assembly errors can appear as control errors on the track.
 
 ### 3. Prepare the software environment
 
-The Nano ESP32 and OpenMV N6 use different development environments.
+The Nano ESP32 and OpenMV RT1062 use different development environments.
 
 | Device | Software | Source |
 | --- | --- | --- |
 | Arduino Nano ESP32 | [Arduino IDE 2](https://www.arduino.cc/en/software), with the appropriate Nano ESP32 board package | [`src/HLR_FE/`](../src/HLR_FE/) |
-| OpenMV N6 | [OpenMV IDE](https://openmv.io/pages/download) and compatible camera firmware | [`src/camera.py`](../src/camera.py) |
+| OpenMV RT1062 | [OpenMV IDE](https://openmv.io/pages/download) and compatible camera firmware | [`src/camera.py`](../src/camera.py) |
 
-The documented sketch uses the following libraries with their latest version:
+The following table lists the software dependencies and library versions used to build the robot firmware.
 
 | Dependency | Reproduction instruction | Library version |
 | --- | --- | --- |
-| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version | - |
+| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version | v2.0.18 |
 | `ESP32Encoder` | Use the copy supplied with the project, if available, or the matching installed library | v5.0.0 |
 | `ESP32Servo` | Use the copy supplied with the project, if available, or the matching installed library | v3.2.1 |
 | `SoftwareSerial` | Verify the library supports the selected ESP32 core and matches the source | v2.0.1 |
@@ -157,28 +157,28 @@ The Arduino Nano ESP32 executes the vehicle control software. Its entry point is
 8. Raise the driving wheels off the floor, select **Upload**, then restart the controller.
 9. Open **Serial Monitor** at **115200 baud** for the documented sketch and check that startup completes without persistent errors.
 
-### 5. Flash the OpenMV N6
+### 5. Flash the OpenMV RT1062
 
-The OpenMV N6 performs image capture and detection of coloured obstacles. The project camera source is [`src/camera.py`](../src/camera.py).
+The OpenMV RT1062 performs image capture and detection of coloured obstacles. The project camera source is [`src/camera.py`](../src/camera.py).
 
-1. Install **OpenMV IDE** and connect the **OpenMV N6** through a USB data cable.
+1. Install **OpenMV IDE** and connect the **OpenMV RT1062** through a USB data cable.
 2. Connect to the camera in OpenMV IDE and complete any required camera firmware initialization.
-3. Open the N6-compatible `camera.py`, select **Run**, and inspect the image in the IDE frame buffer.
+3. Open the RT1062-compatible `camera.py`, select **Run**, and inspect the image in the IDE frame buffer.
 4. Present red and green traffic signs within the field of view. Check the image orientation, region of interest, colour classification and detection overlays.
 5. Verify the communication link to the Nano ESP32. Camera transmit must reach the appropriate controller receive connection; the controllers must share a common ground and use a matching baud rate and message format. Use the [Arduino/OpenMV communication test](../src/tests/arduino_openmv_serial_communication/) to check the connection independently of driving.
-6. When the script runs correctly, use **Tools → Save open script to OpenMV Cam** so that it is saved as the camera's startup program. Restart the N6 without the IDE and verify that detection and communication resume.
+6. When the script runs correctly, use **Tools → Save open script to OpenMV Cam** so that it is saved as the camera's startup program. Restart the RT1062 without the IDE and verify that detection and communication resume.
 
 Camera-to-controller pin assignments and the exact serial protocol are implementation-specific. They should be checked in the selected firmware and [chapter 04](04-software.md), rather than copied from an earlier OpenMV generation.
 
-<img src="docs-media/openmv-n6-camera-view.png" alt="OpenMV N6 camera frame showing the image used for obstacle detection" width="32%">
+<img src="docs-media/openmv-RT1062-camera-view.png" alt="OpenMV RT1062 camera frame showing the image used for obstacle detection" width="32%">
 
-*Figure 6.1. OpenMV N6 frame buffer used to verify image orientation, detection thresholds and the active region of interest.*
+*Figure 6.1. OpenMV RT1062 frame buffer used to verify image orientation, detection thresholds and the active region of interest.*
 
 ---
 
 ## Running the vehicle
 
-After programming both devices, disconnect programming cables as appropriate for the power setup, mount and secure the battery, and switch on the robot. Allow the Nano ESP32, IMU, ToF sensors and N6 to initialize. Check basic actuator direction and sensor operation before attempting an autonomous run.
+After programming both devices, disconnect programming cables as appropriate for the power setup, mount and secure the battery, and switch on the robot. Allow the Nano ESP32, IMU, ToF sensors and RT1062 to initialize. Check basic actuator direction and sensor operation before attempting an autonomous run.
 
 ### Connect to the local web interface
 
@@ -231,9 +231,9 @@ The test code is organized under [`src/tests/`](../src/tests/). Each test isolat
 | Steering | [`servo_steering`](../src/tests/servo_steering/) | Wheels return to neutral and move in both steering directions without hitting mechanical stops |
 | IMU | [`gyro_test`](../src/tests/gyro_test/) | Readings respond to manual rotation with the correct sign and do not show an obvious stationary fault |
 | Straight-line controller | [`move_straight_on_gyro`](../src/tests/move_straight_on_gyro/) | The correction acts against a heading deviation rather than increasing it |
-| Camera communication | [`arduino_openmv_serial_communication`](../src/tests/arduino_openmv_serial_communication/) | Nano receives valid, correctly formatted messages from the N6 |
+| Camera communication | [`arduino_openmv_serial_communication`](../src/tests/arduino_openmv_serial_communication/) | Nano receives valid, correctly formatted messages from the RT1062 |
 | ToF sensor checks | [Live web dashboard](#live-distance-sensor-checks) | Each installed sensor responds to a target moving through its field of view |
-| Camera classification | [OpenMV frame buffer](#5-flash-the-openmv-n6) | Red and green objects in the configured ROI are identified consistently |
+| Camera classification | [OpenMV frame buffer](#5-flash-the-openmv-RT1062) | Red and green objects in the configured ROI are identified consistently |
 
 Use raised wheels for the first drive and steering tests. The table intentionally describes observable pass/fail behavior rather than unsupported numerical accuracy claims. Numerical tolerances and repeatability results should come from measured tests in [05. Systems and testing](05-systems.md).
 
@@ -254,7 +254,7 @@ For meaningful comparisons, record the same field layout, battery condition, fir
 - [ ] Mechanical parts match the selected CAD revision and move freely.
 - [ ] Battery polarity, regulated voltages and board connections have been checked.
 - [ ] Arduino Nano ESP32 sketch compiles and starts correctly.
-- [ ] N6 script runs independently after the camera is restarted.
+- [ ] RT1062 script runs independently after the camera is restarted.
 - [ ] Camera-to-controller serial communication is working.
 - [ ] Drive direction and steering neutral/limits are correct.
 - [ ] IMU heading direction and ToF readings respond to known physical inputs.
@@ -279,6 +279,6 @@ To make both versions of our robot reproducible, the following table identifies 
 | Robot version | GitHub commit | Description |
 | --- | --- | --- |
 | **V4** | [View V4 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/7e1b0b5b707511563fd0250af08e68c7288d2966) | National competition configuration, including the original drivetrain, distance sensors and wheel assemblies |
-| **V4.1** | [View V4.1 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/INSERT_V41_HASH) | Updated configuration with VL53L5CX ToF sensors, a 50:1 geared motor, steel wheel rims and revised software |
+| **V4.1** | [View V4.1 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/fee1a8440b3251d7454f14fb1ae3a48e173f498c) | Updated configuration with VL53L5CX ToF sensors, a 50:1 geared motor, steel wheel rims and revised software |
 
 These commits provide reference points for reproducing each robot version. CAD models, PCB files and software should be taken from the same corresponding revision to avoid compatibility issues.
