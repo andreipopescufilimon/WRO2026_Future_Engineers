@@ -1,6 +1,6 @@
 
 
-## 02 | Power and Sense Management <a id="power-and-sense-management"></a>
+## 03 | Power and Sense Management <a id="power-and-sense-management"></a>
 
 Electrical design, load path, sensor specifications, power consumption and PCB layout.
 
