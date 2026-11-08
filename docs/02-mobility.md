@@ -17,13 +17,13 @@ Mechanical design, load path, traction, kinematics, mounting and assembly eviden
 
 The vehicle uses a compact PCB as both the electrical carrier and the primary mechanical frame. The rear motor transmits torque through a printed gear into a differential; a single servo steers both front wheels. The design favors compact packaging, low play and predictable steering at low and high speed. Traction comes from tire contact and load distribution, without an active aerodynamic system.
 
-## 🚗 Mobility Management <a id="mobility-management"></a>
+## Mobility Management <a id="mobility-management"></a>
 
 The robot's mobility is controlled through **a fully PCB chassis, a servo-based steering system, and a drivetrain featuring a custom differential and axes**. These components work together to ensure smooth, **precise movement with optimized traction, stability, and efficient power management**.
 
-## ⚙️ **Drivebase** <a id="drivebase"></a>
+## **Drivebase** <a id="drivebase"></a>
 
-### 🔧 **Drivetrain** <a id="drivetrain"></a>
+### **Drivetrain** <a id="drivetrain"></a>
 
 The drivetrain uses a custom micro-RC differential at the rear, driven by a **Pololu 30:1 HPCB micro gearmotor** through a **3D printed gear** → **differential input gear**. The motor is held in a 3D-printed support with the battery mounted above, keeping the center of mass centered and low. Rear outputs rotate in bearings seated inside a printed part that contains 4 bearings for the wheel axles, this attachment is mounted using M2 screws to the PCB chassis, minimizing friction and parts count. 
 At the front, the wheels are fully 3D-printed and each wheel runs on two bearings (inner + outer) for a rigid, wobble-free hub that steers precisely.
@@ -32,7 +32,7 @@ At the front, the wheels are fully 3D-printed and each wheel runs on two bearing
 
 To maximize grip on the track we've made the wheel rims out of 45# steel. The drive motor is controlled by an **IFX9201SG driver (PWM + DIR)** with an active brake pulse for precise stopping, while the encoder on the gearmotor provides odometry for short, accurate moves (e.g., avoidance hops, parking nudges).
 
-### ⚙️ **Motor – 30:1 Micro Metal Pololu Gearmotor HPCB** <a id="motor"></a>
+### **Motor – 30:1 Micro Metal Pololu Gearmotor HPCB** <a id="motor"></a>
 
 Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6V)** for the drive system. This motor provides an **optimal balance of speed and torque**, allowing the robot to maintain stability while navigating turns.
 
@@ -41,13 +41,13 @@ Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6
 | **Model:** 30:1 HPCB | **Voltage:** 6V |
 | **No-load Speed:** 1000 RPM | **No-load Current:** 120mA |
 | **Stall Torque:** ~0.45 kg·cm | **Stall Current:** 1.6A |
-| 🔗 **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
+| **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
 
 **Why We Chose This Motor?**  
 **- Gear ratio provides sufficient torque** without sacrificing efficiency.  
 **- Compact and lightweight design**, allowing integration into a lightweight robot.
 
-### 🛞 Wheels & Tires (Silicone) <a id="wheels"></a>
+### Wheels & Tires (Silicone) <a id="wheels"></a>
 
 
 <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/5bc63707b6ec19c1477c26fbc46637d6a6cd95f3/technical-draws/back-wheel_technical-drawing.png" width="800">
@@ -62,7 +62,7 @@ Following past testing, we selected **a high-power 30:1 Micro Metal Gearmotor (6
 - Tire: Cast silicone ring fitted onto a mechanical bead on the rim (no harsh solvents needed).
 - Fit: Rear wheels mount directly to the diff axle outputs; fronts ride on steering hubs for low friction.
 
-#### ⚙️ **Torque and Speed Reasoning** <a id="torque"></a>
+#### **Torque and Speed Reasoning** <a id="torque"></a>
 
 The 30:1 Pololu HPCB gearmotor was selected because it provides a good balance between speed and usable torque. A lower gear ratio would increase the maximum speed, but the robot would lose acceleration and braking control. A higher gear ratio would give more torque, but the robot would become slower on long straight sections.
 
@@ -81,7 +81,7 @@ The goal was not to choose the fastest possible motor, but the fastest motor tha
 | 30:1 HPCB gearmotor | Good speed, enough torque, compact size | Needs careful speed control | Selected |
 
 This choice improved the robot’s consistency because the car could drive fast while still keeping predictable control during turns and obstacle sections.
-## 🔄 **Steering** <a id="steering"></a>
+## **Steering** <a id="steering"></a>
 
 The **steering system** is a critical part of the robot, ensuring precise maneuverability and smooth turns. Our design is based on a **parallelogram steering mechanism**, where both front wheels turn at the same angle through a single servo-controlled linkage. This setup provides predictable and stable steering, making it easy to use for an autonomous vehicle. Instead of using an **Ackermann steering system**, which requires more complex calculations and linkages, we opted for a **simpler and more lightweight solution** that offers consistent control. Our steering system allows for a maximum turning angle of 80 degrees in both the left and right directions. This range provides precise maneuverability, enabling the robot to navigate sharp turns efficiently while maintaining stability.
 
@@ -95,7 +95,7 @@ Our **steering arm is directly connected to the servo**, which moves the two fro
 
 ---
 
-### **🔄 Steering Servo – MG90S** <a id="servo-motor"></a>
+### **Steering Servo – MG90S** <a id="servo-motor"></a>
 
 To control the steering system, we use an **MG90S micro servo**, known for its high torque and fast response. This servo enables quick and precise adjustments while maintaining a compact and lightweight design. Featuring **metal gears**, it ensures durability and reliability over extended use. The servo is securely mounted onto the chassis with two screws, and the steering arm is directly attached to its output shaft, providing smooth and efficient motion transfer for accurate steering.
 
@@ -105,10 +105,10 @@ To control the steering system, we use an **MG90S micro servo**, known for its h
 | **Torque:** 2.2kg/cm | **Signal Type:** PWM |
 | **Current Draw (Avg):** 120mA | **Peak Current:** 500mA |
 | **Weight:** ~13.4g | **Gears:** Plastic |
-| 🔗 **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
+| **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
 
 ---
-## 🏎️ **Chassis & Component Mounting** <a id="chassis"></a>
+## **Chassis & Component Mounting** <a id="chassis"></a>
 
 The chassis of our robot is built around a custom PCB structure, which acts both as the electrical base and as the main mechanical frame. This design helps reduce unnecessary wiring, saves space, improves rigidity, and keeps the robot compact enough for fast movement inside the track.
 
@@ -149,7 +149,7 @@ The original dimensions and assembly photographs are in [overview](01-overview.m
 
 ## Mechanical iterations
 
-## 🔬 Testing & Iterations <a id="testing-iterations"></a>
+## Testing & Iterations <a id="testing-iterations"></a>
 
 During development, multiple robot revisions were designed and tested to improve steering precision, reliability, and overall track performance. The robot was developed through several iterations. Each version was tested on the main tasks required by the WRO Future Engineers challenge: stable driving, obstacle handling, cornering, and parking.
 
