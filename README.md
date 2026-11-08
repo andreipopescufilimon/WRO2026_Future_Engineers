@@ -205,7 +205,7 @@ Hi! I’m Horia from Romania, and this is my third WRO season competing alongsid
 
 ### **Eduard Alexandru Vasile** (right)
 **Age:** 16 <br>
-**High School:** Liceul Teoretic Alexandru Ioan Cuza
+**High School:** Teoretical High School "Alexandru Ioan Cuza" (LTAIC)
 
 **Description:**
 Hi! I’m Eduard from Romania. I’m passionate about robotics, especially building and testing competitive robots. I have worked on sumo robots, and recently I started developing line follower robots as well. I also enjoy driving and flight simulators, where I like exploring realistic control, precision, and performance.
