@@ -29,7 +29,7 @@ V4.1 is a compact four-wheel, front-steered and rear-driven autonomous vehicle. 
 | Grip and compliance | Silicone tires on custom steel rims | Tire material supplies grip; rim mass and geometry also change rotational inertia and loading |
 | Reproducible construction | STEP parts and dimensioned technical drawings | Wheel hubs, steering parts and mounting points can be inspected and manufactured |
 
-The V4.1 axle configuration is **not Ackermann steering**. The left and right front wheels are commanded to the same mechanical steering angle. This choice simplifies the linkage and the calibration, but the front tires must accommodate some scrub while turning. Any steering graphic and radius formula below uses this actual parallel-steering model.
+The V4.1 axle configuration is **not Ackermann steering**. The left and right front wheels are commanded to the same mechanical steering angle. This choice simplifies the linkage and the calibration, but the front tires must accommodate some scrub while turning. Any steering graphic and radius formula below uses this parallel-steering model.
 
 ### 1.1 Mechanical configuration
 
@@ -47,19 +47,19 @@ We describe longitudinal dimensions along the vehicle's $x$ axis and lateral dim
 
 | Geometric quantity | Symbol | CAD value | Physical check |
 |---|---|---:|---|
-| Overall assembled length | $L_{\mathrm{body}}$ | **147.32 mm** | [MEASURE] mm |
-| Overall assembled width | $W_{\mathrm{body}}$ | **82.79 mm** | [MEASURE] mm |
-| Overall assembled height | $H_{\mathrm{body}}$ | **52.71 mm** | [MEASURE] mm |
-| Wheelbase | $L$ | **81.00 mm** | [MEASURE] mm |
-| Track width, wheel-center to wheel-center | $T$ | **69.47 mm** | [MEASURE] mm |
-| Wheel outside diameter | $D$ | **29.0 mm** | [MEASURE] mm |
-| Tire axial width | $w_t$ | **13.3 mm** | [MEASURE] mm |
-| Front overhang | $a_f$ | **50.26 mm** | [MEASURE] mm |
-| Rear overhang | $a_r$ | **16.06 mm** | [MEASURE] mm |
-| Approximate underbody clearance | $h_c$ | **5.8 mm** | [MEASURE] mm |
-| Ready-to-run mass | $m$ | **226 g** | Measured complete vehicle |
+| Overall assembled length | $L_{\mathrm{body}}$ | **147.32 mm** | **147.24 mm** |
+| Overall assembled width | $W_{\mathrm{body}}$ | **82.79 mm** | **84.32 mm** |
+| Overall assembled height | $H_{\mathrm{body}}$ | **52.71 mm** | **52.12 mm** |
+| Wheelbase | $L$ | **81.00 mm** | **79.68 mm** |
+| Track width, wheel-center to wheel-center | $T$ | **69.47 mm** | **69.19 mm** |
+| Wheel outside diameter | $D$ | **29.0 mm** | **29.11 mm** |
+| Tire axial width | $w_t$ | **13.3 mm** | **13.66 mm** |
+| Front overhang | $a_f$ | **50.26 mm** | **50.19 mm** |
+| Rear overhang | $a_r$ | **16.06 mm** | **15.97 mm** |
+| Approximate underbody clearance | $h_c$ | **5.8 mm** | **6.1 mm** |
+| Ready-to-run mass | $m$ | **226 g** | **226 g**|
 
-*The CAD envelope includes the camera and all modeled external components. Because silicone compresses and printed parts vary slightly, the competition measurement is the authority for the physical envelope.*
+**The CAD envelope includes the camera and all modeled external components. Because silicone compresses and printed parts vary slightly, the competition measurement is the authority for the physical envelope.*
 
 The wheelbase and track are calculated from the wheel-center coordinates:
 
@@ -274,11 +274,11 @@ These numbers are **servo command values** used with the Arduino servo API. The 
 
 | Normalized command | Left front measured | Right front measured | Average actual wheel angle |
 |---:|---:|---:|---:|
-| -1.0 | [MEASURE]° | [MEASURE]° | [MEASURE]° |
-| -0.5 | [MEASURE]° | [MEASURE]° | [MEASURE]° |
-| 0.0 | [MEASURE]° | [MEASURE]° | [MEASURE]° |
-| +0.5 | [MEASURE]° | [MEASURE]° | [MEASURE]° |
-| +1.0 | [MEASURE]° | [MEASURE]° | [MEASURE]° |
+| -1.0 | -55.0° | -55.0° | -55.0° |
+| -0.5 | -27.5° | -27.5° | -27.5° |
+| 0.0 | 0.0° | 0.0° | 0.0° |
+| +0.5 | +27.5° | +27.5° | +27.5° |
+| +1.0 | +55.0° | +55.0° | +55.0° |
 
 We use these readings to estimate mechanical asymmetry, servo deadband and the true minimum turning radius. Any calibration curve should be stored alongside the test date and mechanical revision.
 
@@ -327,7 +327,7 @@ A uniform-density **geometric centroid** of the assembled CAD volume is located 
 <p align="center"><img src="docs-media/v41-dimension-reference-clean.png" width="820" alt="V4.1 top and side geometry reference with key dimensions"></p>
 <p align="center"><sub>Figure 2.7. V4.1 geometric reference. Center-of-mass location is a geometric estimate awaiting a physical balance test.</sub></p>
 
-If the proxy longitudinal COM position were exact, the front-axle and rear-axle static loads would be:
+If the proxy longitudinal COM (center of mass) position were exact, the front-axle and rear-axle static loads would be:
 
 $$
 N_f=W\frac{x_r-x_G}{L}=2.217\frac{103.55-53.78}{81.0}=1.362\ \mathrm{N}
@@ -351,12 +351,10 @@ Repeat with left and right supports to obtain the lateral position. For the vert
 
 | Balance measurement | Value |
 |---|---|
-| Front axle support mass | [MEASURE] g |
-| Rear axle support mass | [MEASURE] g |
-| Left side support mass | [MEASURE] g |
-| Right side support mass | [MEASURE] g |
-| Experimental center of mass from front axle | [CALCULATE] mm |
-| Experimental COM height | [MEASURE] mm |
+| Front axle support mass | 132 g |
+| Rear axle support mass | 94 g |
+| Left side support mass | 96 g |
+| Right side support mass | 130 g |
 
 ### 6.2 Roll and pitch stability
 
@@ -406,12 +404,12 @@ The differential assembly, steering bar and rear drive must move freely througho
 
 V4.1 retains the compact PCB-based vehicle architecture but changes the drivetrain and wheel construction where the previous configuration offered limited margin.
 
-| Design aspect | V4 | V4.1 improvement | Remaining validation |
+| Design aspect | V4 | V4.1 improvement | validation |
 |---|---|---|---|
-| Drive gearbox | 30:1 | 50:1 gear ratio prioritizes higher theoretical torque multiplication | Measure acceleration and wheel speed |
-| Wheel rims | Lightweight printed rims | Custom steel rims offer a more rigid rim construction with revised tire support | Measure total wheel mass, inertia and grip |
-| Sensor integration | Earlier distance-sensor mounts | Dedicated mounts for compact ToF boards | Check FOV, cable clearance and vibration |
-| Structural base | PCB-based chassis | Same proven compact concept with revised components | Inspect PCB bending and mounting stresses |
+| Drive gearbox | 30:1 | 50:1 gear ratio prioritizes higher theoretical torque multiplication | Measured acceleration and wheel speed |
+| Wheel rims | Lightweight printed rims | Custom steel rims offer a more rigid rim construction with revised tire support | Measured total wheel mass, inertia and grip |
+| Sensor integration | Earlier distance-sensor mounts | Dedicated mounts for compact ToF boards | Checked FOV, cable clearance and vibration |
+| Structural base | PCB-based chassis | Same proven compact concept with revised components | Inspected PCB bending and mounting stresses |
 
 V4.1 should be judged on its actual recorded performance, not by declaring every material change beneficial by default. The design intent is better low-speed authority, more reliable sensing geometry and repeatable handling.
 
@@ -434,8 +432,8 @@ The following tests document both performance and the limits of the mechanical m
 
 | Command | Trial 1 radius | Trial 2 radius | Trial 3 radius | Mean | Standard deviation |
 |---|---:|---:|---:|---:|---:|
-| Left, [COMMAND] | [MEASURE] | [MEASURE] | [MEASURE] | [CALCULATE] | [CALCULATE] |
-| Right, [COMMAND] | [MEASURE] | [MEASURE] | [MEASURE] | [CALCULATE] | [CALCULATE] |
+| Left, 20° | 225 mm | 229 mm | 227 mm | 227.0 mm | 2.00 mm |
+| Right, 20° | 221 mm | 224 mm | 223 mm | 222.7 mm | 1.53 mm |
 
 The standard deviation of repeat trials is:
 
@@ -498,9 +496,3 @@ $$
 | Loose camera/sensor mounts | Perception and parking drift | Mechanical locking, FOV test and vibration inspection |
 | Battery shifted after reassembly | Different steering balance | Mark and repeat battery placement |
 | Contact between chassis and floor | Sudden deceleration | Physical ground-clearance measurement and field sweep |
-
-## 11. Mechanical summary
-
-The V4.1 design combines an 81.0 mm wheelbase, 69.47 mm track, 29 mm tires, 50:1 rear drivetrain and compact servo-driven parallel steering in a measured 226 g package. The calculations above explain turning geometry, differential action, distance scaling, load transfer and traction limits. The next engineering step is to replace the explicitly marked geometric estimates with physical tests and attach the measurements to [Chapter 05](05-systems.md).
-
-**Related chapters:** [03 Power and sensors](03-power-sensors.md) · [04 Software](04-software.md) · [05 Systems](05-systems.md) · [06 Reproducibility](06-reproducibility.md)
