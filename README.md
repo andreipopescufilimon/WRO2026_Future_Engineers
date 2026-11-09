@@ -79,15 +79,15 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 
 | Parameter | V4.1 design | Supporting evidence |
 |---|---|---|
-| Configuration | Front steering, rear drive with differential | [Mobility](/docs/02-mobility.md), [3D models](../3D-models/) |
-| Main structure | Custom PCB chassis and printed mounts | [Electrical schematics](../electrical-schematics/), [3D models](../3D-models/) |
-| Main controller | Arduino Nano ESP32 | [Power and sensors](/docs/03-power-sensors.md), [firmware](../src/) |
-| Vision processor | OpenMV N6 | [Camera software](../src/camera.py), [software](/docs/04-software.md) |
+| Configuration | Front steering, rear drive with differential | [Mobility](/docs/02-mobility.md), [3D models](/3D-models/) |
+| Main structure | Custom PCB chassis and printed mounts | [Electrical schematics](/electrical-schematics/), [3D models](/3D-models/) |
+| Main controller | Arduino Nano ESP32 | [Power and sensors](/docs/03-power-sensors.md), [firmware](/src/) |
+| Vision processor | OpenMV N6 | [Camera software](/src/camera.py), [software](/docs/04-software.md) |
 | Inertial sensing | Custom BMI088 IMU | [Power and sensors](/docs/03-power-sensors.md) |
-| Distance sensors | Custom VL53L5CXV0GC ToF sensors | [Power and sensors](/docs/03-power-sensors.md), [ToF board files](../electrical-schematics/TOF%20sensors/production-files/) |
+| Distance sensors | Custom VL53L5CXV0GC ToF sensors | [Power and sensors](/docs/03-power-sensors.md), [ToF board files](/electrical-schematics/TOF%20sensors/production-files/) |
 | Propulsion | Updated higher-torque geared motor driving rear axle | [Mobility](/docs/02-mobility.md) |
-| Steering | Servo-driven parallel front steering | [Mobility](/docs/02-mobility.md), [CAD](../3D-models/) |
-| Wheels | Silicone tyres with revised, heavier rims | [Mobility](/docs/02-mobility.md), [wheel CAD](../3D-models/wheel%20with%20silicone.step) |
+| Steering | Servo-driven parallel front steering | [Mobility](/docs/02-mobility.md), [CAD](/3D-models/) |
+| Wheels | Silicone tyres with revised, heavier rims | [Mobility](/docs/02-mobility.md), [wheel CAD](/3D-models/wheel%20with%20silicone.step) |
 | Power source | 2S Li-Po in documented design; confirm installed pack | [Power and sensors](/docs/03-power-sensors.md) |
 | Fan / fan ESC | Not installed on V4.1 | Current CAD and wiring |
 | Dimensions, mass, speed and power draw | **Re-measure on complete V4.1 assembly** | [Systems and testing](/docs/05-systems.md) |
