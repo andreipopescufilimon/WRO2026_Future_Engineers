@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="700" viewBox="0 0 1440 700">
+<rect width="1440" height="700" fill="#f6f9fc"/>
+<text x="60" y="65" font-family="Arial,sans-serif" font-size="29" fill="#19354a" font-weight="bold">V4.1 power distribution and major electrical loads</text>
+<text x="60" y="98" font-family="Arial,sans-serif" font-size="16" fill="#526b7f">Functional power architecture. Consult the fabricated PCB revision for exact conductor routing and local 3.3 V regulation.</text>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#567086"/></marker></defs>
+<rect x="55" y="260" width="265" height="145" rx="18" fill="#1a4058"/>
+<text x="188" y="311" fill="white" font-family="Arial" font-size="23" text-anchor="middle" font-weight="bold">2S LiHV battery</text>
+<text x="188" y="343" fill="#dcf4ff" font-family="Arial" font-size="21" text-anchor="middle">7.6 V / 300 mAh</text><text x="188" y="373" fill="#dcf4ff" font-family="Arial" font-size="16" text-anchor="middle">2.28 Wh nominal</text>
+<path d="M320 333 L407 333 L407 211 L465 211" stroke="#567086" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+<path d="M407 333 L407 482 L465 482" stroke="#567086" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+<rect x="465" y="148" width="286" height="129" rx="16" fill="#fff" stroke="#c7d7e5" stroke-width="3"/>
+<text x="608" y="190" font-family="Arial" font-weight="bold" font-size="22" fill="#1d4b66" text-anchor="middle">IFX9201SG motor driver</text><text x="608" y="220" font-family="Arial" font-size="18" fill="#516a7c" text-anchor="middle">Battery-side drive path</text><text x="608" y="248" font-family="Arial" font-size="15" fill="#60798e" text-anchor="middle">PWM + direction</text>
+<rect x="465" y="416" width="286" height="130" rx="16" fill="#fff" stroke="#c7d7e5" stroke-width="3"/>
+<text x="608" y="457" font-family="Arial" font-weight="bold" font-size="22" fill="#1d4b66" text-anchor="middle">D24V50F5 regulator</text><text x="608" y="489" font-family="Arial" font-size="21" fill="#237585" text-anchor="middle">5 V regulated</text><text x="608" y="518" font-family="Arial" font-size="15" fill="#60798e" text-anchor="middle">Actual loads depend on board wiring</text>
+<rect x="914" y="147" width="380" height="129" rx="16" fill="#e7f4f6" stroke="#80c0ca" stroke-width="3"/>
+<text x="1104" y="195" font-family="Arial" font-weight="bold" font-size="22" fill="#1d4b66" text-anchor="middle">Pololu drive motor</text><text x="1104" y="227" font-family="Arial" font-size="18" fill="#516a7c" text-anchor="middle">Rear differential + encoder</text>
+<path d="M751 212 L914 212" stroke="#567086" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+<path d="M751 481 L812 481 L812 353 L914 353" stroke="#567086" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+<path d="M812 481 L812 565 L914 565" stroke="#567086" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+<rect x="914" y="291" width="380" height="131" rx="16" fill="#e7f4f6" stroke="#80c0ca" stroke-width="3"/>
+<text x="1104" y="329" font-family="Arial" font-weight="bold" font-size="20" fill="#1d4b66" text-anchor="middle">Arduino Nano ESP32</text><text x="1104" y="361" font-family="Arial" font-size="18" fill="#516a7c" text-anchor="middle">OpenMV N6 • MG90S steering</text><text x="1104" y="390" font-family="Arial" font-size="15" fill="#60798e" text-anchor="middle">Regulated logic / actuation</text>
+<rect x="914" y="500" width="380" height="133" rx="16" fill="#e7f4f6" stroke="#80c0ca" stroke-width="3"/>
+<text x="1104" y="541" font-family="Arial" font-weight="bold" font-size="20" fill="#1d4b66" text-anchor="middle">Sensor assemblies</text><text x="1104" y="572" font-family="Arial" font-size="17" fill="#516a7c" text-anchor="middle">4× VL53L5CX • BMI088 • TCS34725</text><text x="1104" y="602" font-family="Arial" font-size="15" fill="#60798e" text-anchor="middle">Local supply voltage must match PCB</text>
+<text x="55" y="663" font-family="Arial" font-size="15" fill="#6b7d90">Shared ground is required for control signals. This diagram does not assert net-to-net connections or measured current.</text>
+</svg>
