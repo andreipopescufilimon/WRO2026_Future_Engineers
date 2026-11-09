@@ -50,14 +50,14 @@ The fan/downforce assembly is **not installed** on V4.1. It is not counted as a 
 
 ### 2.1 Component presentation
 
-The following photographs show the installed V4.1 electronics and the custom boards used to connect them. Component values are separated into **manufacturer specifications**, **firmware configuration**, and **assumptions requiring physical verification**. The distinction is important because maximum ratings do not describe normal operating current.
+The following component images identify the electronics selected for V4.1. Photographs of the installed electronics and custom boards appear in the PCB integration section. Component values are separated into **manufacturer specifications**, **firmware configuration**, and **assumptions requiring physical verification**. The distinction is important because maximum ratings do not describe normal operating current.
 
 #### 2.1.1 Battery: Gaoneng GNB 2S LiHV, 300 mAh
 
 | <img src="https://img-va.myshopline.com/image/store/2000408386/1640672930478/GNB3002S60AHV-(4)_1800x.jpeg?w=1000&h=1000" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Model:** 2S Li-HV | **Capacity:** 300mAh |
-| **Voltage:** 7.4V | **Discharge Rate:** 60C |
+| **Nominal Voltage:** 7.6 V | **Discharge Rate:** 60C |
 | **Weight:** 12g | **Size:** 13.8 x 12 x 52.5mm |
 | **Output Current:** Varies by load | **Connector Type:** JST |
 | 🔗 **[Buy Here](https://www.gaoneng.shop/products/gaoneng-gnb-lihv-2s-7.6v-300mah-60c-jst-lipo-battery)** | **Function:** Powers the entire robot |
@@ -71,7 +71,7 @@ The battery is mounted alongside the middle axis of the PCB chassis, minimizing 
 | **Microcontroller:** ESP32 | **Flash Memory:** 4MB |
 | **SRAM:** 520KB | **Frequency:** 240MHz |
 | **Pins:** 22 | **Input Voltage:** 5V |
-| **Current Draw (Avg):** 200mA | **Peak Current:** 500mA |
+| **Active-current budget:** 200 mA | **Peak-current allowance:** 500 mA |
 | 🔗 **[Buy Here](https://store.arduino.cc/en-ro/products/nano-esp32)** | **Function:** Controls all robot components |
 
 The Nano ESP32 is the coordinator of the electrical system. It communicates with the BMI088 and range devices, interprets OpenMV results, produces the H-bridge PWM command, and outputs steering commands. The final pin allocation is documented in [04 Software](04-software.md). The **200 mA @ 5 V** value used in the power model is an explicit planning assumption rather than a measured consumption of this assembled board.
@@ -82,7 +82,7 @@ The Nano ESP32 is the coordinator of the electrical system. It communicates with
 |------------------------------|------------------------------|
 | **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
 | **Interface:** I2C | **Supply Voltage:** 3.0V – 3.6V |
-| **Current Draw:** ~3.2mA | **Weight:** ~1g |
+| **Full-operation chip current:** ~5.15 mA | **Weight:** ~1g |
 | 🔗 [View Open Source Project Here](https://oshwlab.com/bicicleta11/bmi088-gyro-module) | **Function:** Tracks orientation & motion |
 
 The custom board reduces the need for an oversized breakout module. V4.1 firmware selects **±2000°/s** for the gyroscope and **±6 g** for the accelerometer. The gyroscope's Z axis is integrated for turning and heading verification. Bosch specifies approximately **5.15 mA full-operation current** for the sensor itself, but the complete assembled board should be measured separately. [BMI088 device specification](https://www.bosch-sensortec.com/en/products/motion-sensors/imus/bmi088).
@@ -96,7 +96,7 @@ The custom board reduces the need for an oversized breakout module. V4.1 firmwar
 | **Camera Sensor:** OV5640 | **Resolution:** 2592 × 1944, 5 MP |
 | **Typical Vision Speed:** ~40 FPS at QVGA | **Interfaces:** UART, I2C, SPI, CAN, USB-C |
 | **Connectivity:** Wi-Fi, Bluetooth 5.1, Ethernet | **I/O Voltage:** 3.3 V only |
-| 🔗 **[Buy Here](https://openmv.io/collections/cameras/products/openmv-cam-rt?variant=42269003743326)** | **Function:** Detects traffic signs, lanes, and visual markers |
+| 🔗 **[Buy Here](https://openmv.io/collections/cameras/products/openmv-cam-rt?variant=42269003743326)** | **Function:** Detects red and green traffic pillars |
 
 The front placement provides an unobstructed forward view without relying on the Arduino for pixel processing. The camera transmits decisions over **19,200 baud UART** in the configured V4.1 interface. This division keeps expensive image operations separate from the deterministic motion-control loop. [OpenMV RT1062 specification](https://openmv.io/products/openmv-cam-rt).
 
@@ -129,8 +129,8 @@ The integration of the motor driver IC eliminates an external motor-driver break
 |------------------------------|------------------------------|
 | **Model:** MG90S | **Voltage:** 5V |
 | **Torque:** 2.2kg/cm | **Signal Type:** PWM |
-| **Current Draw (Avg):** 120mA | **Peak Current:** 500mA |
-| **Weight:** ~13.4g | **Gears:** Plastic |
+| **Moving-current allowance:** 120 mA | **Peak-current allowance:** 500 mA |
+| **Weight:** ~13.4g | **Gears:** Metal |
 | 🔗 **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
 
 The steering servo is a pulsed, highly variable load. Servo current under active steering cannot be calculated from the command pulse width. The **120 mA active-current assumption** used in the engineering budget is for calculation only; fast direction changes and a jammed linkage can cause much larger current draws.
@@ -140,8 +140,8 @@ The steering servo is a pulsed, highly variable load. Servo current under active
 | <img src="https://image.easyeda.com/oshwhub/pullImage/4a3e6f96cb774722876587269d4116ee.png" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Detection Range:** 400 cm (depends on surface) | **Type:** I2C,  8x8 or 4x4 matrix |
-| **Voltage Supply:** 5.0V, on board 3.3V regulator | **Current Draw:** ~30 mA enabled |
-| **Resolution:** 3 mm (≈ 4 µs per 3 mm)	 | **Update Rate:** ~60 Hz |
+| **Board supply:** 5 V with onboard 3.3 V regulation | **Chip power:** 313 mW typical continuous-ranging example |
+| **Ranging zones:** 4×4 or 8×8 | **V4.1 update rate:** 30 Hz (4×4) |
 | 🔗 [View open sourced project](https://oshwlab.com/bicicleta11/project_mhqqebyu) | **Use Case:** Read distances to walls |
 
 Unlike single-point distance sensors, each VL53L5CX returns a 16-zone spatial matrix at 4×4 resolution. The four sensors monitor front, left, right and rear. Each begins with the factory address `0x29` and is assigned a different address (`0x30` to `0x33`) during initialization. The manufacturer's **continuous-ranging typical power example** at 3.3 V/3.3 V is **313 mW per sensor chip**, corresponding to **1.252 W for four chips** before breakout-board overhead. [VL53L5CX datasheet](https://www.st.com/resource/en/datasheet/vl53l5cx.pdf), electrical characteristics §6.4.
@@ -156,7 +156,7 @@ Unlike single-point distance sensors, each VL53L5CX returns a 16-zone spatial ma
 | **Protection:** Short-circuit & thermal shutdown | **Mounting Type:** Pins |
 | 🔗 **[Buy Here](https://www.pololu.com/product/2851)** | **Function:** Converts battery voltage to 5V |
 
-The regulator converts the battery rail to the logic and actuator supply. The nominal 5 A output coveres the draw of all the components when running at peak drawing. The worst moment is often servo activity coinciding with camera and ToF operation.. [D24V50F5 technical specification](https://www.pololu.com/product/2851).
+The regulator converts the battery rail to the logic and actuator supply. The regulator is rated for up to 5 A output under its specified operating conditions. This rating does not establish the robot’s actual peak demand or guarantee that the supply remains at 5 V during every transient. Servo activity coinciding with camera and ToF operation is a useful condition to check. [D24V50F5 technical specification](https://www.pololu.com/product/2851).
 
 #### 2.1.10 Floor-color sensor: TCS34725
 
@@ -244,7 +244,7 @@ $$
 
 where $\eta_{\mathrm{buck}}$ is the regulator's efficiency at the actual operating point. We cannot simply add the motor's battery-side current to each 5 V device's rail current, because they are measured at different voltages.
 
-A 5 V rail measured at $I_{5V}=0.85$ A, for **illustration**, represents $4.25$ W at the output. At an *assumed* 90% efficiency, it would draw $4.72$ W from the pack, or $0.621$ A at 7.6 V. The actual value belongs in the measurement table below.
+For example, a hypothetical 5 V rail current of $I_{5V}=0.85$ A represents $4.25$ W at the output. At an *assumed* 90% efficiency, it would draw $4.72$ W from the pack, or $0.621$ A at 7.6 V. The actual value belongs in the measurement table below.
 
 The electrical load of the robot is expressed as:
 
@@ -256,12 +256,12 @@ This form is useful for evaluating acceleration transients and establishing an e
 
 ### 3.3 Physical power measurement plan
 
-We record three physical regimes, as a peak-only budget cannot predict battery runtime and an idle-only budget cannot reveal brownouts.
+The test protocol covers three operating regimes: idle, normal driving and brief peaks. A peak-only budget cannot predict battery runtime, and an idle-only budget cannot reveal brownouts. The table below gives planning values, not measurements from a completed test.
 
 | Load | Estimated idle current | Estimated active current | Estimated peak | Supply rail |
 |---|---:|---:|---:|---|
 | Arduino Nano ESP32 | 120 mA | 200 mA | 350 mA | 5 V |
-| OpenMV N6 | 100 mA | 150 mA | 200 mA | 5 V |
+| OpenMV RT1062 | 100 mA | 150 mA | 200 mA | 5 V |
 | MG90S steering servo | 20 mA | 120 mA | 1,000 mA | 5 V |
 | Four VL53L5CX sensors | 20 mA | 380 mA | 600 mA | 3.3 V |
 | BMI088 board | 4 mA | 5.15 mA | 10 mA | 3.3 V |
@@ -269,7 +269,7 @@ We record three physical regimes, as a peak-only budget cannot predict battery r
 | Pololu 50:1 HPCB drive motor | 0 A | 0.80 A | 1.50 A | Motor supply, nominal rating 6 V |
 | Complete battery input | 0.19 A | 1.34 A | ~3.1 A | 2S LiHV, 7.6 V nominal |
 
-**Measurement procedure:** we monitored the battery with a suitable current meter and a separate 5 V rail monitor, capture the minimum 5 V voltage during abrupt acceleration and steering reversals, then repeat with camera processing active. Include the battery charge level, firmware mode and measurement bandwidth. A slow multimeter can miss short voltage dips. We also used an oscillator to study the 5V rail noise.
+**Measurement procedure:** monitor the battery with a suitable current meter and the 5 V rail with a separate voltage probe. Capture the minimum regulator voltage during abrupt acceleration and steering reversals, then repeat with camera processing active. Record battery charge level, firmware mode and measurement bandwidth. A slow multimeter can miss short voltage dips; use an oscilloscope to inspect transient ripple and voltage sag on the 5 V rail.
 
 <!-- CODE-DERIVED DATA VIEW -->
 
@@ -281,14 +281,14 @@ A useful power budget must distinguish **manufacturer-specified electrical value
 | Component | Assumed operation | Electrical basis | Modeled power |
 |---|---|---|---:|
 | Arduino Nano ESP32 | 200 mA at 5 V | Engineering allowance | 1.000 W |
-| OpenMV RT1062 | 150 mA at 5 V | Manufacturer full-power specification | 0.750 W |
+| OpenMV RT1062 | 150 mA at 5 V | Conservative design allowance; published active current is approximately 130 mA at 5 V | 0.750 W |
 | MG90S steering servo | 120 mA at 5 V | Assumed moving-average current; peak can be higher | 0.600 W |
 | Four VL53L5CX chips | 4× continuous ranging, 3.3 V/3.3 V | ST example: 313 mW per chip | 1.252 W |
 | BMI088 chip | 5.15 mA at 3.3 V | Bosch full-operation specification | 0.017 W |
 | TCS34725 module | Allowance | Preliminary estimate, pending measurement | 0.020 W |
 | **Total regulated loads, before conversion losses** | | | **3.639 W** |
 
-The 3.639 W total is the sum of powers at each module's voltage. It is **not** the actual measured current drawn from the 5 V regulator. Sensor-board support electronics, voltage conversion between the 5 V bus and any local 3.3 V rails, copper losses and servo-current transients can increase consumption. The actual PCB rail map determines how the load is distributed.
+The 3.639 W total includes a design margin for the RT1062 and is the sum of modeled powers at each module's voltage. It is **not** the actual measured current drawn from the 5 V regulator. Sensor-board support electronics, voltage conversion between the 5 V bus and any local 3.3 V rails, copper losses and servo-current transients can increase consumption. The actual PCB rail map determines how the load is distributed.
 
 <p align="center"><a href="docs-media/v41-power-components.svg"><img src="docs-media/v41-power-components.png" width="790" alt="Calculated V4.1 regulated subsystem power budget"></a></p>
 <p align="center"><sub>Modeled component consumption from manufacturer values and explicit assumptions. Motor power is excluded; no measurement is implied.</sub></p>
@@ -297,22 +297,22 @@ The 3.639 W total is the sum of powers at each module's voltage. It is **not** t
 
 #### From component demand to battery input
 
-For a first-order sensitivity model, assume that the regulated loads are delivered through conversion stages with an overall effective efficiency of $\\eta=0.90$. Then:
+For a first-order sensitivity model, assume that the regulated loads are delivered through conversion stages with an overall effective efficiency of $\eta=0.90$. Then:
 
 $$
-P_{\\mathrm{regulated,input}}\\approx\\frac{3.639}{0.90}=4.04\\ \\mathrm{W}
+P_{\mathrm{regulated,input}}\approx\frac{3.639}{0.90}=4.04\ \mathrm{W}
 $$
 
 We add direct battery-side motor consumption, plus a **10 mA H-bridge quiescent assumption**:
 
 $$
-P_{\\mathrm{battery}}(I_m,\\eta)=\\frac{3.639}{\\eta}+7.6(I_m+0.010)
+P_{\mathrm{battery}}(I_m,\eta)=\frac{3.639}{\eta}+7.6(I_m+0.010)
 $$
 
 where $I_m$ is the **assumed motor input current**, not the 8-bit PWM duty value. For a worked example of $I_m=0.80$ A:
 
 $$
-P_{\\mathrm{battery}}\\approx\\frac{3.639}{0.90}+7.6(0.80+0.010)=10.20\\ \\mathrm{W}
+P_{\mathrm{battery}}\approx\frac{3.639}{0.90}+7.6(0.80+0.010)=10.20\ \mathrm{W}
 $$
 
 <table><tr><td align="center" width="50%"><a href="docs-media/v41-power-motor-sensitivity.svg"><img src="docs-media/v41-power-motor-sensitivity.png" width="480" alt="Sensitivity of calculated pack input power to drive current and regulator efficiency"></a></td><td align="center" width="50%"><a href="docs-media/v41-ideal-runtime.svg"><img src="docs-media/v41-ideal-runtime.png" width="480" alt="Ideal upper-bound runtime from nominal pack energy"></a></td></tr><tr><td align="center"><sub>Battery power depends strongly on direct motor current.</sub></td><td align="center"><sub>Ideal runtime, before reserve, sag, thermal losses or cutoff.</sub></td></tr></table>
@@ -326,7 +326,7 @@ $$
 | 1.20 A | 13.24 W | 10.3 min |
 | 1.60 A | 16.28 W | 8.4 min |
 
-These durations are **upper bounds using nominal pack energy**, not predictions of how long the robot will actually run. The real test is a continuous capture of $V_{\\mathrm{bat}}(t)$ and $I_{\\mathrm{bat}}(t)$ during the complete challenge.
+These durations are **upper bounds using nominal pack energy**, not predictions of how long the robot will actually run. The real test is a continuous capture of $V_{\mathrm{bat}}(t)$ and $I_{\mathrm{bat}}(t)$ during the complete challenge.
 
 [Model scenarios (CSV)](validation/power_model_scenarios.csv) · [Blank physical power measurements](validation/measurement_templates/power_budget.csv).
 
@@ -506,7 +506,7 @@ The purpose of this view is to make perception behavior inspectable, rather than
 
 ### 5.1 Distance-sensor calibration matrix
 
-We test the front, left, right and rear sensors at multiple known wall distances, using a flat wall and a ruler aligned with the sensor's optical center. The observed bias at a given position is:
+To measure ranging accuracy, test the front, left, right and rear sensors at multiple known wall distances using a flat wall and a ruler aligned with each sensor's optical center. The observed bias at a given position is:
 
 $$
 e_d=d_{\mathrm{ToF}}-d_{\mathrm{reference}}
@@ -518,14 +518,16 @@ $$
 \mathrm{RMSE}=\sqrt{\frac{1}{N}\sum_{j=1}^N e_{d,j}^2}
 $$
 
-| Sensor | Reference position | Mean ToF range | RMSE | Invalid frames |
-|---|---:|---:|---:|---:|
+The following values are an **illustrative calculation example**, not measurements from V4.1. Their RMSE figures are calculated from the four example mean errors; a physical accuracy report must compute RMSE across all valid captured frames and separately count invalid frames.
+
+| Sensor | Reference positions | Illustrative mean ToF range | RMSE of example means | Illustrative invalid frames |
+|---|---|---|---:|---:|
 | Front | 200 / 400 / 600 / 1000 mm | 202 / 397 / 605 / 988 mm | 6.75 mm | 0/400 |
 | Left | 200 / 400 / 600 / 1000 mm | 196 / 407 / 592 / 1015 mm | 9.41 mm | 2/400 |
 | Right | 200 / 400 / 600 / 1000 mm | 203 / 394 / 609 / 989 mm | 7.86 mm | 1/400 |
 | Back | 200 / 400 / 600 / 1000 mm | 198 / 404 / 594 / 1018 mm | 9.75 mm | 4/400 |
 
-We repeat while the drive motor runs and while the chassis is tilted slightly, because reflections from the floor and sensor mounting geometry can alter individual zones.
+Repeat the physical test with the drive motor running and the chassis tilted slightly, because reflections from the floor and sensor mounting geometry can alter individual zones.
 
 <!-- CODE-DERIVED DATA VIEW -->
 ### 5.1.1 Open-mode ToF decision boundaries
@@ -551,15 +553,15 @@ The controller uses both front matrix zones `(2,3)` and `(3,3)`. In the current 
 
 ### 5.2 Gyroscope stability
 
-We record at least 60 seconds at rest after startup calibration, then perform 12 successive 90° rotations. Compare integrated heading to the known final orientation. Track bias (°/s), final heading error (°), and whether the error grows systematically with time.
+The gyroscope validation procedure records at least 60 seconds at rest after startup calibration, followed by 12 successive 90° rotations. Compare integrated heading to the known final orientation. Track bias (°/s), final heading error (°), and whether the error grows systematically with time.
 
 ### 5.3 Camera and color verification
 
-We record images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, blob area, candidate count and the UART command sent. Repeating under different lighting and with the camera facing a nearby wall at startup. This last condition is important because it tests whether automatic camera settings are stable when the initial field of view is unusual.
+The camera validation procedure records images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, blob area, candidate count and the UART command sent. Repeat under different lighting conditions and with the camera facing a nearby wall at startup. This last condition is important because it tests whether automatic camera settings are stable when the initial field of view is unusual.
 
 ### 5.4 Power and bus stress test
 
-With all sensors running, cycle the steering servo and drive motor. Log (a) minimum 5 V voltage, (b) ToF frame age, (c) UART errors and (d) IMU sample gaps. A test passes only when no brownout occurs and sensor data remains within the required freshness window.
+With all sensors running, cycle the steering servo and drive motor. Record (a) minimum 5 V voltage, (b) ToF frame age, (c) UART errors and (d) IMU sample gaps. A test passes only when no brownout occurs and sensor data remains within the required freshness window.
 
 ## 6. Iterations and engineering decisions
 
