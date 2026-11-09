@@ -1,8 +1,3 @@
-
-
-$$x = L\,\frac{m_f}{m_f + m_r}, \qquad z = r + \frac{L\,(m_f' - m_f)}{(m_f + m_r)\tan\theta}$$
-
-
 # 02 | Mobility and mechanical design
 
 > **HyperLine Robotics · WRO 2026 Future Engineers · V4.1**  
