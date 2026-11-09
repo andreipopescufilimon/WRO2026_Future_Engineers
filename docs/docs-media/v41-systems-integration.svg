@@ -24,7 +24,7 @@
 <path fill="#dff5e8" stroke="#9cb2cb" stroke-width="1.6" d="M486,-119C486,-119 355,-119 355,-119 349,-119 343,-113 343,-107 343,-107 343,-67 343,-67 343,-61 349,-55 355,-55 355,-55 486,-55 486,-55 492,-55 498,-61 498,-67 498,-67 498,-107 498,-107 498,-113 492,-119 486,-119"/>
 <text text-anchor="middle" x="420.5" y="-97.6" font-family="DejaVu Sans" font-size="13.00">PERCEPTION</text>
 <text text-anchor="middle" x="420.5" y="-83.6" font-family="DejaVu Sans" font-size="13.00">4 ToF, BMI088, TCS</text>
-<text text-anchor="middle" x="420.5" y="-69.6" font-family="DejaVu Sans" font-size="13.00">OpenMV N6</text>
+<text text-anchor="middle" x="420.5" y="-69.6" font-family="DejaVu Sans" font-size="13.00">OpenMV RT1062</text>
 </g>
 <!-- mechanics&#45;&gt;sensors -->
 <g id="edge3" class="edge">

@@ -84,7 +84,7 @@
 <g id="node9" class="node">
 <title>cam</title>
 <path fill="#dff5e8" stroke="#9cb2cb" stroke-width="1.6" d="M687.5,-321C687.5,-321 564.5,-321 564.5,-321 558.5,-321 552.5,-315 552.5,-309 552.5,-309 552.5,-283 552.5,-283 552.5,-277 558.5,-271 564.5,-271 564.5,-271 687.5,-271 687.5,-271 693.5,-271 699.5,-277 699.5,-283 699.5,-283 699.5,-309 699.5,-309 699.5,-315 693.5,-321 687.5,-321"/>
-<text text-anchor="middle" x="626" y="-299.6" font-family="DejaVu Sans" font-size="13.00">OpenMV N6</text>
+<text text-anchor="middle" x="626" y="-299.6" font-family="DejaVu Sans" font-size="13.00">OpenMV RT1062</text>
 <text text-anchor="middle" x="626" y="-285.6" font-family="DejaVu Sans" font-size="13.00">UART 19200 baud</text>
 </g>
 <!-- buck&#45;&gt;cam -->
