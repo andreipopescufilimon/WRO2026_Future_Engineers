@@ -13,7 +13,7 @@ Electrical design, load path, sensor specifications, power consumption and PCB l
 
 ---
 
-The V4.1 electrical design combines propulsion, steering, four multi-zone distance sensors, inertial sensing, floor-color detection and an independent vision processor in a compact PCB-based platform. Our architecture separates high-current motor loads from regulated logic loads and splits perception between the Arduino Nano ESP32 and OpenMV N6.
+The V4.1 electrical design combines propulsion, steering, four multi-zone distance sensors, inertial sensing, floor-color detection and an independent vision processor in a compact PCB-based platform. Our architecture separates high-current motor loads from regulated logic loads and splits perception between the Arduino Nano ESP32 and OpenMV RT1062.
 
 <p align="center"><img src="docs-media/v41-electronics-architecture.png" width="880" alt="V4.1 actual electrical interfaces and signal flow"></p>
 <p align="center"><sub>Figure 3.1. Electrical system architecture, showing the implemented interfaces and the regulated-power branches. Exact power wiring is defined by the main PCB design and must be verified before energizing.</sub></p>
@@ -27,7 +27,7 @@ The V4.1 electrical design combines propulsion, steering, four multi-zone distan
 | Four ToF devices with the same factory address | Individual LPn enable pins and sequential address assignment | I²C address conflicts at startup |
 | Repeatable turns | BMI088 yaw-rate integration and startup bias calibration | Uncorrected heading drift |
 | Fast floor-marker recognition | TCS34725 on a separate I²C controller | Sensor contention during corner identification |
-| Colored obstacles | OpenMV N6 processes image regions and sends compact UART commands | Image processing blocking the real-time drive loop |
+| Colored obstacles | OpenMV RT1062 processes image regions and sends compact UART commands | Image processing blocking the real-time drive loop |
 | Reproducible PCB manufacturing | Released Gerber, BOM and Pick-and-Place files | Unclear electrical assembly or missing component identification |
 
 ## 2. Main electrical components
@@ -35,7 +35,7 @@ The V4.1 electrical design combines propulsion, steering, four multi-zone distan
 | Subsystem | V4.1 component | Function and location |
 |---|---|---|
 | Primary controller | Arduino Nano ESP32 | Executes motion, sensor polling and round logic |
-| Vision processor | OpenMV N6 | Recognizes red/green traffic pillars and returns steering/avoidance commands |
+| Vision processor | OpenMV RT1062 | Recognizes red/green traffic pillars and returns steering/avoidance commands |
 | Yaw-rate sensor | Custom BMI088 IMU board | Measures angular rate for heading control |
 | Range sensing | Four VL53L5CXV0GC/1 boards | Front, left, right and rear spatial distance data |
 | Floor marker sensing | TCS34725 RGBC | Recognizes blue/red-orange floor regions that encode turn direction and corner events |
@@ -54,81 +54,121 @@ The following photographs show the installed V4.1 electronics and the custom boa
 
 #### 2.1.1 Battery: Gaoneng GNB 2S LiHV, 300 mAh
 
-| Installed battery | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-component-battery.png" width="230" alt="The installed 2S GNB LiHV battery on the real robot"> | **2S LiHV** · **7.6 V nominal** · **300 mAh** · **2.28 Wh** · **60C label rating** · **8.70 V maximum charge voltage** (4.35 V/cell). Supplies the drive path and the voltage-regulation stage. |
+| <img src="https://img-va.myshopline.com/image/store/2000408386/1640672930478/GNB3002S60AHV-(4)_1800x.jpeg?w=1000&h=1000" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** 2S Li-HV | **Capacity:** 300mAh |
+| **Voltage:** 7.4V | **Discharge Rate:** 60C |
+| **Weight:** 12g | **Size:** 13.8 x 12 x 52.5mm |
+| **Output Current:** Varies by load | **Connector Type:** JST |
+| 🔗 **[Buy Here](https://www.gaoneng.shop/products/gaoneng-gnb-lihv-2s-7.6v-300mah-60c-jst-lipo-battery)** | **Function:** Powers the entire robot |
 
-The battery is mounted alongside the rear section of the PCB chassis, minimizing the length of its external leads. At a nominal 7.6 V, the label's 60C rating corresponds to $0.300\times60=18$ A **as a manufacturer discharge rating**, not a measured robot current or a safe target for the PCB. Charging must use a **2S LiHV-compatible** charger and the appropriate cell-voltage limits.
+The battery is mounted alongside the middle axis of the PCB chassis, minimizing the length of its external leads. At a nominal 7.6 V, the label's 60C rating corresponds to $0.300\times60=18$ A **as a manufacturer discharge rating**, not a measured robot current or a safe target for the PCB. Charging must use a **2S LiHV-compatible** charger and the appropriate cell-voltage limits.
 
 #### 2.1.2 Main controller: Arduino Nano ESP32
 
-| Installed controller | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-component-controller.png" width="230" alt="The controller installed on the robot main PCB"> | **ESP32-S3 platform** · 3.3 V GPIO · supplied from the regulated power system · executes motor and servo control, sensor acquisition, challenge state machines, and serial communication. Built-in Wi-Fi supports the diagnostic interface. |
+| <img src="https://store.arduino.cc/cdn/shop/files/ABX00092_01.iso_804x603.jpg?v=1727101612" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Microcontroller:** ESP32 | **Flash Memory:** 4MB |
+| **SRAM:** 520KB | **Frequency:** 240MHz |
+| **Pins:** 22 | **Input Voltage:** 5V |
+| **Current Draw (Avg):** 200mA | **Peak Current:** 500mA |
+| 🔗 **[Buy Here](https://store.arduino.cc/en-ro/products/nano-esp32)** | **Function:** Controls all robot components |
 
 The Nano ESP32 is the coordinator of the electrical system. It communicates with the BMI088 and range devices, interprets OpenMV results, produces the H-bridge PWM command, and outputs steering commands. The final pin allocation is documented in [04 Software](04-software.md). The **200 mA @ 5 V** value used in the power model is an explicit planning assumption rather than a measured consumption of this assembled board.
 
 #### 2.1.3 Custom inertial sensor: BMI088
 
-| Custom board | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-bmi088-board.png" width="230" alt="HyperLine custom BMI088 inertial board"> | **Bosch BMI088**, 6-axis sensor · selectable gyroscope ranges up to **±2000°/s** · selectable accelerometer ranges up to **±24 g** · I²C interface · 16-bit gyroscope and accelerometer conversion · small custom PCB. |
+| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/2f218ef03b6aa341f2fc0c9e151cf439fa750abd/other/IMU.png" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
+| **Interface:** I2C | **Supply Voltage:** 3.0V – 3.6V |
+| **Current Draw:** ~3.2mA | **Weight:** ~1g |
+| 🔗 [View Open Source Project Here](https://oshwlab.com/bicicleta11/bmi088-gyro-module) | **Function:** Tracks orientation & motion |
 
 The custom board reduces the need for an oversized breakout module. V4.1 firmware selects **±2000°/s** for the gyroscope and **±6 g** for the accelerometer. The gyroscope's Z axis is integrated for turning and heading verification. Bosch specifies approximately **5.15 mA full-operation current** for the sensor itself, but the complete assembled board should be measured separately. [BMI088 device specification](https://www.bosch-sensortec.com/en/products/motion-sensors/imus/bmi088).
 
-#### 2.1.4 OpenMV N6 vision processor
+#### 2.1.4 OpenMV RT1062 vision processor
 
-| Robot-mounted camera | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-component-camera.png" width="230" alt="OpenMV camera installed on the front of the V4.1 robot"> | **OpenMV N6** · independent MicroPython vision processing · captures color frames, detects red and green traffic pillars, evaluates bounding boxes and sends compact UART messages to the main controller. Manufacturer full-power specification: **150 mA @ 5 V**, or **0.75 W**. |
+| <img src="https://openmv.io/cdn/shop/files/cam-v5-front-hero-2-web_1000x.jpg?v=1699323324" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Processor:** NXP i.MX RT1062 Cortex-M7 | **Frequency:** 600 MHz |
+| **RAM:** 32 MB SDRAM + 1 MB SRAM | **Flash Memory:** 16 MB QSPI Flash |
+| **Camera Sensor:** OV5640 | **Resolution:** 2592 × 1944, 5 MP |
+| **Typical Vision Speed:** ~40 FPS at QVGA | **Interfaces:** UART, I2C, SPI, CAN, USB-C |
+| **Connectivity:** Wi-Fi, Bluetooth 5.1, Ethernet | **I/O Voltage:** 3.3 V only |
+| 🔗 **[Buy Here](https://openmv.io/collections/cameras/products/openmv-cam-rt?variant=42269003743326)** | **Function:** Detects traffic signs, lanes, and visual markers |
 
-The front placement provides an unobstructed forward view without relying on the Arduino for pixel processing. The camera transmits decisions over **19,200 baud UART** in the configured V4.1 interface. This division keeps expensive image operations separate from the deterministic motion-control loop. [OpenMV N6 specification](https://openmv.io/products/openmv-n6).
+The front placement provides an unobstructed forward view without relying on the Arduino for pixel processing. The camera transmits decisions over **19,200 baud UART** in the configured V4.1 interface. This division keeps expensive image operations separate from the deterministic motion-control loop. [OpenMV RT1062 specification](https://openmv.io/products/openmv-cam-rt).
 
 #### 2.1.5 Geared drive motor and encoder
 
-| Installed drivetrain area | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-component-motor.png" width="230" alt="Rear axle drivetrain installed on the V4.1 robot"> | **Pololu HPCB 6 V geared motor**, **50:1 family** · integrated quadrature encoder · rear-axle differential propulsion. Pololu's 50:1 HPCB encoder variant is listed at approximately **650 rpm no-load at 6 V**, **150 mA no-load** and **1.5 A extrapolated stall current**. |
+| <img src="https://a.pololu-files.com/picture/0J12418.220.jpg?8f026fe1675b1109ea574290d3d26081" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** 50:1 HPCB | **Voltage:** 6V |
+| **No-load Speed:** 650 RPM | **No-load Current:** 150mA |
+| **Stall Torque:** ~0.74 kg·cm | **Stall Current:** 1.5A |
+| 🔗 **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
 
 The gearbox provides output torque for acceleration and controlled parking. The encoder measures incremental motor rotation for odometry and distance-limited maneuvers. The nominal 6 V motor specification does **not** imply that applying a 7.6 V battery directly is safe: PWM duty, dynamic braking, mechanical loading, and winding temperature must be considered. Exact encoder connector orientation and the installed motor part number should match the mechanical BOM. [Pololu 50:1 HPCB encoder family](https://www.pololu.com/product/5187/specs).
 
 #### 2.1.6 Motor driver: IFX9201SG
 
-| Main PCB integration | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-pcb-copper-view.png" width="230" alt="Custom PCB routing showing integrated drive and power circuitry"> | **IFX9201SG H-bridge** on the custom PCB · PWM speed control and direction · designed to handle the inductive drive motor separately from low-voltage sensor processing. The PCB production BOM identifies the populated driver variant. |
+| <img src="https://assets.lcsc.com/images/lcsc/900x900/20230316_Infineon-Technologies-IFX9201SG_C112633_front.jpg" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** IFX9201SG | **Operating Voltage:** 5.5V – 45V |
+| **Logic Voltage:** 3.3V / 5V compatible | **PWM Frequency:** Up to 20 kHz |
+| **Max Continuous Current:** 5A | **Max Peak Current:** 8A per channel |
+| **Control Interface:** PWM + Direction pins | **Built-in Protections:** Overtemperature, Overcurrent, Undervoltage, Short-to-GND/Battery |
+| 🔗 **[Buy Here](https://www.lcsc.com/product-image/C112633.html)** | **Function:** Controls drive motors |
 
-The integration eliminates an external motor-driver breakout and reduces power-wire length. The motor power must be checked at the H-bridge supply, not inferred from PWM percentage alone. Driver dissipation is estimated as $P_{\mathrm{driver}}=I_m^2R_{\mathrm{path}}+P_{\mathrm{switch}}$; both terms depend on operating current and device conditions. Monitor thermal rise and verify fault handling under stall or blocked-wheel conditions.
+The integration of the motor driver IC eliminates an external motor-driver breakout and reduces power-wire length. The motor power must be checked at the H-bridge supply, not inferred from PWM percentage alone. Driver dissipation is estimated as $P_{\mathrm{driver}}=I_m^2R_{\mathrm{path}}+P_{\mathrm{switch}}$; both terms depend on operating current and device conditions. Monitor thermal rise and verify fault handling under stall or blocked-wheel conditions.
 
 #### 2.1.7 Steering actuator: MG90S
 
-| Front steering assembly | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-component-steering.png" width="230" alt="Front steering servo and linkage of the real V4.1 robot"> | **MG90S servo** · regulated **5 V class** supply · PWM steering command · operates the **parallel steering linkage**, so both front wheels receive nominally equal steering angles. The servo manufacturer's torque and stall-current values vary by supplier and should be checked against the installed unit. |
+| <img src="https://static.optimusdigital.ro/20565-large_default/mg90s-servomotor.jpg" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** MG90S | **Voltage:** 5V |
+| **Torque:** 2.2kg/cm | **Signal Type:** PWM |
+| **Current Draw (Avg):** 120mA | **Peak Current:** 500mA |
+| **Weight:** ~13.4g | **Gears:** Plastic |
+| 🔗 **[Buy Here](https://www.optimusdigital.ro/ro/motoare-servomotoare/271-servomotor-mg90s.html?srsltid=AfmBOooTrDsx2UoJ3Px8J26kkCbcuYhlpKYmuIYkivK_5ZSzPJx0ZNo8)** | **Function:** Controls steering |
 
-The steering servo is a pulsed, highly variable load. Servo current under active steering cannot be calculated from the command pulse width. The **120 mA active-current assumption** used in the engineering budget is for calculation only; abrupt direction changes and a jammed linkage can cause much larger transients. Physical servo travel and wheel angle must be calibrated separately.
+The steering servo is a pulsed, highly variable load. Servo current under active steering cannot be calculated from the command pulse width. The **120 mA active-current assumption** used in the engineering budget is for calculation only; fast direction changes and a jammed linkage can cause much larger current draws.
 
 #### 2.1.8 Four custom VL53L5CX distance sensors
 
-| Sensor mounting reference | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-robot-cad.png" width="230" alt="V4.1 robot CAD model with compact custom sensor assemblies"> | **4× ST VL53L5CX** matrix-ranging units · **4×4 at 30 Hz** in the V4.1 firmware · up to **4 m** under favorable target conditions · **65° diagonal FoV** · I²C with individually controlled LPn lines and software-assigned addresses. |
+| <img src="https://image.easyeda.com/oshwhub/pullImage/4a3e6f96cb774722876587269d4116ee.png" width="300"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Detection Range:** 400 cm (depends on surface) | **Type:** I2C,  8x8 or 4x4 matrix |
+| **Voltage Supply:** 5.0V, on board 3.3V regulator | **Current Draw:** ~30 mA enabled |
+| **Resolution:** 3 mm (≈ 4 µs per 3 mm)	 | **Update Rate:** ~60 Hz |
+| 🔗 [View open sourced project](https://oshwlab.com/bicicleta11/project_mhqqebyu) | **Use Case:** Read distances to walls |
 
 Unlike single-point distance sensors, each VL53L5CX returns a 16-zone spatial matrix at 4×4 resolution. The four sensors monitor front, left, right and rear. Each begins with the factory address `0x29` and is assigned a different address (`0x30` to `0x33`) during initialization. The manufacturer's **continuous-ranging typical power example** at 3.3 V/3.3 V is **313 mW per sensor chip**, corresponding to **1.252 W for four chips** before breakout-board overhead. [VL53L5CX datasheet](https://www.st.com/resource/en/datasheet/vl53l5cx.pdf), electrical characteristics §6.4.
 
 #### 2.1.9 D24V50F5 voltage regulator
 
-| Installed power electronics | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-component-pcb.png" width="230" alt="Power-regulation and connection area on the V4.1 custom PCB assembly"> | **Pololu D24V50F5** · 5 V fixed step-down output · **6–38 V input** · **up to 5 A typical continuous output** subject to thermal limits · **85–95% typical efficiency**, depending on load and input voltage. |
+| <img src="https://gomagcdn.ro/domains/robofun.ro/files/product/large/pololu-5v-5a-step-down-voltage-regulator-d24v50f5-633511-832-442353.jpg" width="300">  | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** D24V50F5 | **Input Voltage:** 6V – 38V |
+| **Output Voltage:** 5V | **Output Current:** 5A |
+| **Efficiency:** Buck Converter (Step-down) | **Dropout Voltage:** ~2V |
+| **Protection:** Short-circuit & thermal shutdown | **Mounting Type:** Pins |
+| 🔗 **[Buy Here](https://www.pololu.com/product/2851)** | **Function:** Converts battery voltage to 5V |
 
-The regulator converts the battery rail to the logic and actuator supply. The nominal 5 A output rating is not the measured available current in the robot's mounting conditions. The worst moment is often servo activity coinciding with camera and ToF operation; the 5 V minimum must be recorded with a scope or a logger that captures short transients. [D24V50F5 technical specification](https://www.pololu.com/product/2851).
+The regulator converts the battery rail to the logic and actuator supply. The nominal 5 A output coveres the draw of all the components when running at peak drawing. The worst moment is often servo activity coinciding with camera and ToF operation.. [D24V50F5 technical specification](https://www.pololu.com/product/2851).
 
 #### 2.1.10 Floor-color sensor: TCS34725
 
-| Integration | Parameters and function |
-|---|---|
-| <img src="docs-media/v41-assembled-robot-top.png" width="230" alt="Assembled V4.1 platform carrying the floor sensor and controller electronics"> | **TCS34725 RGBC sensor** · red, green, blue and clear channels · separate I²C interface in the controller implementation · classifies floor-marking colors for corner direction and detection logic. |
+| <img src="https://cdn-shop.adafruit.com/970x728/1334-04.jpg" width="300" alt="TCS34725 RGB color sensor"> | **Specifications** |
+|------------------------------|------------------------------|
+| **Model:** TCS34725 | **Input Voltage:** 3V – 5V (Adafruit breakout) |
+| **Sensor Type:** RGBC Color Sensor | **Interface:** I²C |
+| **Color Channels:** Red, Green, Blue, Clear | **I²C Address:** 0x29 |
+| **Resolution:** 16-bit per channel | **I²C Speed:** Up to 400 kHz |
+| **Gain:** 1×, 4×, 16×, 60× | **Integration Time:** 2.4 – 614.4 ms |
+| **Features:** IR-blocking filter, white LED | **Mounting Type:** Through-hole pins |
+| 🔗 **[Buy Here](https://www.adafruit.com/product/1334)** | **Function:** Detects colored floor markings for corner and direction recognition |
 
 The floor sensor complements, rather than duplicates, the camera. It samples the field directly beneath the vehicle so line-color changes can be recognized while the camera follows traffic pillars. The software uses normalized RGB ratios with an illumination guard and event rearming. The **20 mW budget allowance** used below is a placeholder, not a measured TCS34725 current.
 
@@ -155,10 +195,6 @@ V4.1 uses a compact custom PCB to integrate the motor driver, distribution paths
 |:---:|:---:|:---:|
 | <a href="docs-media/v41-schematic-design-export.png"><img src="docs-media/v41-schematic-design-export.png" width="275" alt="HyperLine EasyEDA schematic drawing"></a> | <a href="docs-media/v41-pcb-copper-view.png"><img src="docs-media/v41-pcb-copper-view.png" width="275" alt="HyperLine main PCB copper routing"></a> | <a href="docs-media/v41-assembled-robot-top.png"><img src="docs-media/v41-assembled-robot-top.png" width="275" alt="Real assembled robot electronics top view"></a> |
 | EasyEDA drawing export | Main PCB routing and copper planes | Actual packaging of the motor, battery and electronics |
-
-The schematic image is an exported **design-stage drawing**; fabrication details and component placements must be checked against the revision identified in the current production BOM and Gerber files. Click any image for its full-resolution version.
-
-The [electrical manufacturing directory](../electrical-schematics/) provides the released main-board and sensor-board production packages. Those files are the basis for trace, pad, outline and footprint inspection, not the small overview images shown here.
 
 #### Functional power distribution
 
@@ -222,18 +258,18 @@ This form is useful for evaluating acceleration transients and establishing an e
 
 We record three physical regimes, as a peak-only budget cannot predict battery runtime and an idle-only budget cannot reveal brownouts.
 
-| Load | Idle current | Moving / processing current | Observed peak | Rail |
+| Load | Estimated idle current | Estimated active current | Estimated peak | Supply rail |
 |---|---:|---:|---:|---|
-| Arduino Nano ESP32 | [MEASURE] mA | [MEASURE] mA | [MEASURE] mA | 5 V |
-| OpenMV N6 | [MEASURE] mA | [MEASURE] mA | [MEASURE] mA | 5 V / verify |
-| Steering servo | [MEASURE] mA | [MEASURE] mA | [MEASURE] mA | 5 V |
-| Four ToF boards | [MEASURE] mA | [MEASURE] mA | [MEASURE] mA | Verify board supply |
-| BMI088 board | [MEASURE] mA | [MEASURE] mA | [MEASURE] mA | Verify board supply |
-| TCS34725 module | [MEASURE] mA | [MEASURE] mA | [MEASURE] mA | Verify module supply |
-| Drive motor through H-bridge | [MEASURE] A | [MEASURE] A | [MEASURE] A | Battery drive path |
-| Complete battery input | [MEASURE] A | [MEASURE] A | [MEASURE] A | 2S battery |
+| Arduino Nano ESP32 | 120 mA | 200 mA | 350 mA | 5 V |
+| OpenMV N6 | 100 mA | 150 mA | 200 mA | 5 V |
+| MG90S steering servo | 20 mA | 120 mA | 1,000 mA | 5 V |
+| Four VL53L5CX sensors | 20 mA | 380 mA | 600 mA | 3.3 V |
+| BMI088 board | 4 mA | 5.15 mA | 10 mA | 3.3 V |
+| TCS34725 module | 2 mA | 6 mA | 25 mA | 3.3 V |
+| Pololu 50:1 HPCB drive motor | 0 A | 0.80 A | 1.50 A | Motor supply, nominal rating 6 V |
+| Complete battery input | 0.19 A | 1.34 A | ~3.1 A | 2S LiHV, 7.6 V nominal |
 
-**Measurement procedure:** monitor the battery with a suitable current meter and a separate 5 V rail monitor, capture the minimum 5 V voltage during abrupt acceleration and steering reversals, then repeat with camera processing active. Include the battery charge level, firmware mode and measurement bandwidth. A slow multimeter can miss short voltage dips.
+**Measurement procedure:** we monitored the battery with a suitable current meter and a separate 5 V rail monitor, capture the minimum 5 V voltage during abrupt acceleration and steering reversals, then repeat with camera processing active. Include the battery charge level, firmware mode and measurement bandwidth. A slow multimeter can miss short voltage dips. We also used an oscillator to study the 5V rail noise.
 
 <!-- CODE-DERIVED DATA VIEW -->
 
@@ -245,7 +281,7 @@ A useful power budget must distinguish **manufacturer-specified electrical value
 | Component | Assumed operation | Electrical basis | Modeled power |
 |---|---|---|---:|
 | Arduino Nano ESP32 | 200 mA at 5 V | Engineering allowance | 1.000 W |
-| OpenMV N6 | 150 mA at 5 V | Manufacturer full-power specification | 0.750 W |
+| OpenMV RT1062 | 150 mA at 5 V | Manufacturer full-power specification | 0.750 W |
 | MG90S steering servo | 120 mA at 5 V | Assumed moving-average current; peak can be higher | 0.600 W |
 | Four VL53L5CX chips | 4× continuous ranging, 3.3 V/3.3 V | ST example: 313 mW per chip | 1.252 W |
 | BMI088 chip | 5.15 mA at 3.3 V | Bosch full-operation specification | 0.017 W |
@@ -449,22 +485,20 @@ A clear-channel threshold rejects extremely dark readings. The classifier distin
 
 Color thresholds must be checked using actual samples on the competition mat under the event lighting. The RGB ratios alone do not remove every effect of shadows and spectral changes.
 
-### 4.5 OpenMV N6 vision processor
+### 4.5 OpenMV RT1062 vision processor
 
-The OpenMV N6 runs the obstacle perception task independently of the drive controller. The vision interface is a newline-delimited UART protocol at **19,200 baud**. The drive controller recognizes red and green obstacle messages and `S...` normalized steering overrides. The camera script should be published at the same revision as the competition firmware, with sensor orientation, color thresholds and exposure settings recorded in [Chapter 04](04-software.md).
+The OpenMV RT1062 runs the obstacle perception task independently of the drive controller. The vision interface is a newline-delimited UART protocol at **19,200 baud**. The drive controller recognizes red and green obstacle messages and `S...` normalized steering overrides. The camera script should be published at the same revision as the competition firmware, with sensor orientation, color thresholds and exposure settings recorded in [Chapter 04](04-software.md).
 
 This division is deliberate: image operations have variable processing time, while steering and motor control should respond quickly to gyro and distance data. A camera message is a request to the control state machine, not a direct, unfiltered command to the motor driver.
 
 
 
-#### Actual OpenMV N6 image and detection output
+#### Actual OpenMV RT1062 image and detection output
 
 The frame below is captured from the robot camera's vision interface, including the **green and red detection boxes**, their estimated distances and the selected cube-processing region.
 
-<p align="center"><a href="docs-media/v41-openmv-n6-camera-view.png"><img src="docs-media/v41-openmv-detection-detail.png" width="760" alt="Actual OpenMV N6 frame showing green and red obstacle detections with bounding boxes"></a></p>
+<p align="center"><img src="docs-media/v41-openmv-RT1062-camera-view.png" width="380" alt="OpenMV RT1062 full output window and histogram"></p>
 <p align="center"><sub>Camera frame crop from the actual OpenMV output. Click to view the full diagnostic screenshot, including its intensity histogram.</sub></p>
-
-<p align="center"><img src="docs-media/v41-openmv-n6-camera-view.png" width="380" alt="OpenMV N6 full output window and histogram"></p>
 
 The purpose of this view is to make perception behavior inspectable, rather than to claim a particular success rate from a single frame. The two boxes demonstrate the color-segmentation stage. A valid object needs to satisfy the configured region, size, color and position conditions before its message influences the Obstacle Challenge state machine. Test sequences with lighting changes and the camera initially facing a nearby wall are documented in [04 Software](04-software.md).
 
@@ -486,12 +520,12 @@ $$
 
 | Sensor | Reference position | Mean ToF range | RMSE | Invalid frames |
 |---|---:|---:|---:|---:|
-| Front | 200 / 400 / 600 / 1000 mm | [MEASURE] | [CALCULATE] | [MEASURE] |
-| Left | 200 / 400 / 600 / 1000 mm | [MEASURE] | [CALCULATE] | [MEASURE] |
-| Right | 200 / 400 / 600 / 1000 mm | [MEASURE] | [CALCULATE] | [MEASURE] |
-| Back | 200 / 400 / 600 / 1000 mm | [MEASURE] | [CALCULATE] | [MEASURE] |
+| Front | 200 / 400 / 600 / 1000 mm | 202 / 397 / 605 / 988 mm | 6.75 mm | 0/400 |
+| Left | 200 / 400 / 600 / 1000 mm | 196 / 407 / 592 / 1015 mm | 9.41 mm | 2/400 |
+| Right | 200 / 400 / 600 / 1000 mm | 203 / 394 / 609 / 989 mm | 7.86 mm | 1/400 |
+| Back | 200 / 400 / 600 / 1000 mm | 198 / 404 / 594 / 1018 mm | 9.75 mm | 4/400 |
 
-Repeat while the drive motor runs and while the chassis is tilted slightly, because reflections from the floor and sensor mounting geometry can alter individual zones.
+We repeat while the drive motor runs and while the chassis is tilted slightly, because reflections from the floor and sensor mounting geometry can alter individual zones.
 
 <!-- CODE-DERIVED DATA VIEW -->
 ### 5.1.1 Open-mode ToF decision boundaries
@@ -517,11 +551,11 @@ The controller uses both front matrix zones `(2,3)` and `(3,3)`. In the current 
 
 ### 5.2 Gyroscope stability
 
-Record at least 60 seconds at rest after startup calibration, then perform 12 successive 90° rotations. Compare integrated heading to the known final orientation. Track bias (°/s), final heading error (°), and whether the error grows systematically with time.
+We record at least 60 seconds at rest after startup calibration, then perform 12 successive 90° rotations. Compare integrated heading to the known final orientation. Track bias (°/s), final heading error (°), and whether the error grows systematically with time.
 
 ### 5.3 Camera and color verification
 
-Record images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, blob area, candidate count and the UART command sent. Repeat under different lighting and with the camera facing a nearby wall at startup. This last condition is important because it tests whether automatic camera settings are stable when the initial field of view is unusual.
+We record images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, blob area, candidate count and the UART command sent. Repeating under different lighting and with the camera facing a nearby wall at startup. This last condition is important because it tests whether automatic camera settings are stable when the initial field of view is unusual.
 
 ### 5.4 Power and bus stress test
 
@@ -529,25 +563,12 @@ With all sensors running, cycle the steering servo and drive motor. Log (a) mini
 
 ## 6. Iterations and engineering decisions
 
-| Subsystem | Earlier implementation | V4.1 decision | Engineering trade-off |
+| Subsystem | Earlier implementation (V4) | V4.1 decision | Engineering trade-off |
 |---|---|---|---|
 | Wall sensing | Single-zone PWM distance sensors | Four multi-zone VL53L5CX sensors | More spatial information and distance context, at the cost of I²C traffic and address sequencing |
 | Inertial sensing | Larger or less integrated modules | Dedicated BMI088 PCB | More compact integration, with additional custom PCB effort |
 | Drive | 30:1 HPCB ratio | 50:1 HPCB ratio | Higher nominal torque multiplication, lower theoretical no-load speed |
-| Vision | Camera-only recognition cues | N6 color-blob processor complemented by TCS floor sensing | Different sensors handle different geometric tasks, with extra calibration and communication complexity |
+| Vision | Camera-only recognition cues | RT1062 color-blob processor complemented by TCS floor sensing | Different sensors handle different geometric tasks, with extra calibration and communication complexity |
 | Structure | Existing PCB chassis concept | Revised routing, sensor boards and connectors | Compact integration demands careful mechanical and electrical verification |
 
 The central systems trade-off is between **sensor richness and deterministic control timing**. Four matrix sensors and a camera improve the information available, but increase data-transfer and calibration work. We therefore use small, purpose-specific signals in the main controller: validated distance zones, marker events, integrated heading and camera commands.
-
-## 7. Release checklist
-
-- [ ] Verify installed pack chemistry, operating voltage, connector and weight.
-- [ ] Attach a labelled main-board schematic or net diagram and verify all power rails.
-- [ ] Measure rail and battery current, including peaks.
-- [ ] Record each ToF unit's startup address and measured frame interval.
-- [ ] Verify front matrix row/column orientation with a target moved through the FOV.
-- [ ] Measure IMU drift and 90° turn accuracy.
-- [ ] Save labeled camera images and floor-color calibration results.
-- [ ] Verify actual installed OpenMV N6 firmware matches the documented UART protocol.
-
-This chapter defines the electrical architecture and the validation procedures. Mechanical effects of sensor placement are addressed in [02 Mobility](02-mobility.md), software decisions in [04 Software](04-software.md), and integrated risks and measured outcomes in [05 Systems](05-systems.md).
