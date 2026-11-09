@@ -101,10 +101,10 @@ The **Open Challenge** requires the robot to navigate the course autonomously fo
 | Competition task | Our approach | Detailed explanation |
 |---|---|---|
 | Follow the course and complete laps | Inertial feedback from the IMU and distance sensing with controlled steering | [Software](/docs/04-software.md) |
-| Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](/docs/04-software.md), [camera code](../src/camera.py) |
+| Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](/docs/04-software.md), [camera code](/src/camera.py) |
 | Pass obstacles and recover | Separate approach, avoidance and recovery behaviours | [Software](/docs/04-software.md) |
 | Park accurately | Slow manoeuvres with distance feedback | [Software](/docs/04-software.md) |
-| Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](/docs/05-systems.md), [Reproducibility](06-reproducibility.md) |
+| Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](/docs/05-systems.md), [Reproducibility](/docs/06-reproducibility.md) |
 
 ---
 
@@ -150,15 +150,15 @@ WRO2026_Future_Engineers/
 
 | Resource | Repository location | Use |
 |---|---|---|
-| Mechanical CAD | [3D-models](../3D-models/) | Examine or manufacture the steering, wheel and mounting components |
+| Mechanical CAD | [3D-models](/3D-models/) | Examine or manufacture the steering, wheel and mounting components |
 | Mechanical drawings | [docs/technical-drawings](/docs/technical-drawings/) | Check geometry and dimensions |
-| PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
-| Robot firmware | [src/HLR_FE](../src/HLR_FE/) | Study the controller and navigation implementation |
-| Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
-| Component tests | [src/tests](../src/tests/) | Verify individual subsystems |
-| Vehicle photographs | [v-photos](../v-photos/) | Inspect the physical build |
-| Team photograph | [t-photos](../t-photos/) | Identify the team |
-| Videos | [video](../video/) | See the robot operating |
+| PCB and manufacturing files | [electrical-schematics](/electrical-schematics/) | Inspect schematics and reproduce boards |
+| Robot firmware | [src/HLR_FE](/src/HLR_FE/) | Study the controller and navigation implementation |
+| Camera firmware | [src/camera.py](/src/camera.py) | Inspect colour-detection logic |
+| Component tests | [src/tests](/src/tests/) | Verify individual subsystems |
+| Vehicle photographs | [v-photos](/v-photos/) | Inspect the physical build |
+| Team photograph | [t-photos](/t-photos/) | Identify the team |
+| Videos | [video](/video/) | See the robot operating |
 
 ---
 
