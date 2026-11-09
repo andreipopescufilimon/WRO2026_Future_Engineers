@@ -1,0 +1,1 @@
+trial_id,date_utc,revision,firmware_commit,direction,entry_pose,slot_length_mm,slot_width_mm,commanded_forward_mm,measured_forward_mm,commanded_reverse_mm,measured_reverse_mm,front_tof_final_mm,side_tof_final_mm,final_yaw_error_deg,parking_valid,notes
