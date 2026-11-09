@@ -27,23 +27,26 @@ All paths in this chapter are relative to the repository root. The six engineeri
 | [`electrical-schematics/Main PCB/production-files/`](../electrical-schematics/Main%20PCB/production-files/) | Main PCB production files |
 | [`electrical-schematics/IMU/production-files/`](../electrical-schematics/IMU/production-files/) | IMU PCB production files |
 | [`electrical-schematics/TOF sensors/production-files/`](../electrical-schematics/TOF%20sensors/production-files/) | ToF PCB production files |
-| [`src/HLR_FE/`](../src/HLR_FE/) | Arduino Nano ESP32 program and its supporting `.ino` files |
+| [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) | V4.1 Arduino Nano ESP32 Open/Final firmware and supporting `.ino` files |
 | [`src/camera.py`](../src/camera.py) | Camera-side Python source; ensure the selected revision targets OpenMV RT1062 |
-| [`src/libraries/`](../src/libraries/) | Project-supplied library copies, where included |
+| [`src/HLR_FE_Separated/README.txt`](../src/HLR_FE_Separated/README.txt) | Firmware setup and mode-selection reference |
 | [`src/tests/`](../src/tests/) | Motor, steering, IMU, straight-driving and communication tests |
 | [`v-photos/`](../v-photos/) | Vehicle photographs from all sides |
 | [`t-photos/`](../t-photos/) | Team photograph |
 | [`video/`](../video/) | Driving and challenge recordings |
 | [`other/`](../other/) | Additional development resources |
 
-The Arduino sketch is divided into multiple tabs, which the Arduino IDE compiles together. Keep them in the same `HLR_FE` directory.
+The Arduino sketch is divided into multiple tabs, which the Arduino IDE compiles together. Keep them in the same `HLR_FE_Separated` directory.
 
 | File | Responsibility |
 | --- | --- |
-| [`HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino) | Main initialization, vehicle states, configuration and autonomous operation |
-| [`functions.ino`](../src/HLR_FE/functions.ino) | Movement sequences, distance handling and shared routines |
-| [`gyro-code.ino`](../src/HLR_FE/gyro-code.ino) | IMU acquisition and heading calculations |
-| [`motors-code.ino`](../src/HLR_FE/motors-code.ino) | Motor, encoder and steering control |
+| [`HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino) | Main initialization, V4.1 mode selection, hardware pins, startup and dispatch |
+| [`functions.ino`](../src/HLR_FE_Separated/functions.ino) | Shared movement and floor-marker routines |
+| [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) | BMI088 acquisition and heading calculations |
+| [`motors.ino`](../src/HLR_FE_Separated/motors.ino) | Motor, encoder and steering control |
+| [`tof.ino`](../src/HLR_FE_Separated/tof.ino) | Four VL53L5CX devices and address sequencing |
+| [`Open.ino`](../src/HLR_FE_Separated/Open.ino) | Open Challenge navigation and transitions |
+| [`Final.ino`](../src/HLR_FE_Separated/Final.ino) | Obstacle Challenge navigation, colored pillars and parking |
 
 The separate programs in [`src/tests/`](../src/tests/) are intended for testing one function at a time. They are not replacements for the complete driving program.
 
@@ -55,7 +58,7 @@ The following table identifies the principal assemblies used by V4.1. Exact part
 
 | Assembly | Component or source | Reproduction reference |
 | --- | --- | --- |
-| Main controller | Arduino Nano ESP32 | [Controller firmware](../src/HLR_FE/) |
+| Main controller | Arduino Nano ESP32 | [Controller firmware](../src/HLR_FE_Separated/) |
 | Vision | OpenMV RT1062 | [Camera script](../src/camera.py) |
 | Main structure | Custom PCB chassis | [Main PCB manufacturing files](../electrical-schematics/Main%20PCB/production-files/) |
 | Drive | Pololu 50:1 HPCB geared motor, V4.1 configuration | [Mechanical design](02-mobility.md) and motor mounting CAD |
@@ -64,7 +67,7 @@ The following table identifies the principal assemblies used by V4.1. Exact part
 | IMU | Custom board based on BMI088 | [IMU manufacturing files](../electrical-schematics/IMU/production-files/) |
 | Distance sensing | Custom VL53L5CX ToF sensor boards | [ToF manufacturing files](../electrical-schematics/TOF%20sensors/production-files/) |
 | Wheels | Silicone tyres and custom steel rims | [Wheel and mechanical CAD](../3D-models/) |
-| Battery | 2S LiPo power system | [Power architecture](03-power-sensors.md) |
+| Battery | GNB 2S LiHV, 7.6 V nominal, 300 mAh | [Power architecture](03-power-sensors.md) |
 | Printed supports | Camera, sensor, steering and battery mounts | [3D models](../3D-models/) |
 
 ### Mechanical CAD and assembly reference
@@ -126,36 +129,36 @@ The servo's calibrated neutral position, linkage geometry, wheelbase and other d
 
 ### 3. Prepare the software environment
 
-The Nano ESP32 and OpenMV RT1062 use different development environments.
+The Nano ESP32 and OpenMV RT1062 use different development environments. The Open and Obstacle routines use a common V4.1 hardware layer but separate round implementations.
 
 | Device | Software | Source |
 | --- | --- | --- |
-| Arduino Nano ESP32 | [Arduino IDE 2](https://www.arduino.cc/en/software), with the appropriate Nano ESP32 board package | [`src/HLR_FE/`](../src/HLR_FE/) |
+| Arduino Nano ESP32 | [Arduino IDE 2](https://www.arduino.cc/en/software), with the appropriate Nano ESP32 board package | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) |
 | OpenMV RT1062 | [OpenMV IDE](https://openmv.io/pages/download) and compatible camera firmware | [`src/camera.py`](../src/camera.py) |
 
-The following table lists the software dependencies and library versions used to build the robot firmware.
+The following table identifies the software dependencies to install for the selected V4.1 firmware. Record the exact installed versions and compiler output together with the Git commit used for the test.
 
 | Dependency | Reproduction instruction | Library version |
 | --- | --- | --- |
-| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version | v2.0.18 |
-| `ESP32Encoder` | Use the copy supplied with the project, if available, or the matching installed library | v5.0.0 |
-| `ESP32Servo` | Use the copy supplied with the project, if available, or the matching installed library | v3.2.1 |
-| `SoftwareSerial` | Verify the library supports the selected ESP32 core and matches the source | v2.0.1 |
-| `BMI088.h` | Match the exact BMI088 implementation expected by the sketch | v1.0.1 |
+| Arduino ESP32 board package | Install a version compatible with Arduino Nano ESP32 and record its version | Record installed version |
+| `ESP32Encoder` | Use the copy supplied with the project, if available, or the matching installed library | Record installed version |
+| `ESP32Servo` | Use the copy supplied with the project, if available, or the matching installed library | Record installed version |
+| `SparkFun_VL53L5CX_Library` | Install the SparkFun VL53L5CX Arduino library required by `tof.ino` | Record installed version |
+| `BMI088.h` | Install the BMI088 library that provides the API used by `gyro.ino` | Record installed version |
 
 ### 4. Flash the Arduino Nano ESP32
 
-The Arduino Nano ESP32 executes the vehicle control software. Its entry point is [`src/HLR_FE/HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino).
+The Arduino Nano ESP32 executes the vehicle control software. Its entry point is [`src/HLR_FE_Separated/HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino).
 
 1. Install Arduino IDE and the **Arduino Nano ESP32** board support package through **Boards Manager**.
 2. Connect the controller using a **USB-C data cable**.
-3. Open `src/HLR_FE/HLR_FE.ino`. Confirm that `functions.ino`, `gyro-code.ino` and `motors-code.ino` open as tabs in the same sketch.
+3. Open `src/HLR_FE_Separated/HLR_FE_Separated.ino`. Confirm that `functions.ino`, `gyro.ino`, `motors.ino`, `tof.ino`, `Open.ino` and `Final.ino` open as tabs in the same sketch.
 4. Install the dependencies needed by the selected revision. Use the supplied library copies where appropriate and check for compilation conflicts.
 5. Select **Tools → Board → Arduino Nano ESP32**, then choose the correct port in **Tools → Port**.
-6. Inspect the source configuration for challenge mode, motor direction, steering limits, encoder parameters, IMU settings, camera communication and driving speeds. These settings must match the assembled hardware.
+6. Before power-up, select the challenge at the D11/D12 inputs: **D11 HIGH and D12 LOW = Final; D12 HIGH and D11 LOW = Open**. Both HIGH or both LOW activate a safe stop. These inputs accept **3.3 V logic**. Inspect the motor direction, steering limits, encoder parameters, IMU settings, camera communication and driving speeds against the assembled hardware. The unused fan control remains at zero.
 7. Select **Verify** and resolve compile errors before uploading.
 8. Raise the driving wheels off the floor, select **Upload**, then restart the controller.
-9. Open **Serial Monitor** at **115200 baud** for the documented sketch and check that startup completes without persistent errors.
+9. Open **Serial Monitor** at **115200 baud** for controller diagnostics. The RT1062 UART link uses **19,200 baud**, which is a separate serial interface. Verify the four ToF sensor addresses at startup: front `0x30`, left `0x31`, right `0x32`, back `0x33`.
 
 ### 5. Flash the OpenMV RT1062
 
@@ -168,9 +171,9 @@ The OpenMV RT1062 performs image capture and detection of coloured obstacles. Th
 5. Verify the communication link to the Nano ESP32. Camera transmit must reach the appropriate controller receive connection; the controllers must share a common ground and use a matching baud rate and message format. Use the [Arduino/OpenMV communication test](../src/tests/arduino_openmv_serial_communication/) to check the connection independently of driving.
 6. When the script runs correctly, use **Tools → Save open script to OpenMV Cam** so that it is saved as the camera's startup program. Restart the RT1062 without the IDE and verify that detection and communication resume.
 
-Camera-to-controller pin assignments and the exact serial protocol are implementation-specific. They should be checked in the selected firmware and [chapter 04](04-software.md), rather than copied from an earlier OpenMV generation.
+On the RT1062, **P4 = UART1 TX** and **P5 = UART1 RX**, at **19,200 baud** in this release. Connect TX to the Nano UART receive and use a common GND. Both devices use 3.3 V logic. Keep the matching camera script and controller revision together. The controller also routes its camera communication over D0/D1 (Serial0).
 
-<img src="docs-media/openmv-RT1062-camera-view.png" alt="OpenMV RT1062 camera frame showing the image used for obstacle detection" width="32%">
+<img src="docs-media/v41-openmv-RT1062-camera-view.png" alt="OpenMV RT1062 camera frame showing the image used for obstacle detection" width="32%">
 
 *Figure 6.1. OpenMV RT1062 frame buffer used to verify image orientation, detection thresholds and the active region of interest.*
 
@@ -182,7 +185,7 @@ After programming both devices, disconnect programming cables as appropriate for
 
 ### Connect to the local web interface
 
-The V4.1 firmware includes a Wi-Fi access point and a browser-based interface for live measurements and configuration.
+The **Wi-Fi-enabled diagnostic firmware variant** provides a Wi-Fi access point and browser-based interface for live measurements and configuration. The supplied `HLR_FE_Separated` autonomous firmware does **not** contain this dashboard server. The dashboard steps below apply only after separately flashing and validating a Wi-Fi-capable diagnostic revision.
 
 1. Power the robot using the Wi-Fi-enabled V4.1 firmware.
 2. On a phone or computer, join the Wi-Fi network broadcast by the robot. The network name and credentials are configured in the controller firmware.
@@ -232,14 +235,14 @@ The test code is organized under [`src/tests/`](../src/tests/). Each test isolat
 | IMU | [`gyro_test`](../src/tests/gyro_test/) | Readings respond to manual rotation with the correct sign and do not show an obvious stationary fault |
 | Straight-line controller | [`move_straight_on_gyro`](../src/tests/move_straight_on_gyro/) | The correction acts against a heading deviation rather than increasing it |
 | Camera communication | [`arduino_openmv_serial_communication`](../src/tests/arduino_openmv_serial_communication/) | Nano receives valid, correctly formatted messages from the RT1062 |
-| ToF sensor checks | [Live web dashboard](#live-distance-sensor-checks) | Each installed sensor responds to a target moving through its field of view |
+| ToF sensor checks | [`tof.ino`](../src/HLR_FE_Separated/tof.ino) and optional [diagnostic dashboard](#live-distance-sensor-checks) | Each installed sensor responds to a target moving through its field of view |
 | Camera classification | [OpenMV frame buffer](#5-flash-the-openmv-RT1062) | Red and green objects in the configured ROI are identified consistently |
 
 Use raised wheels for the first drive and steering tests. The table intentionally describes observable pass/fail behavior rather than unsupported numerical accuracy claims. Numerical tolerances and repeatability results should come from measured tests in [05. Systems and testing](05-systems.md).
 
 ### 2. Bench verification with telemetry
 
-Once individual components pass, run the controller and camera together while the robot remains stationary. Use the [web interface](#connect-to-the-local-web-interface) to read ToF and IMU data, and the OpenMV IDE frame buffer to verify visual detection. Also check that the camera's serial messages reach the Nano ESP32 and that the robot initializes without unexpected motion.
+Once individual components pass, run the controller and camera together while the robot remains stationary. Use the serial diagnostic output or the [optional Wi-Fi diagnostic interface](#connect-to-the-local-web-interface), if installed, to read ToF and IMU data, and use the OpenMV IDE frame buffer to verify visual detection. Also check that the camera's serial messages reach the Nano ESP32 and that the robot initializes without unexpected motion.
 
 A useful bench sequence is to rotate the robot by hand, move targets past the distance sensors and show red and green pillars to the camera. If the physical input changes but the reported state does not, investigate the relevant subsystem before changing the autonomous strategy.
 
@@ -258,7 +261,7 @@ For meaningful comparisons, record the same field layout, battery condition, fir
 - [ ] Camera-to-controller serial communication is working.
 - [ ] Drive direction and steering neutral/limits are correct.
 - [ ] IMU heading direction and ToF readings respond to known physical inputs.
-- [ ] Robot Wi-Fi network appears and `http://192.168.4.1` loads the live dashboard.
+- [ ] **Optional diagnostic build only:** robot Wi-Fi network appears and `http://192.168.4.1` loads the live dashboard.
 - [ ] Driving settings and the project revision are recorded for the test.
 - [ ] Autonomous behavior has been checked on the field in both challenge configurations.
 
@@ -281,4 +284,4 @@ To make both versions of our robot reproducible, the following table identifies 
 | **V4** | [View V4 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/7e1b0b5b707511563fd0250af08e68c7288d2966) | National competition configuration, including the original drivetrain, distance sensors and wheel assemblies |
 | **V4.1** | [View V4.1 commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/fee1a8440b3251d7454f14fb1ae3a48e173f498c) | Updated configuration with VL53L5CX ToF sensors, a 50:1 geared motor, steel wheel rims and revised software |
 
-These commits provide reference points for reproducing each robot version. CAD models, PCB files and software should be taken from the same corresponding revision to avoid compatibility issues.
+These commits provide reference points for the mechanical and electronics revisions. The V4.1 driving program is the separated `src/HLR_FE_Separated/` sketch documented above. The earlier `src/HLR_FE/` main sketch uses a different sensor and round-selection architecture, so it must not be used as the V4.1 reproduction entry point. The assembled hardware and selected firmware must be verified together before the release is treated as tested.
