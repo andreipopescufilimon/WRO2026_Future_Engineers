@@ -1,0 +1,31 @@
+digraph G {
+graph [bgcolor="white",fontname="DejaVu Sans",ranksep="0.85",nodesep="0.50",pad="0.4",splines="ortho",dpi="160"];
+node [shape="box",style="rounded,filled",fillcolor="#F2F6FB",color="#9CB2CB",penwidth="1.6",fontname="DejaVu Sans",fontsize="13",margin="0.20,0.15"];
+edge [color="#58738F",penwidth="2.0",arrowsize="0.8",fontname="DejaVu Sans",fontsize="11"];
+
+rankdir=LR;
+exit [label="Un-park
+side ToF + gyro turn",fillcolor="#DDECFB"];
+pid [label="PID
+heading hold",fillcolor="#DFF5E8"];
+follow [label="FOLLOW_CUBE
+S... camera steering
+350 ms timeout",fillcolor="#FFF3D6"];
+avoid [label="AVOID_CUBE
+RED → L maneuver
+GREEN → R maneuver",fillcolor="#FFE8E2"];
+after [label="AFTER_CUBE
+recover heading
+and distance",fillcolor="#FFF3D6"];
+park [label="PARK
+13th floor marker
+ToF + gyro + encoder",fillcolor="#DDECFB"];
+exit->pid;
+pid->follow [label="S... command"];
+follow->pid [label="timeout"];
+pid->avoid [label="RED / GREEN"];
+follow->avoid [label="close obstacle"];
+avoid->after [label="maneuver done"];
+after->pid [label="recovered"];
+pid->park [label="13th marker"];
+}

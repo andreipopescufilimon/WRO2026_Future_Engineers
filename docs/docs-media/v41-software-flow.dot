@@ -1,0 +1,29 @@
+digraph G {
+graph [bgcolor="white",fontname="DejaVu Sans",ranksep="0.85",nodesep="0.50",pad="0.4",splines="ortho",dpi="160"];
+node [shape="box",style="rounded,filled",fillcolor="#F2F6FB",color="#9CB2CB",penwidth="1.6",fontname="DejaVu Sans",fontsize="13",margin="0.20,0.15"];
+edge [color="#58738F",penwidth="2.0",arrowsize="0.8",fontname="DejaVu Sans",fontsize="11"];
+
+rankdir=TB;
+start [label="Boot + mode inputs D11 / D12",fillcolor="#DDECFB"];
+valid [label="Exactly one input HIGH?",shape="diamond",fillcolor="#FFF3D6"];
+stop [label="Error LED / do not start",fillcolor="#FFE8E2"];
+init [label="Initialize motor, servo, encoder
+10 s gyro bias + ToF addresses
+TCS + UART 19200"];
+button [label="Wait for physical Start D10"];
+mode [label="Latched mode",shape="diamond",fillcolor="#FFF3D6"];
+open [label="Open.ino
+open_execute()",fillcolor="#DFF5E8"];
+final [label="Final.ino
+final_execute()",fillcolor="#DFF5E8"];
+shared [label="Shared helpers:
+tof, gyro, motors, functions",fillcolor="#EEF1FC"];
+start->valid;
+valid->stop [label="no"];
+valid->init [label="yes"];
+init->button->mode;
+mode->open [label="D12"];
+mode->final [label="D11"];
+open->shared [style="dashed",constraint=false];
+final->shared [style="dashed",constraint=false];
+}

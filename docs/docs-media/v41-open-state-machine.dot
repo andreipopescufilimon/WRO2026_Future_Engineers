@@ -1,0 +1,31 @@
+digraph G {
+graph [bgcolor="white",fontname="DejaVu Sans",ranksep="0.85",nodesep="0.50",pad="0.4",splines="ortho",dpi="160"];
+node [shape="box",style="rounded,filled",fillcolor="#F2F6FB",color="#9CB2CB",penwidth="1.6",fontname="DejaVu Sans",fontsize="13",margin="0.20,0.15"];
+edge [color="#58738F",penwidth="2.0",arrowsize="0.8",fontname="DejaVu Sans",fontsize="11"];
+
+rankdir=LR;
+start [label="Start / find direction
+TCS blue or red-orange",fillcolor="#DDECFB"];
+straight [label="Straight PID
+80 PWM first corner
+then 250 PWM",fillcolor="#DFF5E8"];
+slow [label="Front ToF < 800 mm
+40% normal duty"];
+turn [label="Both front cells
+< 600 mm
+90° gyro target
+80 PWM",fillcolor="#FFF3D6"];
+rearm [label="Wait until both cells
+>= 800 mm
+to re-arm"];
+count [label="Count reached 12?",shape=diamond,fillcolor="#FFF3D6"];
+finish [label="Finish 1200 ms
+80 PWM, then stop",fillcolor="#DDECFB"];
+start->straight;
+straight->slow [label="valid near wall"];
+slow->turn [label="two-cell trigger"];
+turn->count;
+count->finish [label="yes"];
+count->rearm [label="no"];
+rearm->straight [label="clear"];
+}
