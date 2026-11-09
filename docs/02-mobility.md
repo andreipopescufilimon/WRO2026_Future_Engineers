@@ -1,566 +1,933 @@
-# 02 | Mobility and mechanical design
+# 02 | Mobility and Mechanical Design
 
-> **HyperLine Robotics · WRO 2026 Future Engineers · V4.1**  
-> This chapter describes the current front-steered, rear-driven vehicle, distinguishes historical V4 components, derives its mechanical design equations and defines repeatable experiments for validating the design. **A calculated value is not presented as a measured result.** Parameters not recoverable from the released drawings or firmware are explicitly marked **MEASURE**.
+<div align="center">
 
-| Chapter | Contents |
-|---|---|
-| [01 · Overview](01-overview.md) | Vehicle, competition tasks, versions and results |
-| **02 · Mobility** | Structure, drivetrain, steering, mechanics, calculations and tests |
-| [03 · Power and sensors](03-power-sensors.md) | Power electronics, wiring, sensing and calibration |
-| [04 · Software](04-software.md) | Navigation, control and obstacle logic |
-| [05 · Systems](05-systems.md) | Iterations, evidence, reliability and integration |
-| [06 · Reproducibility](06-reproducibility.md) | Rebuilding, flashing and checking the vehicle |
+[**01 Overview**](01-overview.md) &nbsp;·&nbsp; **02 Mobility & Mechanical Design** &nbsp;·&nbsp; [**03 Power & Sensors**](03-power-sensors.md) &nbsp;·&nbsp; [**04 Software**](04-software.md) &nbsp;·&nbsp; [**05 Systems**](05-systems.md) &nbsp;·&nbsp; [**06 Reproducibility**](06-reproducibility.md)
+
+</div>
 
 ---
 
-## 1. Mechanical architecture and design requirements
 
-Our vehicle uses a **custom printed circuit board as the main chassis**, one **geared DC motor driving a rear mechanical differential**, **two driven rear wheels**, and **two front wheels steered by one servo and a parallel linkage**. The four wheels use silicone contact surfaces. The V4.1 drivetrain uses the **Pololu 50:1 HPCB gearmotor** stated in [the overview](01-overview.md#national-version-compared-with-the-current-version); the **30:1** motor mentioned in older documentation belongs to **V4**. The fan/downforce assembly shown in older CAD is **not installed on V4.1**.
+The **V4.1** vehicle is our current WRO Future Engineers design. We developed its mechanical layout to combine four-wheel stability, parallel front-axle steering and rear-wheel drive in a compact chassis. This chapter presents the design choices, mechanical model, CAD-derived geometry, calculations, and the tests used to assess the vehicle. V4 is mentioned only where its comparison helps explain a V4.1 improvement.
 
-![V4.1 vehicle CAD](docs-media/robot-v4-1-cad.png)
-
-*Figure 2.1. V4.1 CAD assembly. Always cross-check this rendering against photographs of the assembled revision.*
-
-### 1.1 Requirements and the choices they drove
-
-| Requirement / constraint | Mechanical response | Verification |
-|---|---|---|
-| WRO vehicle envelope: maximum **300 × 200 × 300 mm** | Compact PCB platform and short wheelbase | Measure full outside envelope, including camera and sensors |
-| Autonomous, repeatable turning | Common front steering linkage, servo neutral calibration, rigid hub mounts | Wheel-angle and circular-path tests |
-| Propulsion and cornering on smooth track | Rear differential and silicone tires | Wheel-slip and turn tests |
-| Controlled low-speed parking | Geared motor, encoder feedback and low-speed steering | Repeated stopping and parking trials |
-| Low mass and limited assembly space | PCB chassis doubles as electrical and structural substrate | Weigh parts and measure center of mass |
-| Rebuildability | STEP models, dimensioned part drawings, M2-mounted subassemblies | Assembly and service tests |
-
-**Why front steering instead of differential steering?** The vehicle follows car-like trajectories while the mechanical differential permits the rear wheels to roll at different speeds during corners. This avoids relying on two independently commanded drive wheels to create yaw. A parallel linkage is simple and compact but does **not** produce ideal Ackermann steering, so its geometric limitations and tire scrub must be acknowledged.
-
-### 1.2 Symbols, reference frame and units
-
-The rear-axle center is the origin. The **+x** axis points forward, **+y** points to the vehicle's left, and **+z** points up. Positive yaw and steering angle turn left. Use SI units for calculations; CAD drawings may be in millimeters.
-
-| Symbol | Definition | Status for V4.1 |
-|---|---|---|
-| $L$ | Rear-to-front axle wheelbase | approximately **65 mm**, from earlier README; **MEASURE** |
-| $t_f,t_r$ | Front and rear track width, tire center to tire center | **MEASURE** |
-| $D$ | Loaded effective rolling diameter of driven wheels | **29 mm** firmware setting, **not yet measured** |
-| $r=D/2$ | Effective rolling radius | 14.5 mm for firmware nominal diameter |
-| $m$ | Robot mass with competition battery | approximately **0.200 kg** in older README; **REWEIGH V4.1** |
-| $h$ | Center-of-mass height above ground | **MEASURE** |
-| $x_G,y_G$ | CoM coordinates from rear axle and centerline | **MEASURE** |
-| $\delta$ | Equivalent front road-wheel steering angle | **MEASURE**, not servo command angle |
-| $i_g$ | Internal motor gearbox reduction, motor revs per output rev | **50:1 stated for V4.1**; confirm SKU |
-| $i_e$ | External gear reduction, motor-gearbox output revs per differential-input rev | **MEASURE TOOTH COUNTS** |
-| $\eta$ | Combined transmission efficiency | **MEASURE / ESTIMATE RANGE** |
-| $\mu$ | Effective tire-floor friction coefficient | **MEASURE** on actual competition mat |
-| $v,a_x,a_y$ | Longitudinal speed, acceleration and lateral acceleration | Calculated or measured as labeled |
-
-**Measurement convention:** Record loaded wheel diameter, battery state, track surface, firmware revision and measurement uncertainty. Changing any of these can change the result.
-
-## 2. Chassis, mechanical load path and mounting
-
-### 2.1 Structural concept
-
-Instead of a separate plate plus a separate electronics board, the custom PCB provides both mechanical mounting references and electrical routing. The drivetrain, steering servo, battery, camera and ToF mounts fasten to supports that reference PCB holes. The rear axle and differential are supported by a bearing-bearing assembly and printed holders. The front wheels rotate on bearings in the steering hubs.
-
-![Drivetrain assembly](docs-media/drivetrain.png)
-
-*Figure 2.2. Rear transmission and support arrangement.*
-
-The principal load paths are:
-
-1. **Vertical:** floor → silicone tire → wheel/rim → bearing or axle → printed mount → PCB chassis → battery/electronics masses.
-2. **Propulsion:** motor shaft → motor gear → differential input → differential side outputs → axle → rear tires → floor.
-3. **Steering:** servo output shaft → horn/linkage → left and right knuckles → front contact patches → reaction load through the knuckle pivots into the chassis.
-4. **Braking:** rear contact patches → wheel/axle → drivetrain and chassis; front/rear normal-force transfer changes available grip.
-
-PCB material is mechanically convenient, but its stiffness and fastener-hole integrity must be verified. It is **not** assumed equivalent to a metal chassis. Avoid locating high bending loads at unsupported narrow PCB sections or relying on solder joints as structural fasteners.
-
-### 2.2 Bending and deflection calculations
-
-For a simplified chassis section modeled as a simply supported beam of span $\ell$ carrying a central force $F$, the peak bending moment and deflection are
-
-$$M_{\max}=\frac{F\ell}{4},\qquad \Delta_{\max}=\frac{F\ell^3}{48EI}.$$
-
-For a rectangular section of width $b$ and thickness $t$, $I=bt^3/12$, giving
-
-$$\Delta_{\max}=\frac{F\ell^3}{4Ebt^3},\qquad \sigma_{\max}=\frac{M_{\max}(t/2)}{I}=\frac{6M_{\max}}{bt^2}.$$
-
-These are **screening equations**, not a validated PCB structural model. Real PCB geometry includes cut-outs, mounting holes, copper layers, different elastic properties and concentrated loads. Use the actual support geometry and PCB laminate specification for quantitative predictions. A particularly useful result is that doubling local thickness, at the same width, reduces ideal bending deflection by a factor of eight.
-
-**Validation:** Mount the assembled vehicle at its normal support points and apply a known small load at the camera or battery support. Record deflection and any permanent displacement. Check steering alignment again afterwards.
-
-### 2.3 CAD and manufactured parts
-
-| Part | V4.1 source | Function / inspection |
-|---|---|---|
-| Motor and drivetrain support | [`drive-system-mount.step`](../3D-models/drive-system-mount.step) | Motor location, gear alignment, bearing support |
-| Battery mount | [`battery-mount.step`](../3D-models/battery-mount.step) | Keeps battery position repeatable |
-| Front steering and camera support | [`steering%20and%20camera%20mounting.step`](../3D-models/steering%20and%20camera%20mounting.step) | Servo and camera references |
-| Left and right steering hubs | [`steering-hub-left.step`](../3D-models/steering-hub-left.step), [`steering-right.step`](../3D-models/steering-right.step) | Steering pivots and wheel bearings |
-| Steering tie bar | [`steering%20bar.step`](../3D-models/steering%20bar.step) | Couples the two front wheel angles |
-| Wheel with silicone | [`wheel%20with%20silicone.step`](../3D-models/wheel%20with%20silicone.step) | Contact geometry and hub design |
-
-See also [technical drawings](technical-drawings/) and [vehicle photographs](../v-photos/). Historical STL models are stored separately in [`old-3D-models/`](../3D-models/old-3D-models/) and should not be mixed with V4.1 parts without checking fit.
-
-<img src="technical-drawings/motor-and-wheel-hub(main-drive-hub)_technical-drawing.png" width="49%" alt="Drive mount drawing" /> <img src="technical-drawings/battery-support_technical-drawing.png" width="49%" alt="Battery support drawing" />
-
-*Figure 2.3. Manufacturing drawings retained in the repository. Check revision and dimensions against V4.1 STEP models before machining.*
-
-### 2.4 Dimensional tolerances and stack-up
-
-A nominal fit does not guarantee a functional assembly after printing. If several tolerances add in the same direction, a worst-case dimensional stack is
-
-$$T_{\mathrm{worst}}=\sum_{k=1}^{n}|T_k|.$$
-
-For independent, approximately centered variations, an approximate statistical stack is
-
-$$T_{\mathrm{RSS}}=\sqrt{\sum_{k=1}^{n} T_k^2}.$$
-
-The RSS expression is **not** a guaranteed maximum and requires justification from the actual manufacturing process. For the motor pinion, differential gear and rear bearings, check shaft parallelism, center distance, end play and runout after assembly. For each bearing seat, document printed-hole diameter and measured bearing outside diameter rather than assuming nominal CAD values are achieved.
-
-## 3. Mass distribution, center of gravity and static stability
-
-### 3.1 Center of mass from the bill of materials
-
-For component $j$, measure mass $m_j$ and center coordinates $(x_j,y_j,z_j)$. The assembled vehicle center of mass is
-
-$$m=\sum_j m_j,\quad x_G=\frac{\sum_jm_jx_j}{m},\quad y_G=\frac{\sum_jm_jy_j}{m},\quad h=z_G=\frac{\sum_jm_jz_j}{m}.$$
-
-The battery, steel wheel rims and camera mount should be entered individually because moving them shifts the center of mass. Do not claim that heavier rims automatically increase the friction coefficient: added mass can change load distribution and tire deformation, but the ideal Coulomb limit scales with normal load and requires measurement of the actual tire-floor behavior.
-
-### 3.2 Axle-load measurement
-
-Place the front and rear wheels on separate scales of equal height. If front and rear indicated masses are $m_f$ and $m_r$,
-
-$$m=m_f+m_r,\quad N_f=m_fg,\quad N_r=m_rg,\quad x_G=L\frac{m_f}{m_f+m_r}.$$
-
-Here $x_G$ is the distance **forward from the rear axle**, since front-axle normal force acts at $x=L$. A front axle carrying 55% of total weight corresponds to $x_G=0.55L$. That is a **general example**, not a measurement of HyperLine.
-
-### 3.3 Fore-aft load transfer during acceleration and braking
-
-For a flat ground surface, negligible aerodynamic force and small pitch acceleration,
-
-$$N_f=mg\frac{x_G}{L}-ma_x\frac{h}{L},\qquad N_r=mg\left(1-\frac{x_G}{L}\right)+ma_x\frac{h}{L}.$$
-
-Positive $a_x$ is forward acceleration. During acceleration the rear normal force increases; during braking ($a_x<0$) it decreases. The formula highlights why the battery's vertical location matters even if its fore-aft position is unchanged.
-
-### 3.4 Lateral load transfer and rollover check
-
-For track width $t$ and center-of-mass height $h$, the approximate difference between outer and inner wheel-side normal forces under steady cornering is
-
-$$N_{\mathrm{outer}}-N_{\mathrm{inner}}\approx\frac{2ma_yh}{t},$$
-
-assuming a simple rigid vehicle and approximately symmetric left/right load. At the point where the inner side unloads, a simple static rollover threshold is
-
-$$a_{y,\mathrm{tip}}\approx g\frac{t}{2h}.$$
-
-This is an idealized rollover boundary, **not** a tested operating limit. Tire slip, steering dynamics and suspension or chassis compliance often limit cornering earlier.
-
-### 3.5 Wheel-rim inertia and the V4 → V4.1 material change
-
-For a thin ring with mass $m_w$ and radius $r$, $J_w\approx m_wr^2$. For a solid disk of the same mass and radius, $J_w=\tfrac12m_wr^2$. Real steel rims lie between shapes depending on their geometry, so calculate their moment of inertia from the CAD mass properties where possible.
-
-Increasing wheel-rim mass has two competing effects:
-
-- It can alter tire loading, tire deformation and the robot's center of gravity.
-- It **increases rotational inertia**, meaning the motor must deliver more torque to achieve the same wheel angular acceleration.
-
-A first-order effective accelerating mass for four rotating wheels is
-
-$$m_{\mathrm{effective}}=m+\sum_{k=1}^{4}\frac{J_{w,k}}{r_k^2}+\frac{J_{\mathrm{drive,eq}}}{r^2}.$$
-
-The final term represents drivetrain inertia reflected to wheel speed. This expression is useful when comparing the printed V4 rims and steel V4.1 rims. **A measured grip improvement has not been established solely by the rim material change.**
-
-## 4. Rear drivetrain and mechanical differential
-
-### 4.1 Transmission layout
-
-The drive uses one DC gearmotor feeding a printed external gear and then the mechanical differential. The differential permits the left and right rear wheels to have different rotational speeds while remaining connected to a single drive motor.
-
-![Differential assembly](docs-media/differential.jpeg)
-
-*Figure 2.4. Mechanical rear differential and axle system.*
-
-### 4.2 Gear ratios
-
-Let $z_p$ be the tooth count of the drive pinion and $z_d$ the driven differential-input gear. For an external gear pair,
-
-$$i_e=\frac{z_d}{z_p},\qquad \omega_{\mathrm{diff}}=\omega_{\mathrm{gearbox}}\frac{z_p}{z_d}.$$
-
-The complete reduction between the bare motor shaft and differential input is
-
-$$i_{\mathrm{total}}=i_gi_e.$$
-
-**Current evidence:** Chapter 01 identifies the V4.1 motor as 50:1, but the released Markdown does not contain the verified pinion/differential tooth counts. Enter the actual teeth from the physical gears or CAD and confirm the exact manufacturer gearbox ratio before publishing a numerical total ratio.
-
-| Revision | Gearmotor stated in repository | External ratio | Combined ratio |
-|---|---|---|---|
-| V4 | 30:1 HPCB | $z_d/z_p$ **MEASURE** | $30(z_d/z_p)$ nominal |
-| V4.1 | 50:1 HPCB | $z_d/z_p$ **MEASURE** | $50(z_d/z_p)$ nominal |
-
-The nominal change from 30 to 50 at an unchanged external stage yields
-
-$$\frac{T_{\mathrm{V4.1}}}{T_{\mathrm{V4}}}\approx\frac{50}{30}=1.667,\qquad\frac{\omega_{\mathrm{V4.1}}}{\omega_{\mathrm{V4}}}\approx\frac{30}{50}=0.600.$$
-
-**These are gear-ratio-only comparisons, not measured torque or speed improvements.** They assume the same motor core, applied voltage, current capability, transmission efficiency and external gearing. Motor winding, vendor SKU, internal losses and tire load can change the actual result.
-
-### 4.3 Output torque and traction force
-
-If the motor shaft torque is $T_m$ and combined transmission efficiency is $\eta$,
-
-$$T_{\mathrm{diff,in}}\approx T_m i_{\mathrm{total}}\eta.$$
-
-For a straight, symmetric run, assuming equal left/right torque sharing and ignoring differential losses,
-
-$$T_L\approx T_R\approx\frac{T_{\mathrm{diff,in}}}{2},\qquad F_x\approx\frac{T_L+T_R}{r}=\frac{T_{\mathrm{diff,in}}}{r}.$$
-
-**Important:** Manufacturer stall torque is not a continuous-use output rating. Design around a measured operating current and acceleration, thermal behavior and motor-driver capability. The actual usable force is limited by tire friction:
-
-$$F_{x,\mathrm{usable}}\le\min\!\left(\frac{T_{\mathrm{diff,in}}}{r},\,\mu_xN_{\mathrm{driven}}\right).$$
-
-An open differential can also be traction-limited by the lower-grip driven wheel. For ideal equal wheel torque and individual limits $F_{L,\max}$ and $F_{R,\max}$, the axle's combined available drive force is approximately bounded by $2\min(F_{L,\max},F_{R,\max})$ before other losses.
-
-### 4.4 Theoretical speed
-
-If gearmotor **output-shaft** speed is $n_g$ rpm, the ideal differential input speed and ground speed on a straight are
-
-$$n_{\mathrm{wheel}}=\frac{n_g}{i_e},\qquad v=\frac{\pi D\,n_g}{60i_e}.$$
-
-With the firmware nominal $D=0.029\ \mathrm{m}$,
-
-$$v=0.0015184\,\frac{n_g}{i_e}\ \mathrm{m/s}.$$
-
-**Worked example, not the measured motor specification:** If $n_g=600\ \mathrm{rpm}$ and $i_e=1.0$, then $v=0.911\ \mathrm{m/s}$. For $i_e=2.0$ under the same hypothetical conditions, $v=0.456\ \mathrm{m/s}$. Loaded speed will normally differ from no-load speed, and the tire's rolling diameter must be calibrated.
-
-### 4.5 Acceleration model
-
-Ignoring aerodynamic drag at low speed and taking rolling resistance coefficient $C_{rr}$,
-
-$$m_{\mathrm{effective}}a_x=F_{\mathrm{drive}}-C_{rr}mg-F_{\mathrm{other}},$$
-
-where $F_{\mathrm{other}}$ includes bearing and transmission drag or other measured resistances. In a simplified constant-acceleration model,
-
-$$v^2=v_0^2+2a_xs,\qquad t=\frac{v-v_0}{a_x}.$$
-
-These equations support the decision to use more torque for acceleration and parking rather than maximizing no-load speed. Validation should use encoder distance over time or video tracking; no measured V4/V4.1 acceleration comparison is present in the supplied documentation.
-
-### 4.6 Open differential behavior in a turn
-
-If differential carrier angular speed is $\omega_c$ and left/right rear axle speeds are $\omega_L$ and $\omega_R$, an ideal symmetric bevel differential obeys
-
-$$\omega_L+\omega_R=2\omega_c.$$
-
-For a vehicle turning with centerline radius $R$ and rear track $t_r$, rolling without slip requires
-
-$$R_{\mathrm{inner}}=R-\frac{t_r}{2},\quad R_{\mathrm{outer}}=R+\frac{t_r}{2},$$
-
-$$\frac{\omega_{\mathrm{outer}}}{\omega_{\mathrm{inner}}}=\frac{R+t_r/2}{R-t_r/2}.$$
-
-In an ideal steady turn the inner wheel rotates more slowly, avoiding the tire scrub that would occur with a fully locked rear axle. At small radii, bearing friction, gear backlash and limited traction can make the ideal model inaccurate.
-
-### 4.7 Bearings, backlash and wear
-
-The rear axle is supported on bearings seated in the printed supports. Check shaft runout, axial retention and gear alignment. Backlash near the differential input is important because a reversal or brake pulse must first take up the free play before generating opposite wheel torque.
-
-Measure output backlash by fixing the motor-side gear and gently rotating one wheel through its free angle, without applying enough force to deform the tire. Record total angular play $\beta$ in degrees. Its ideal equivalent circumferential displacement is
-
-$$s_\beta=r\,\beta_{\mathrm{rad}}=r\frac{\pi\beta_{\mathrm{deg}}}{180}.$$
-
-For illustration, $r=14.5\ \mathrm{mm}$ and $\beta=2^\circ$ correspond to $s_\beta\approx0.506\ \mathrm{mm}$. This is a *sensitivity example*, not a measurement.
-
-## 5. Front steering linkage and kinematics
-
-### 5.1 Mechanical arrangement
-
-The MG90S steering servo moves two front knuckles through a **parallel steering linkage**. The steering hubs use small bearings and M2 pivot screws. This compact configuration favors simpler manufacturing and consistent synchronized movement.
-
-<img src="docs-media/steering.gif" width="65%" alt="Front steering linkage animation" />
-
-*Figure 2.5. Servo-driven front steering. The servo's commanded angle is not automatically the same as the actual wheel angle.*
-
-<img src="technical-drawings/steering-and-camera-mount-hub_technical-drawing.png" width="49%" alt="Steering and camera support drawing" /> <img src="technical-drawings/steering-bar_technical-drawing.png" width="49%" alt="Steering bar drawing" />
-
-*Figure 2.6. Steering support and connecting bar.*
-
-### 5.2 Servo position versus wheel angle
-
-The released `motors-code.ino` maps normalized steering control $u\in[-1,1]$ to servo commands between `STEERING_LEFT = 135` and `STEERING_RIGHT = 35` (with a separate neutral constant of `85`) in the supplied main sketch. These are **servo command degrees**, **not a measured ±50° road-wheel range**. The original chapter's claim of 80° in each direction is unverified.
-
-Define $\theta_s(u)$ as the servo command and $\delta(u)$ as measured road-wheel angle:
-
-$$\theta_s(u)=\theta_{s,L}+\frac{u+1}{2}(\theta_{s,R}-\theta_{s,L}),$$
-
-$$\delta=f(\theta_s).$$
-
-Here $f$ depends on servo-arm length, tie-bar length, knuckle geometry, link offsets and backlash. It is not generally linear. For a quick first approximation near neutral,
-
-$$\delta\approx k_s(\theta_s-\theta_{s,0}),\quad k_s=\left.\frac{\mathrm d\delta}{\mathrm d\theta_s}\right|_{\theta_{s,0}}.$$
-
-Measure both left and right wheel angles independently at at least five servo commands and use a measured lookup table if precision is needed. **Do not use an assumed servo-to-wheel 1:1 angle mapping in turning-radius calculations.**
-
-### 5.3 Ideal bicycle-model turning geometry
-
-If both front wheels are represented by a single equivalent steer angle $\delta$ and tire sideslip is neglected,
-
-$$\kappa=\frac{1}{R}=\frac{\tan\delta}{L},\qquad R=\frac{L}{\tan\delta},$$
-
-$$\dot\psi=\frac{v}{L}\tan\delta=v\kappa,\quad a_y=v\dot\psi=\frac{v^2}{R}=v^2|\kappa|.$$
-
-$R$ is the path radius of the **rear-axle midpoint** in the bicycle approximation; it is not the smallest outside clearance radius of the robot body. This distinction matters for obstacle and parking trajectories.
-
-**Worked geometry sensitivity example, using *unverified* $L=65$ mm:**
-
-| Equivalent wheel angle | Predicted $R=L/\tan\delta$ | Meaning |
-|---:|---:|---|
-| $10^\circ$ | 368.6 mm | Gentle curve |
-| $20^\circ$ | 178.6 mm | Moderate turn |
-| $30^\circ$ | 112.6 mm | Tight turn |
-| $40^\circ$ | 77.5 mm | Very tight, where ideal model can be inaccurate |
-
-These values are **calculated**, not measured. Replace the wheelbase and angles with actual measurements, then validate left and right circle trajectories. At very large angles, linkage stops, tire scrub and camera/PCB clearance may dominate.
-
-### 5.4 Ackermann comparison and parallel-linkage scrub
-
-For ideal Ackermann steering, front inner and outer wheel angles satisfy
-
-$$\tan\delta_{\mathrm{in}}=\frac{L}{R-t_f/2},\qquad\tan\delta_{\mathrm{out}}=\frac{L}{R+t_f/2},$$
-
-so
-
-$$\cot\delta_{\mathrm{out}}-\cot\delta_{\mathrm{in}}=\frac{t_f}{L}.$$
-
-The inner wheel must turn more sharply. Our simpler parallel linkage seeks approximately equal wheel angles, $\delta_L\approx\delta_R$, so exact Ackermann geometry is **not** achieved. That can introduce scrub at small radii; the effect must be assessed by measuring rolling resistance, tire marks (if any) and turn-radius repeatability. It should not be described as equivalent to Ackermann.
-
-**Design trade-off:** The chosen steering layout reduces mechanism complexity and weight, while accepting additional tire scrub and a less accurate large-angle bicycle-model prediction. A more complex Ackermann linkage would be justified only if measured cornering reliability or energy use showed a meaningful improvement.
-
-### 5.5 Dynamic steering and yaw response
-
-For a constant speed $v$ and small perturbations about an operating point $\delta_0$,
-
-$$\frac{\partial\dot\psi}{\partial\delta}=\frac{v}{L}\sec^2\delta_0.$$
-
-This explains why a given steering-angle change causes a much larger yaw-rate change near a large steering deflection than near zero. Control gain, mechanical backlash and steering rate therefore affect high-angle turns strongly.
-
-The servo also has finite response time and load-dependent speed. For a measured wheel-angle step from $\delta_1$ to $\delta_2$ taking time $\Delta t$,
-
-$$\overline{\dot\delta}=\frac{\delta_2-\delta_1}{\Delta t}.$$
-
-Measure steering response with the robot on the ground and with the front axle lightly lifted. The difference helps separate servo speed from tire-scrub loading.
-
-### 5.6 Turning footprint and clearance
-
-A robot may have a smaller rear-axle turning radius than its outer camera or wheel corner. For any vehicle point at body coordinates $(x,y)$ relative to the rear-axle midpoint, its ideal turn radius is
-
-$$R_p=\sqrt{x^2+(R-y)^2}$$
-
-for a left turn about an instantaneous center at $(0,R)$. Take the maximum over physical outer points to obtain an approximate swept clearance radius:
-
-$$R_{\mathrm{outer,clear}}=\max_{p\in\mathrm{vehicle}}R_p.$$
-
-Use actual body outline, tire width and camera/ToF projections. This is more useful for wall clearance and parking than quoting a single bicycle-model radius.
-
-## 6. Tires, traction and cornering limits
-
-### 6.1 Silicone contact surface and steel rims
-
-V4 used lighter printed rims; V4.1 moved to heavier custom **45# steel rims** with silicone tire surfaces, while retaining the same general rear differential and steering concept. Silicone was chosen for repeatable contact on the smooth WRO field. The actual friction coefficient depends on compound, contamination, temperature, floor finish and normal load.
-
-<img src="technical-drawings/back-wheel_technical-drawing.png" width="49%" alt="Rear wheel drawing" /> <img src="technical-drawings/front-wheel_technical-drawing.png" width="49%" alt="Front wheel drawing" />
-
-*Figure 2.7. Wheel drawings. Tire outside diameter must be verified on the final loaded wheel.*
-
-### 6.2 Friction circle and turning speed
-
-For a simple isotropic tire approximation, the resultant tire force is bounded by
-
-$$\sqrt{F_x^2+F_y^2}\le\mu N.$$
-
-If longitudinal acceleration is small and tire adhesion is the dominant limit, the lateral acceleration bound is
-
-$$a_{y,\max}\approx\mu_yg.$$
-
-Therefore the approximate steady-turn maximum speed is
-
-$$v_{\max}(R)\approx\sqrt{\mu_y gR},\qquad v_{\max}(\kappa)\approx\sqrt{\frac{\mu_yg}{|\kappa|}}.$$
-
-**Sensitivity example only:** if $\mu_y=0.5$ and $R=0.15\ \mathrm{m}$, $v_{\max}\approx\sqrt{0.5\cdot9.81\cdot0.15}=0.858\ \mathrm{m/s}$. This does **not** mean the V4.1 tires have $\mu=0.5$ or that the robot can corner at this speed. Actual performance must include steering lag, yaw dynamics, track margin, controller limits and the true floor friction.
-
-The lower of tire-slip and ideal tip-over thresholds is a first-pass physical bound:
-
-$$a_{y,\mathrm{physical}}\lesssim\min\!\left(\mu_yg,\frac{gt}{2h}\right).$$
-
-Use the *relevant effective track* and account for compliance in real testing.
-
-### 6.3 Braking distance
-
-Under constant deceleration magnitude $a_b>0$, the ideal stopping distance is
-
-$$s_b=\frac{v_0^2}{2a_b}.$$
-
-If the controller and drivetrain introduce latency $\tau$, the total distance from decision to rest is approximately
-
-$$s_{\mathrm{total}}\approx v_0\tau+\frac{v_0^2}{2a_b}.$$
-
-For an ideal friction-limited floor, $a_b\le\mu_xg$, but actual braking may also be limited by motor-driver strategy, drivetrain backlash, rear-only driven/braked wheel load and the regulator/battery. The firmware's current `stop_motor()` applies a brief reverse command; **do not assume that this realizes a constant braking force or immediate stop**. Measure it at multiple initial speeds.
-
-### 6.4 Rolling resistance and tire losses
-
-A useful simplified rolling-resistance model is
-
-$$F_{rr}=C_{rr}mg,\qquad P_{rr}=F_{rr}v.$$
-
-The value of $C_{rr}$ is unknown for this robot. To compare tire constructions, coast the robot from a repeatable speed with drive power disabled and measure deceleration, or use a controlled low-speed pull test. This separates claimed grip gains from potentially increased rolling resistance.
-
-## 7. Encoder odometry and real distance calibration
-
-### 7.1 What the released firmware currently does
-
-In `src/HLR_FE/HLR_FE.ino`, the ZIP snapshot defines `PPR = 12`, `QUAD_EDGES = PPR*4`, `GEAR_RATIO = 1.0`, `WHEEL_DIAM = 29.0` mm and `MM_PER_TICK = 1.18` mm. In `motors-code.ino`, the interrupt is attached only to `ENCODER_A` with `RISING`, while `ENCODER_B` determines direction. Thus the implementation uses **one A rising-edge count per A cycle**, **not x4 quadrature**, despite declaring `QUAD_EDGES`. Additionally, `QUAD_EDGES` and `GEAR_RATIO` are not used in the actual `read_cm()` distance calculation; only `MM_PER_TICK` is used.
-
-The 12 pulses may refer to a motor shaft or gearbox output depending on encoder SKU and mounting. **Neither can be assumed without checking the installed encoder.**
-
-### 7.2 Physical conversion
-
-If $N_{\mathrm{wheel}}$ is actual counted encoder ticks per rear wheel revolution,
-
-$$C=\pi D,\qquad k_{\mathrm{mm/tick}}=\frac{\pi D}{N_{\mathrm{wheel}}},\qquad s_{\mathrm{mm}}=k_{\mathrm{mm/tick}}\,n_{\mathrm{ticks}}.$$
-
-For nominal $D=29$ mm, the wheel circumference is
-
-$$C=\pi\cdot29=91.106\ \mathrm{mm}.$$
-
-For illustration, **if** the encoder actually produced 48 ticks per wheel revolution, the conversion would be $91.106/48=1.898\ \mathrm{mm/tick}$. However, that result **must not be substituted directly** until physical ticks per wheel revolution are verified. A motor-mounted encoder combined with a 50:1 gearbox and an external gear pair can produce a radically different count.
-
-If the encoder measures the motor shaft and captures $N_m$ counts per motor revolution,
-
-$$N_{\mathrm{wheel}}=N_mi_gi_e\qquad\text{(ideal ratio, no slip or gear omission)}.$$
-
-If the encoder is on the gearbox output instead, the internal ratio $i_g$ must **not** be multiplied again.
-
-### 7.3 Empirical calibration
-
-Choose a long straight distance $s_{\mathrm{true}}$ measured with a tape, command the robot to travel at several low speeds, and log **raw tick counts** $n$ as well as actual travel. For each trial,
-
-$$k_i=\frac{s_{\mathrm{true},i}}{|n_i|},\qquad \overline{k}=\frac{\sum_i s_{\mathrm{true},i}}{\sum_i|n_i|}.$$
-
-The ratio of sums is a practical estimate for zero-intercept data. With multiple distances and significant start/stop error, fit a line $s=kn+b$ to estimate both scale $k$ and fixed offset $b$.
-
-**Correction rule when raw ticks are unavailable:** If a program using old scale $k_{\mathrm{old}}$ was commanded to travel $s_{\mathrm{cmd}}$, and actually traveled $s_{\mathrm{measured}}$, then the corrected scale for the **same counting method** is
-
-$$k_{\mathrm{new}}=k_{\mathrm{old}}\frac{s_{\mathrm{measured}}}{s_{\mathrm{cmd}}}.$$
-
-For example, a 20 cm commanded move that physically travels 18.5 cm gives $k_{\mathrm{new}}=0.925k_{\mathrm{old}}$, assuming the motion loop truly stops at the requested encoded distance and braking overshoot and missed pulses are negligible. If distance does not change after changing the scale, investigate code path, end conditions, stale firmware, wheel slip or braking distance before applying another correction.
-
-| Trial | Target (mm) | Actual (mm) | Raw ticks | Speed/PWM | Battery V | New $k$ (mm/tick) |
-|---|---:|---:|---:|---:|---:|---:|
-| 1 | **MEASURE** | **MEASURE** | **MEASURE** | **MEASURE** | **MEASURE** | **CALCULATE** |
-| 2 | **MEASURE** | **MEASURE** | **MEASURE** | **MEASURE** | **MEASURE** | **CALCULATE** |
-| 3 | **MEASURE** | **MEASURE** | **MEASURE** | **MEASURE** | **MEASURE** | **CALCULATE** |
-
-The difference between odometry and traveled distance is particularly important for stopping, reversing and parking. Encoder readings are not absolute ground-truth position if the tires slip.
-
-## 8. Engineering decisions and V4 → V4.1 changes
-
-| Decision | Alternative / previous version | V4.1 choice | Expected benefit | Cost / risk | Evidence still needed |
-|---|---|---|---|---|---|
-| Main structure | Separate heavy frame | PCB as structural and electrical carrier | Lower part count and compact packaging | Board flex and mounting-hole stress | Deflection and load-path test |
-| Propulsion ratio | V4 30:1 motor | 50:1 motor | Greater theoretical torque multiplication | Reduced theoretical output speed | Same-battery acceleration and speed comparison |
-| Rear drive distribution | Locked/common axle alternative | Mechanical differential | Less rear-tire scrub in turns | Added backlash and complexity | Left/right wheel rotation and turn test |
-| Front steering | Ackermann linkage alternative | Parallel servo linkage | Simpler and lighter to manufacture | More scrub in tight turns | Wheel-angle, path-radius and wear tests |
-| Tire/rim | Printed lightweight rims | Steel rims with silicone | More rigid rim and changed mass distribution | Higher mass and rotational inertia | Friction, coast-down and repeatability tests |
-| Downforce device | Fan on V4 | Removed on V4.1 | Less mass, power draw and complexity | No fan-generated normal load | Speed/corner consistency comparison |
-
-**How to make these decisions defensible:** Keep the battery, tires, test mat and controller settings constant where possible. Report average and spread across at least five runs, not only the best result. Record when a change also altered software or sensors so improvements are not falsely attributed to mechanics.
-
-## 9. Validation plan and engineering evidence
-
-The following tests are designed to turn the mechanical reasoning into judge-verifiable evidence. The uploaded repository includes CAD and drawings, but does **not** yet provide complete numerical data for the procedures below. Record the raw measurements instead of presenting the illustrative calculations as results.
-
-| ID | Test | Method | Record and derived metric |
-|---|---|---|---|
-| M01 | Complete dimensions and mass | Calipers, ruler, scale with race battery | $L,t_f,t_r,D,m$, envelope, clearance |
-| M02 | Center of gravity | Axle scales and component mass positions | $x_G,y_G,h$, left/right and front/rear loads |
-| M03 | Steering calibration | Fixed camera/printed angle gauge at servo increments | $\theta_s,\delta_L,\delta_R$, neutral offset, hysteresis |
-| M04 | Static turning radius | Floor tape, circle path at repeatable low speed | Measured $R_L,R_R$ vs $L/\tan\delta$ |
-| M05 | Motor and ratio | Count gear teeth, verify motor SKU, RPM test | $i_e,i_{\mathrm{total}},n_g,n_w$ |
-| M06 | Acceleration | Timed straight-line runs at fixed battery | $v(t),a_x(t)$, 10–90% acceleration |
-| M07 | Braking | Repeatable approach speed, distance markings | Latency, braking distance and scatter |
-| M08 | Encoder calibration | Ground-truth tape and logged tick counts | $k$, offset $b$, absolute and relative error |
-| M09 | Tire traction | Progressive constant-radius test or force measurement | Onset of slip, approximate $\mu_y$, condition |
-| M10 | Differential and backlash | One wheel rotation and free-play angle | Ratio validation, backlash $\beta$, binding |
-| M11 | PCB rigidity | Known load at supports, displacement indicator | Deflection and permanent-set check |
-| M12 | Repeated challenge run | Same field layout, multiple trials | Completion rate, corner errors, mechanical failures |
-
-### 9.1 Reporting uncertainty
-
-For measurements $x_1,\ldots,x_n$, use
-
-$$\bar x=\frac{1}{n}\sum_i x_i,\qquad s_x=\sqrt{\frac{\sum_i(x_i-\bar x)^2}{n-1}},\qquad \mathrm{SE}=\frac{s_x}{\sqrt n}.$$
-
-Report the sample size and distinguish **standard deviation** (repeatability) from **standard error** (uncertainty of the mean). For derived radius $R=L/\tan\delta$, a first-order independent-uncertainty propagation is
-
-$$u_R\approx\sqrt{\left(\frac{u_L}{\tan\delta}\right)^2+\left(\frac{L\,u_\delta}{\sin^2\delta}\right)^2},$$
-
-where $u_\delta$ is in **radians**. At small $\delta$, angle uncertainty becomes especially influential. Systematic calibration errors should be reported separately, not hidden in a standard deviation.
-
-### 9.2 Suggested result tables
-
-**Steering:**
-
-| Servo command (deg) | Left wheel angle (deg) | Right wheel angle (deg) | Predicted radius (mm) | Measured radius (mm) |
-|---:|---:|---:|---:|---:|
-| 35 | | | | |
-| 60 | | | | |
-| 85 | | | | |
-| 110 | | | | |
-| 135 | | | | |
-
-**V4 versus V4.1 mechanical comparison:**
-
-| Metric | V4 measured | V4.1 measured | Test conditions |
-|---|---|---|---|
-| Complete mass (g) | | | Same battery specification |
-| Driven wheel effective diameter (mm) | | | Loaded |
-| Straight-line speed (m/s) | | | Battery voltage and PWM logged |
-| 0–0.5 m travel time (s) | | | Same track, five trials |
-| Turn radius left/right (mm) | | | Same measured wheel angle |
-| Braking distance from fixed speed (mm) | | | Same starting speed |
-| Completed challenge attempts / total | | | Same defined layout or randomized protocol |
-
-Store any future measurements as CSV under `docs/data/mobility/` and put their analysis scripts under `docs/analysis/`, rather than inventing plots without raw sources. Do not claim those paths already exist in this ZIP.
-
-## 10. Assembly and maintenance checks
-
-1. Verify the PCB chassis is flat and inspect mounting holes for cracks or delamination.
-2. Install the motor support and rear axle bearing assembly without forcing printed fits.
-3. Verify differential gear engagement through one full wheel turn, then through several revolutions.
-4. Fit rear wheels; check axle retention, rim concentricity and silicone tire seating.
-5. Install left and right front knuckles, bearings, servo horn and linkage; confirm free movement.
-6. Center the servo in firmware **before** fastening the horn. The neutral firmware command in this snapshot is 85°, but actual straight-ahead alignment is determined by the linkage.
-7. Install the battery in its final mount and recheck steering and drivetrain clearance.
-8. Route camera/ToF wiring without crossing gear teeth, steering pivots or the tire swept volume.
-9. With wheels off the ground, test forward/reverse drive, steering limits, encoder sign and differential action.
-10. With the actual battery installed and the robot on the test surface, repeat clearance, neutral steering and low-speed straight-line checks.
-
-For a rebuild, use the hardware and firmware from a **single matching commit**. Refer to [06 · Reproducibility](06-reproducibility.md) for the complete assembly and programming process.
-
-## 11. Known limitations and remaining measurements
-
-The following are **open validation items**, not proven performance specifications:
-
-- The actual V4.1 **wheelbase, front/rear track, center-of-mass height and full mass** require direct measurement.
-- The V4.1 **gearbox exact SKU, external tooth counts, wheel torque, no-load speed and loaded speed** must be verified. Do not reuse V4 30:1 specifications for the 50:1 assembly.
-- The **servo-to-wheel angle mapping, measured maximum road-wheel steering angle and turning radius** are not established by the servo command limits alone.
-- The **silicone friction coefficient and improvement attributed to steel rims** require comparable floor tests.
-- The **encoder counts per physical wheel revolution** have not been unambiguously established; current source constants and actual ISR counting mode must be reconciled.
-- The **PCB bending stiffness, wheel runout, gear backlash, maximum braking deceleration and tire slip threshold** have not yet been measured in the supplied files.
-- The firmware snapshot still contains impeller functions even though the V4.1 hardware overview says the fan is removed. Hardware installation and historical source functions must be distinguished.
-
-**Chapter completion criterion:** A different team should be able to identify the geometry and all manufactured components, compute theoretical performance from documented inputs, rebuild the assembly, reproduce the measured tests and explain the remaining discrepancy between model and reality.
+The V4.1 geometry below was extracted from the complete assembly STEP model. The assembled robot has a measured mass of **226 g**. We distinguish **CAD dimensions**, **calculated estimates**, and **physical measurements** so that each result can be checked and repeated. Values still requiring measurement are shown as **[TO COMPLETE]**.
 
 ---
 
-### Source and revision notes
+## 1. Design objectives
 
-This chapter is derived from the supplied repository snapshot, particularly [`01-overview.md`](01-overview.md), the previous `02-mobility.md`, [`06-reproducibility.md`](06-reproducibility.md), [`motors-code.ino`](../src/HLR_FE/motors-code.ino), [`HLR_FE.ino`](../src/HLR_FE/HLR_FE.ino), CAD files and technical drawings. It uses standard mechanics and robotics models as clearly labeled analytical additions. No fabricated experiments, measured values or test results have been introduced.
+The mobility system was designed to satisfy four main requirements:
+
+- stable four-wheel motion on the WRO field,
+- compact packaging inside the WRO size limits,
+- steering-based vehicle kinematics rather than differential steering,
+- predictable behavior in high-speed autonomous driving and parking.
+
+We use a **front-steered, rear-driven four-wheel chassis**. A single geared motor drives the rear wheels through a mechanical differential. The front steering hubs move through a servo-driven parallel linkage that turns both front wheels through approximately equal angles. A custom PCB serves as the main mounting structure. The layout allows rear wheels to rotate at different speeds in turns while the front wheels control direction without differential steering.
+
+---
+
+## 2. CAD extraction method
+
+The STEP assembly was processed to extract:
+
+- overall bounding box,
+- wheel centers,
+- wheel diameter and width,
+- axle spacing,
+- track width,
+- overhangs,
+- vertical package height,
+- a **geometry-based center-of-mass estimate**.
+
+### 2.1 Center-of-mass methodology
+
+The geometry-derived centroid uses **equal density for all imported solid volumes**. This is a useful geometric reference but is **not a verified physical center of mass**: V4.1 contains PCB material, metals, plastics, motors, electronics and battery materials of different densities. We use our measured 226 g total mass to scale force calculations and treat every result that depends on the estimated centroid as provisional until checked through scale measurements.
+
+Our reference method is a four-scale static weighing test, followed by a component-by-component mass model if necessary. The completed test will replace the equal-density estimate with the actual mass distribution.
+
+**Measurements to add:** [TO COMPLETE: front-left wheel force], [TO COMPLETE: front-right wheel force], [TO COMPLETE: rear-left wheel force], [TO COMPLETE: rear-right wheel force], [TO COMPLETE: scale precision] and [TO COMPLETE: test photograph].
+
+---
+
+## 3. CAD renders and extracted geometry
+
+### 3.1 Assembly renders
+
+#### Figure 2.1: Isometric CAD render
+
+<p align="center">
+  <img src="docs-media/cad-isometric-actual.png" alt="V4.1 assembly from the supplied STEP CAD model" width="680">
+</p>
+
+#### Figure 2.2: Top CAD render
+
+<p align="center">
+  <img src="docs-media/cad-top-straight.png" alt="V4.1 top view from the supplied STEP CAD model" width="680">
+</p>
+
+#### Figure 2.3: Side CAD render
+
+<p align="center">
+  <img src="docs-media/render_side.png" alt="Side CAD render of the robot" width="680">
+</p>
+
+#### Figure 2.4: Front CAD render
+
+<p align="center">
+  <img src="docs-media/render_front.png" alt="Front CAD render of the robot" width="680">
+</p>
+
+The longer front overhang supports the sensing and steering assembly, while the driven axle is packaged closer to the rear edge. We define the **front axle** as the axle near the camera and front sensing structure. The CAD coordinate x increases from front toward rear, so the front axle has the smaller x-coordinate.
+
+### 3.2 Dimension diagrams
+
+#### Figure 2.5: Top-view mechanical dimensions extracted from CAD
+
+<p align="center">
+  <img src="docs-media/real-robot-top-dimensions.png" alt="V4.1 CAD top view with exact mechanical dimensions" width="680">
+</p>
+
+#### Figure 2.6: Side-view dimensions and COM height estimate
+
+<p align="center">
+  <img src="docs-media/mobility-dimensions-side.png" alt="Side-view dimensions and COM height estimate" width="680">
+</p>
+
+#### Figure 2.7: Support polygon and static wheel-load estimate
+
+<p align="center">
+  <img src="docs-media/mobility-com-loads.png" alt="Support polygon and static wheel-load estimate" width="680">
+</p>
+
+---
+
+## 4. V4.1 geometry and dimension verification
+
+The annotated CAD reference below identifies the vehicle envelope, front and rear axles, wheelbase, track width and overhangs directly on the V4.1 assembly. It also defines the wheel and clearance measurements used in the table.
+
+<p align="center">
+  <img src="docs-media/v41-dimension-reference-clean.png" alt="Annotated V4.1 STEP assembly dimension guide with overall length, width, wheelbase, track width, overhangs, wheel dimensions and clearance" width="900">
+</p>
+
+*Figure 2.8. Dimension guide drawn over our V4.1 STEP assembly. Dimensions are CAD values, not post-assembly measurements.*
+
+Table 2.1 summarizes the key geometric values extracted from the assembly.
+
+| Parameter | Symbol | Value | Source / comment |
+|---|---:|---:|---|
+| Overall length | $L_\mathrm{tot}$ | **147.3 mm** | CAD bounding box |
+| Overall width | $W_\mathrm{tot}$ | **82.8 mm** | CAD bounding box |
+| Overall height | $H_\mathrm{tot}$ | **52.7 mm** | CAD bounding box |
+| Front axle x-position | $x_f$ | **22.55 mm** | Wheel centers from STEP |
+| Rear axle x-position | $x_r$ | **103.55 mm** | Wheel centers from STEP |
+| Wheelbase | $L$ | **81.0 mm** | $x_r-x_f$ |
+| Right wheel center y-position | $y_R$ | **1.42 mm** | Wheel centers from STEP |
+| Left wheel center y-position | $y_L$ | **70.88 mm** | Wheel centers from STEP |
+| Track width | $T$ | **69.47 mm** | $y_L-y_R$ |
+| Front overhang | $O_f$ | **50.3 mm** | Distance from front bumper to front axle |
+| Rear overhang | $O_r$ | **16.1 mm** | Distance from rear bumper to rear axle |
+| Wheel diameter | $D_w$ | **29.0 mm** | Directly extracted from wheel geometry |
+| Wheel radius | $r_w$ | **14.5 mm** | $D_w/2$ |
+| Wheel width | $b_w$ | **13.3 mm** | Directly extracted from wheel geometry |
+| Approximate underbody clearance | $h_c$ | **5.8 mm** | Ground to lowest chassis underside |
+| Measured total mass | $m$ | **226 g** | Physical measurement |
+| Measured physical length | $L_{\mathrm{actual}}$ | **[TO COMPLETE] mm** | Calipers or ruler, assembled robot |
+| Measured physical width | $W_{\mathrm{actual}}$ | **[TO COMPLETE] mm** | Maximum width including tires |
+| Measured physical height | $H_{\mathrm{actual}}$ | **[TO COMPLETE] mm** | Maximum height with electronics |
+| Physical wheelbase | $L_{\mathrm{actual}}^{\mathrm{WB}}$ | **[TO COMPLETE] mm** | Axle-center spacing |
+| Physical track width | $T_{\mathrm{actual}}$ | **[TO COMPLETE] mm** | Tire contact-center spacing |
+| Measured ground clearance | $h_{c,\mathrm{actual}}$ | **[TO COMPLETE] mm** | At normal operating mass |
+
+The geometry values are taken directly from the **V4.1 CAD assembly**. Our physical verification is recorded in the additional rows. CAD measurements cannot account for printed shrinkage, assembly tolerances or tire deformation.
+
+### 4.1 Basic dimensional calculations
+
+Wheelbase:
+
+$$
+L = x_r - x_f = 103.55 - 22.55 = 81.00\ \text{mm}
+$$
+
+Track width:
+
+$$
+T = y_L - y_R = 70.88 - 1.42 = 69.47\ \text{mm}
+$$
+
+Wheel circumference:
+
+$$
+C_w = \pi D_w = \pi \cdot 29.0 = 91.11\ \text{mm}
+$$
+
+Overall planform area of the support rectangle:
+
+$$
+A_\mathrm{support} = L \cdot T = 81.0 \cdot 69.47 = 5626.9\ \text{mm}^2
+$$
+
+These values are important because they affect turning behavior, stability, packaging efficiency, and odometry scaling.
+
+---
+
+## 5. Chassis concept and mechanical structure
+
+The chassis is a compact four-wheel vehicle with:
+
+- a low base structure,
+- a front sensing overhang,
+- one axle at the front and one axle at the rear,
+- large-diameter wheels relative to chassis clearance,
+- an arrangement that concentrates most of the mass near the center and front-middle of the robot.
+
+From a mechanical perspective, this layout provides the following advantages:
+
+1. **Wheel diameter much larger than clearance** improves robustness over surface seams and minor field imperfections.
+2. **Low center of gravity** helps stability during high-speed turns.
+3. **Longer front overhang** provides space for forward sensing without excessively increasing the wheelbase.
+4. **Compact rear packaging** helps reduce swept volume while keeping the drivetrain close to the axle.
+
+The overall aspect ratio is:
+
+$$
+\frac{L_\mathrm{tot}}{W_\mathrm{tot}} = \frac{147.3}{82.8} \approx 1.78
+$$
+
+This means the robot is noticeably longer than it is wide, which is typical for a car-like platform with steering.
+
+---
+
+### 5.1 Technical drawings and manufacturing details
+
+The following production drawings show the dimensions and tolerances of V4.1 mechanical parts. Each drawing is linked to its source file in [`technical-drawings/`](technical-drawings/README.md), alongside the CAD models used for manufacturing. These drawings should be used when checking part orientation, hole patterns, bearing seats and steering fit.
+
+<table>
+<tr>
+<td width="50%" align="center"><strong>Front wheel</strong><br><img src="technical-drawings/front-wheel_technical-drawing.png" alt="V4.1 front wheel engineering drawing" width="330"></td>
+<td width="50%" align="center"><strong>Rear wheel</strong><br><img src="technical-drawings/back-wheel_technical-drawing.png" alt="V4.1 rear wheel engineering drawing" width="330"></td>
+</tr>
+<tr>
+<td align="center"><strong>Left steering hub</strong><br><img src="technical-drawings/left-steering-hub_technical-drawing.png" alt="Left steering hub dimensions" width="330"></td>
+<td align="center"><strong>Right steering hub</strong><br><img src="technical-drawings/right-steering-hub_technical-drawing.png" alt="Right steering hub dimensions" width="330"></td>
+</tr>
+<tr>
+<td align="center"><strong>Steering bar</strong><br><img src="technical-drawings/steering-bar_technical-drawing.png" alt="Parallel steering bar dimensions" width="330"></td>
+<td align="center"><strong>Steering and camera mount</strong><br><img src="technical-drawings/steering-and-camera-mount-hub_technical-drawing.png" alt="Steering and camera mount drawing" width="330"></td>
+</tr>
+<tr>
+<td align="center"><strong>Drive hub</strong><br><img src="technical-drawings/motor-and-wheel-hub(main-drive-hub)_technical-drawing.png" alt="Main drive wheel hub drawing" width="330"></td>
+<td align="center"><strong>Motor drive gear</strong><br><img src="technical-drawings/motor-drive-gear_technical-drawing.png" alt="Motor drive gear dimensions" width="330"></td>
+</tr>
+<tr>
+<td align="center"><strong>Battery support</strong><br><img src="technical-drawings/battery-support_technical-drawing.png" alt="Battery support dimensions" width="330"></td>
+<td align="center"><strong>Full V4.1 geometry</strong><br><img src="docs-media/real-robot-top-dimensions.png" alt="Dimensioned V4.1 top view" width="330"></td>
+</tr>
+</table>
+
+For assembly, the most important checks are the clearance of each steering hub, the parallel movement of both front wheels, and the alignment of the rear transmission. Measured post-print fit and final assembly tolerances should be recorded here: **[TO COMPLETE: bearing fits, steering linkage play, gear backlash, and critical dimensions].**
+
+---
+
+## 6. Drivetrain and odometry-related mechanical parameters
+
+The wheel diameter extracted from the CAD model is **29 mm**, which matches the value used in the firmware.
+
+### 6.1 Wheel circumference
+
+$$
+C_w = \pi D_w = \pi \cdot 29.0 = 91.11\ \text{mm}
+$$
+
+So one full wheel revolution corresponds to approximately **91.1 mm** of ideal no-slip travel.
+
+### 6.2 Encoder conversion
+
+For V4.1 encoder modeling, use the following nominal parameters:
+
+- `PPR = 12` pulses per revolution,
+- quadrature decoding with `QUAD_EDGES = 48`.
+
+The theoretical travel per encoder tick is therefore:
+
+$$
+\text{mm/tick} = \frac{C_w}{48} = \frac{91.11}{48} = 1.898\ \text{mm/tick}
+$$
+
+This gives the nominal wheel-displacement scaling for the defined encoder-decoding configuration. If the real robot under-travels or over-travels, the cause is not the wheel diameter alone; it may also include:
+
+- tire deformation,
+- wheel slip,
+- encoder mounting error,
+- backlash,
+- floor interaction,
+- effective wheel diameter differing from nominal CAD diameter.
+
+### 6.3 Ground clearance to wheel radius ratio
+
+$$
+\frac{h_c}{r_w} = \frac{5.8}{14.5} \approx 0.40
+$$
+
+So the underbody clearance is approximately **40% of the wheel radius**, which provides a low chassis while preserving space beneath the body. Actual clearance is [TO COMPLETE] mm under load.
+
+---
+
+## 6A. V4.1 drivetrain design and torque calculations
+
+We use a **single Pololu 50:1 HPCB gearmotor** connected to the rear axle through an external gear stage and a mechanical differential. Compared with the V4 30:1 configuration, the higher reduction was selected to increase available gearbox-output torque and improve low-speed control. This is a gear-ratio design comparison; real acceleration and load capacity require measurements.
+
+The mechanical power path is: **motor → internal gearbox → external pinion/ring gear → differential carrier → rear axles → wheels → floor**. The differential enables left and right wheels to travel at different speeds without separate wheel motors.
+
+### 6A.1 Total reduction
+
+Let $z_p$ be the drive-pinion tooth count, $z_d$ the differential driven-gear tooth count and $i_g=50$ the nominal internal gearbox ratio.
+
+$$
+i_e=\frac{z_d}{z_p}
+$$
+
+$$
+i_{\mathrm{total}}=i_gi_e=50\frac{z_d}{z_p}
+$$
+
+**V4.1 tooth counts:** pinion **[TO COMPLETE]**, driven gear **[TO COMPLETE]**, combined reduction **[TO COMPLETE]**.
+
+### 6A.2 Torque, tractive force and efficiency
+
+For bare motor shaft torque $T_m$ and total transmission efficiency $\eta$:
+
+$$
+T_w=\eta\,i_{\mathrm{total}}T_m
+$$
+
+The ideal force at the wheel circumference is:
+
+$$
+F_{\mathrm{drive}}=\frac{T_w}{r_w}
+$$
+
+With $r_w=0.0145\ \mathrm{m}$:
+
+$$
+F_{\mathrm{drive}}=68.97\,T_w
+$$
+
+where $T_w$ is expressed in N·m and $F_{\mathrm{drive}}$ in N. This is a torque-to-force conversion, **not** a measured force or a traction guarantee. Available traction limits it further:
+
+$$
+F_{\mathrm{usable}}\le\min\left(\frac{T_w}{r_w},\mu N_{\mathrm{driven}}\right)
+$$
+
+**V4.1 motor test:** operating voltage **[TO COMPLETE] V**, loaded current **[TO COMPLETE] A**, speed **[TO COMPLETE] rpm**, efficiency assumption **[TO COMPLETE]**, measured tractive force **[TO COMPLETE] N**.
+
+### 6A.3 Ideal vehicle speed and acceleration
+
+For motor-shaft speed $n_m$ in rpm:
+
+$$
+n_w=\frac{n_m}{i_{\mathrm{total}}}
+$$
+
+$$
+v=\frac{\pi D_wn_w}{60}
+$$
+
+For the 29 mm wheel:
+
+$$
+v=\frac{0.091106\,n_m}{60\,i_{\mathrm{total}}}
+$$
+
+A basic straight-line acceleration estimate, ignoring aerodynamic drag, is:
+
+$$
+a\approx\frac{F_{\mathrm{drive}}-F_{\mathrm{rolling}}}{m}
+$$
+
+with $m=0.226\ \mathrm{kg}$. This must be checked against the floor friction limit and real electrical current constraints.
+
+### 6A.4 Mechanical differential
+
+For an ideal symmetric open differential:
+
+$$
+\omega_L+\omega_R=2\omega_c
+$$
+
+where $\omega_c$ is the carrier speed and $\omega_L$, $\omega_R$ are the rear-wheel speeds. For a turn of radius $R$ with track width $T$:
+
+$$
+\frac{\omega_{\mathrm{outer}}}{\omega_{\mathrm{inner}}}\approx\frac{R+T/2}{R-T/2}
+$$
+
+This makes the differential preferable to a locked axle for V4.1 turning: it reduces the need for longitudinal tire scrub as the inner and outer wheels follow different paths. **Measured differential backlash:** [TO COMPLETE] degrees; **gear material:** [TO COMPLETE].
+
+---
+
+## 6B. V4.1 parallel steering mechanism and tolerances
+
+V4.1 uses **parallel steering**, not Ackermann steering. An MG90S servo moves a compact mechanical linkage so the two front road wheels are intended to turn through the **same angle** at any given steering command:
+
+$$
+\delta_{\mathrm{left}}\approx\delta_{\mathrm{right}}=\delta
+$$
+
+This simplifies the steering linkage, keeps the mechanism compact and provides a repeatable relationship between left and right wheel positions. The servo command angle is not automatically equal to the wheel angle, because the linkage introduces a mechanical conversion:
+
+$$
+\delta=f(\theta_s)
+$$
+
+where $\theta_s$ is the servo position and $\delta$ is the road-wheel steering angle. We will use **[TO COMPLETE: servo-position versus measured steering-angle table]** to verify the response and measure neutral offset, asymmetry and play.
+
+### 6B.1 Parallel steering and tire scrub
+
+The two front wheels remain parallel to each other, unlike ideal Ackermann steering, where the inner wheel turns through a larger angle. In a turn, the inner and outer wheels follow different circular paths. Therefore, an exactly parallel front-wheel arrangement cannot simultaneously satisfy a zero-lateral-slip rolling condition at both contact patches. Some tire scrub occurs, and the bicycle model remains an approximate, useful reference for turn radius rather than an exact four-wheel no-slip solution.
+
+For the wheelbase $L=81.0\ \mathrm{mm}$ and track width $T=69.47\ \mathrm{mm}$, the bicycle-equivalent reference is:
+
+$$
+R\approx\frac{L}{\tan\delta}
+$$
+
+For a theoretical equal front-wheel angle of $\delta=20^\circ$:
+
+$$
+R\approx\frac{81.0}{\tan20^\circ}=222.5\ \mathrm{mm}
+$$
+
+At this reference radius, ideal rolling geometry would require an inner angle of $23.3^\circ$ and an outer angle of $17.5^\circ$. Since V4.1 uses **20° on both front wheels in this illustrative configuration**, these differences represent the angular mismatch responsible for tire scrub, not actual V4.1 wheel-angle measurements.
+
+**Physical measurements to add:** [TO COMPLETE: left and right wheel angles at five servo positions], [TO COMPLETE: steering linkage free play], [TO COMPLETE: measured turn radius in both directions], [TO COMPLETE: tire wear or scrub observations].
+
+### 6B.1 Manufacturing tolerance stack
+
+For worst-case additive dimensional deviations $t_k$:
+
+$$
+T_{\mathrm{worst}}=\sum_{k=1}^{n}|t_k|
+$$
+
+For statistically independent, approximately centered contributions:
+
+$$
+T_{\mathrm{RSS}}=\sqrt{\sum_{k=1}^{n}t_k^2}
+$$
+
+The RSS method is an approximation, not a maximum bound. Record **[TO COMPLETE: measured shaft diameters, bearing bores, pivot clearances, gear center distances]**.
+
+---
+
+## 6C. V4 to V4.1 mechanical improvements
+
+The V4.1 design retains the compact vehicle layout while introducing revisions chosen to improve drivetrain behavior, packaging and repeatability. We compare versions only where a meaningful mechanical design change occurred.
+
+| Design area | V4 | V4.1 | V4.1 engineering advantage |
+|---|---|---|---|
+| Gearmotor reduction | 30:1 | 50:1 HPCB | More nominal torque multiplication and finer low-speed wheel control, assuming comparable motor characteristics |
+| Rear wheel rims | Earlier lightweight construction | Heavier steel rims | More robust mass distribution and potentially greater mechanical durability, balanced against higher rotational inertia |
+| Sensing integration | Earlier mounting arrangement | Updated sensor placement and mounting | Improved packaging for the current sensing system; quantify field coverage in sensor chapter |
+| Overall geometry | Earlier chassis | Current CAD-derived geometry | 147.3 × 82.8 × 52.7 mm envelope; direct comparison requires the V4 CAD dimensions |
+
+V4.1's design improvements should be supported by test results rather than assuming every material change automatically improves traction or speed. **V4 motor test:** [TO COMPLETE]; **V4.1 motor test:** [TO COMPLETE]; **V4/V4.1 turning repeatability:** [TO COMPLETE].
+
+---
+
+## 6C. V4.1 steering visualizations from the real CAD assembly
+
+The figures below use the **actual V4.1 STEP assembly**, including its chassis, camera mount, PCB, motor, differential and wheel geometry. To illustrate steering, the two front tire solids are rotated by identical prescribed angles around their CAD steering centers. The drawings do not simulate mechanical linkage deformation or establish a measured maximum steering angle.
+
+### 6C.1 Actual robot: neutral, left and right steering
+
+<p align="center">
+  <img src="docs-media/real-robot-parallel-steering.png" alt="V4.1 top-view CAD assembly with both front wheels parallel at zero, left 20 degrees, and right 20 degrees" width="680">
+</p>
+
+The wheel shells in the second and third panels are rotated equally. At every shown position:
+
+$$
+\delta_{\mathrm{left}}=\delta_{\mathrm{right}}
+$$
+
+The **20°** angles are illustrative. The maximum steering angle and the accuracy of the real linkage will be measured on the physical robot.
+
+### 6C.2 Actual robot: turning radius and rear-wheel paths
+
+<p align="center">
+  <img src="docs-media/real-robot-parallel-turn-radius.png" alt="Actual V4.1 CAD top view showing the theoretical bicycle-model turning center and inner and outer rear-wheel paths" width="680">
+</p>
+
+Using the extracted CAD wheelbase and track width, for $\delta=20^\circ$:
+
+$$
+R=\frac{L}{\tan\delta}=\frac{81.0}{\tan20^\circ}=222.5\ \mathrm{mm}
+$$
+
+The rear wheels trace different path radii under the bicycle-model approximation:
+
+$$
+R_{\mathrm{inner}}=R-\frac{T}{2}=222.5-34.7=187.8\ \mathrm{mm}
+$$
+
+$$
+R_{\mathrm{outer}}=R+\frac{T}{2}=222.5+34.7=257.3\ \mathrm{mm}
+$$
+
+The paths show **reference geometry**, not a measured trajectory. The parallel front wheels generate scrub because both are set to the same angle while their ideal rolling directions differ.
+
+For completeness, the front-wheel contact-patch path radii are:
+
+$$
+R_{\mathrm{front,inner}}=\sqrt{L^2+\left(R-T/2\right)^2}
+$$
+
+$$
+R_{\mathrm{front,outer}}=\sqrt{L^2+\left(R+T/2\right)^2}
+$$
+
+At the illustrative 20° steering angle, these are approximately 204.5 mm and 269.7 mm, respectively.
+
+### 6C.3 Turn-radius curve for parallel front steering
+
+<p align="center">
+  <img src="docs-media/real-robot-parallel-radius-curve.png" alt="Theoretical V4.1 rear-axle midpoint and rear-wheel turning radii versus equal front steering angle" width="680">
+</p>
+
+This graph shows how tighter turns require larger equal steering angles. The radius relation is an approximation suitable for initial control and trajectory planning, not a substitute for testing on the competition floor.
+
+### 6C.4 Robot dimensions from the STEP top view
+
+<p align="center">
+  <img src="docs-media/real-robot-top-dimensions.png" alt="V4.1 exact STEP assembly shown from above with wheelbase, track and overall dimensions" width="680">
+</p>
+
+**V4.1 measurements to add:** [TO COMPLETE: actual neutral angle], [TO COMPLETE: maximum left and right wheel angles], [TO COMPLETE: measured turn radius at 10°, 20° and full lock], [TO COMPLETE: steering-angle measurement photographs].
+
+---
+
+## 7. Steering geometry and turning model
+
+The robot uses parallel front-wheel steering. For first-order path planning we approximate its motion using the bicycle model, while recognizing that actual wheel scrub and tire slip affect the measured turn radius.
+
+### 7.1 Bicycle model
+
+For approximate turning analysis, the vehicle can be represented using an equivalent single front wheel in the bicycle model:
+
+$$
+R = \frac{L}{\tan \delta}
+$$
+
+where:
+
+- $R$ is the turning radius measured to the rear axle midpoint,
+- $L$ is wheelbase,
+- $\delta$ is the equal left and right front road-wheel steering angle. The calculated $R$ is approximate because the actual linkage uses parallel steering.
+
+Using the extracted wheelbase $L=81.0\ \text{mm}$:
+
+For $\delta = 10^\circ$:
+
+$$
+R_{10} = \frac{81.0}{\tan 10^\circ} = 459.4\ \text{mm}
+$$
+
+For $\delta = 15^\circ$:
+
+$$
+R_{15} = \frac{81.0}{\tan 15^\circ} = 302.3\ \text{mm}
+$$
+
+For $\delta = 20^\circ$:
+
+$$
+R_{20} = \frac{81.0}{\tan 20^\circ} = 222.5\ \text{mm}
+$$
+
+For $\delta = 25^\circ$:
+
+$$
+R_{25} = \frac{81.0}{\tan 25^\circ} = 173.7\ \text{mm}
+$$
+
+For $\delta = 30^\circ$:
+
+$$
+R_{30} = \frac{81.0}{\tan 30^\circ} = 140.3\ \text{mm}
+$$
+
+These values are theoretical and assume no tire slip.
+
+### 7.2 Curvature
+
+The curvature is:
+
+$$
+\kappa = \frac{1}{R} = \frac{\tan \delta}{L}
+$$
+
+This means that for a fixed steering angle, a shorter wheelbase increases curvature, while a longer wheelbase reduces curvature and makes the car more directionally stable.
+
+### 7.3 Lateral acceleration during turning
+
+The lateral acceleration is:
+
+$$
+a_y = \frac{v^2}{R} = v^2 |\kappa|
+$$
+
+This relation is central to the tuning of speed versus steering angle. If the robot enters a small-radius turn too fast, $a_y$ increases rapidly and causes either slip or unstable path following.
+
+For example, if $R = 222.5\ \text{mm} = 0.2225\ \text{m}$ and the speed is $v=1.0\ \text{m/s}$:
+
+$$
+a_y = \frac{1.0^2}{0.2225} = 4.49\ \text{m/s}^2 \approx 0.46g
+$$
+
+This already shows that even a small robot can demand substantial lateral grip.
+
+---
+
+## 8. Mass distribution and center of mass
+
+The measured robot mass is:
+
+$$
+m = 226\ \text{g} = 0.226\ \text{kg}
+$$
+
+### 8.1 CAD-based center-of-mass estimate
+
+The STEP-based geometry estimate gives:
+
+- $x_G = 53.78\ \text{mm}$,
+- $y_G = 36.67\ \text{mm}$,
+- $z_G = 11.77\ \text{mm}$ relative to the CAD coordinate system.
+
+Relative to the ground plane, the COM height is:
+
+$$
+h_G = z_G - z_\mathrm{ground} = 11.77 - (-5.83) = 17.60\ \text{mm}
+$$
+
+Relative to the axle layout, the COM lies:
+
+behind the front axle by
+
+$$
+a = x_G - x_f = 53.78 - 22.55 = 31.23\ \text{mm}
+$$
+
+and ahead of the rear axle by
+
+$$
+b = x_r - x_G = 103.55 - 53.78 = 49.77\ \text{mm}
+$$
+
+Under the equal-density assumption, the estimated centroid is toward the front axle. We will verify the actual distribution before claiming a measured front-biased chassis.
+
+The lateral offset from the centerline is very small:
+
+$$
+\Delta y_G = y_G - \frac{y_L+y_R}{2} = 36.67 - 36.15 = 0.52\ \text{mm}
+$$
+
+The CAD-volume estimate is almost laterally symmetric. The battery, motor, PCB copper and fastener masses must be accounted for before claiming the same balance on the real robot.
+
+### 8.2 Total weight
+
+The gravitational force is:
+
+$$
+W = mg = 0.226 \cdot 9.81 = 2.217\ \text{N}
+$$
+
+---
+
+## 9. Static axle loads and wheel loads
+
+For a four-wheel vehicle on a flat floor, the longitudinal axle loads can be estimated from static equilibrium.
+
+### 9.1 Front and rear axle reactions
+
+Using the standard lever equations:
+
+$$
+R_f = W \frac{x_r-x_G}{L}
+$$
+
+$$
+R_r = W \frac{x_G-x_f}{L}
+$$
+
+Substituting the extracted values:
+
+$$
+R_f = 2.217 \cdot \frac{103.55-53.78}{81.0} = 1.362\ \text{N}
+$$
+
+$$
+R_r = 2.217 \cdot \frac{53.78-22.55}{81.0} = 0.855\ \text{N}
+$$
+
+Therefore the static longitudinal load split is approximately:
+
+- **front axle:** 61.4%
+- **rear axle:** 38.6%
+
+### 9.2 Left-right side loads
+
+Similarly, the left and right side reactions are:
+
+$$
+R_L = W \frac{y_G-y_R}{T}
+$$
+
+$$
+R_R = W \frac{y_L-y_G}{T}
+$$
+
+Thus:
+
+$$
+R_L = 2.217 \cdot \frac{36.67-1.42}{69.47} = 1.125\ \text{N}
+$$
+
+$$
+R_R = 2.217 \cdot \frac{70.88-36.67}{69.47} = 1.092\ \text{N}
+$$
+
+So the left-right distribution is nearly symmetric.
+
+### 9.3 Estimated static load per wheel
+
+The total front/rear and left/right reactions follow from static equilibrium **if the estimated COM is correct**. The four individual contact forces cannot be uniquely determined by rigid-body equilibrium alone. For a preliminary illustration, we apply a **bilinear distribution assumption**, equivalent to one particular load-sharing model. Actual wheel forces depend on compliance, tire contact geometry and assembly tolerances:
+
+- front-left wheel:
+
+$$
+R_{FL} = W \left(\frac{x_r-x_G}{L}\right)\left(\frac{y_G-y_R}{T}\right) = 0.691\ \text{N}
+$$
+
+- front-right wheel:
+
+$$
+R_{FR} = W \left(\frac{x_r-x_G}{L}\right)\left(\frac{y_L-y_G}{T}\right) = 0.671\ \text{N}
+$$
+
+- rear-left wheel:
+
+$$
+R_{RL} = W \left(\frac{x_G-x_f}{L}\right)\left(\frac{y_G-y_R}{T}\right) = 0.434\ \text{N}
+$$
+
+- rear-right wheel:
+
+$$
+R_{RR} = W \left(\frac{x_G-x_f}{L}\right)\left(\frac{y_L-y_G}{T}\right) = 0.421\ \text{N}
+$$
+
+The estimated front wheel loading is therefore significantly larger than the rear loading. This is not necessarily a disadvantage: it can improve front contact authority for steering and sensing alignment, but it also means the rear driven axle must still provide enough traction.
+
+---
+
+## 10. Static stability analysis
+
+### 10.1 Lateral static rollover threshold
+
+A simple static rollover threshold can be estimated from the half-track and COM height:
+
+$$
+\tan \phi_\mathrm{lat} = \frac{T/2}{h_G}
+$$
+
+Therefore:
+
+$$
+\phi_\mathrm{lat} = \tan^{-1}\left(\frac{69.47/2}{17.60}\right) = 63.1^\circ
+$$
+
+If the CAD-internal $z_G$ coordinate is used directly without ground shifting, the equivalent ratio becomes even more conservative, but the physically meaningful value for rollover is the height above ground, so **$63.1^\circ$** is the correct practical static estimate.
+
+The equivalent lateral acceleration threshold is:
+
+$$
+\frac{a_{y,\max}}{g} \approx \frac{T/2}{h_G} = \frac{34.74}{17.60} = 1.97
+$$
+
+So the theoretical rigid-body rollover threshold is approximately:
+
+$$
+a_{y,\max} \approx 1.97g
+$$
+
+The value is a geometric static threshold, not a measured driving limit. Sliding may occur first, depending on tire grip and floor properties. We will verify dynamic behavior in controlled cornering tests.
+
+### 10.2 Longitudinal pitch stability
+
+For forward pitch-over:
+
+$$
+\phi_\mathrm{front} = \tan^{-1}\left(\frac{a}{h_G}\right)=\tan^{-1}\left(\frac{31.23}{17.60}\right)=60.6^\circ
+$$
+
+For rearward pitch-over:
+
+$$
+\phi_\mathrm{rear} = \tan^{-1}\left(\frac{b}{h_G}\right)=\tan^{-1}\left(\frac{49.77}{17.60}\right)=70.5^\circ
+$$
+
+These theoretical angles suggest a broad static stability margin. Their accuracy depends on the real COM location, so they are not used as guarantees of no rollover or pitch-over.
+
+---
+
+## 11. Tire grip and cornering limit
+
+If the tire-road friction coefficient is $\mu$, then the no-slip lateral acceleration limit is approximately:
+
+$$
+a_{y,\text{grip}} \le \mu g
+$$
+
+This gives a speed limit in a turn of radius $R$:
+
+$$
+v_{\max} \approx \sqrt{\mu g R}
+$$
+
+For a **worked example only**, suppose the floor-tire friction coefficient is $\mu = 0.8$ (not measured for this assembly):
+
+At $R = 0.2225\ \text{m}$:
+
+$$
+v_{\max} = \sqrt{0.8 \cdot 9.81 \cdot 0.2225} = 1.32\ \text{m/s}
+$$
+
+At $R = 0.1403\ \text{m}$:
+
+$$
+v_{\max} = \sqrt{0.8 \cdot 9.81 \cdot 0.1403} = 1.05\ \text{m/s}
+$$
+
+We therefore use curvature-dependent speed limits as a design principle. The speed limits for the competition floor will be determined from measured grip and completed runs: **[TO COMPLETE: measured friction or slip threshold]** and **[TO COMPLETE: recommended corner speeds]**.
+
+---
+
+## 12. Manufacturing tolerance and fit considerations
+
+A nominal fit does not guarantee a functional assembly after printing. If several tolerances accumulate in the same direction, the worst-case tolerance stack is:
+
+$$
+T_{\mathrm{worst}} = \sum_{k=1}^{n} |T_k|
+$$
+
+For independent, approximately centered variations, an approximate statistical stack is:
+
+$$
+T_{\mathrm{RSS}} = \sqrt{\sum_{k=1}^{n} T_k^2}
+$$
+
+These formulas are particularly relevant for:
+
+- bearing seats,
+- differential alignment,
+- shaft supports,
+- wheel hub fits,
+- parallelism of steering links,
+- center distance between gears or gears and shafts.
+
+In practice, the nominal CAD geometry should always be checked against the printed result, especially for rotational components where a small radial error creates noticeable friction.
+
+---
+
+## 13. Mechanical design evaluation
+
+From the extracted geometry and calculations, the mechanical design has the following strengths:
+
+### 13.1 Strengths
+
+1. **Compact size**: the robot comfortably fits inside the WRO dimension limits.
+2. **Large wheels relative to chassis clearance**: improves robustness while maintaining low height.
+3. **Low estimated COM**: good for stability.
+4. **Nearly symmetric lateral mass distribution**: helps left/right consistency.
+5. **Front-biased longitudinal load distribution**: useful for a sensor-heavy front module and stable steering behavior.
+6. **Short wheelbase with moderate track width**: enables tight turning while preserving lateral stability.
+
+### 13.2 Engineering implications
+
+- The short wheelbase allows relatively small turning radii.
+- The low COM means the robot is far more likely to experience **slip before rollover**, which is the desired failure mode.
+- The main mechanical tuning challenge is not static stability, but **repeatable tracking, steering precision, and traction management**.
+
+---
+
+## 14. Physical validation and results to complete
+
+We will record the following checks on the assembled V4.1 robot:
+
+1. **Dimensions:** physical length [TO COMPLETE] mm, width [TO COMPLETE] mm, height [TO COMPLETE] mm; measuring tool [TO COMPLETE].
+2. **Parallel steering:** servo neutral [TO COMPLETE], left and right front-wheel angles at neutral [TO COMPLETE] degrees and [TO COMPLETE] degrees, maximum equal-angle steering left [TO COMPLETE] degrees, maximum equal-angle steering right [TO COMPLETE] degrees.
+3. **Turning tests:** measured radii at three steering settings [TO COMPLETE] mm, [TO COMPLETE] mm and [TO COMPLETE] mm.
+4. **Mass and COM:** total assembled mass **226 g**; each wheel load [TO COMPLETE]; measured x/y COM [TO COMPLETE], [TO COMPLETE] mm; measured COM height [TO COMPLETE] mm.
+5. **Grip:** test surface [TO COMPLETE], tire material [TO COMPLETE], slip onset speed [TO COMPLETE] m/s.
+6. **Odometry:** commanded travel [TO COMPLETE] mm, measured travel [TO COMPLETE] mm, effective wheel diameter [TO COMPLETE] mm.
+7. **Transmission:** pinion teeth [TO COMPLETE], differential ring teeth [TO COMPLETE], measured backlash [TO COMPLETE] degrees.
+8. **Reliability:** number of runs [TO COMPLETE], completed runs [TO COMPLETE], mean lap time [TO COMPLETE] s, observed mechanical faults [TO COMPLETE].
+
+For each test, we record the setup, measurement instrument, conditions, raw results and any adjustment made. The tables distinguish between:
+
+- **CAD-derived values**,
+- **measured values**, and
+- **assumptions used for design calculations**.
+
+---
+
+
+## 14A. Competition-ready measurement record
+
+We maintain the following table alongside CAD dimensions so that the final mechanical report is independently verifiable.
+
+| Measurement | V4.1 CAD or nominal | V4.1 physical measurement | Instrument / conditions |
+|---|---:|---:|---|
+| Robot length | 147.3 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Robot width | 82.8 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Robot height | 52.7 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Wheelbase | 81.0 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Track width | 69.47 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Wheel diameter, unloaded | 29.0 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Wheel diameter, under load | Not determined | **[TO COMPLETE]** | [TO COMPLETE] |
+| Ground clearance | approx. 5.8 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Total mass | not assigned by CAD | **226 g** | [TO COMPLETE: scale, tolerance] |
+| Actual COM from front axle | geometric estimate 31.23 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Actual COM height | geometric estimate 17.60 mm | **[TO COMPLETE]** | [TO COMPLETE] |
+| Maximum left road-wheel angle | not extracted | **[TO COMPLETE]** | [TO COMPLETE] |
+| Maximum right road-wheel angle | not extracted | **[TO COMPLETE]** | [TO COMPLETE] |
+| Tightest measured turn radius | not extracted | **[TO COMPLETE]** | [TO COMPLETE] |
+| Effective wheel travel per quadrature edge | 1.898 mm (nominal) | **[TO COMPLETE]** | [TO COMPLETE] |
+
+### Figures and photographs to insert
+
+- **[TO COMPLETE: photo of assembled V4.1 from the front, side, top and bottom]**
+- **[TO COMPLETE: photograph of chassis on four corner scales]**
+- **[TO COMPLETE: image of measured steering wheel angle at servo left limit]**
+- **[TO COMPLETE: image or short video still of circular-turn radius measurement]**
+- **[TO COMPLETE: drivetrain close-up showing external gearing and differential]**
+
+The CAD figures in this chapter use the real V4.1 STEP geometry. The physical photographs will document the manufactured assembly and experimentally measured steering.
+
+---
+## 15. Conclusion
+
+The STEP-based analysis shows that the V4.1 robot has the following key mechanical characteristics:
+
+- **overall dimensions:** 147.3 mm × 82.8 mm × 52.7 mm,
+- **wheelbase:** 81.0 mm,
+- **track width:** 69.47 mm,
+- **wheel diameter:** 29.0 mm,
+- **ground clearance:** approximately 5.8 mm,
+- **measured total mass:** 226 g,
+- **equal-density geometry centroid height above ground:** 17.6 mm (not a measured COM),
+- **modeled static load split:** 61.4% front / 38.6% rear, conditional on estimated COM.
+
+The CAD geometry gives V4.1 a compact 81.0 mm wheelbase, a 69.47 mm track width and a nominal 29 mm wheel diameter. The measurements and physical tests listed above will establish how accurately the manufactured robot reproduces this geometry and how it performs on the competition floor. The resulting data supports steering calibration, speed planning, odometry and the engineering decisions documented throughout this project.
