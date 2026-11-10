@@ -331,5 +331,3 @@ The filming snapshot and later modular sketch are different implementations. We 
 ### 8.1 What we learned from the complete system
 
 The largest changes were not independent upgrades. More detailed distance sensing only became useful after we selected specific zones, filtered invalid readings and defined rearm behavior. Higher motor reduction only makes sense when considered alongside intentional overvoltage, tire grip and short-distance maneuvers. A separate vision processor only helps when its messages are interpreted by a stable state machine with consistent steering response. Removing the fan simplifies the electrical system, but shifts greater importance onto passive traction and chassis geometry.
-
-The value of V4.1 is therefore not a list of higher specifications. It is the way the sensor information, mechanical design and controller behavior are assembled into a vehicle that can make the next driving decision from several imperfect sources of information.
