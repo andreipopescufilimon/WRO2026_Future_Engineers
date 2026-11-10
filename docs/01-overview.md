@@ -2,7 +2,7 @@
 
 **HyperLine Robotics | WRO 2026 Future Engineers**
 
-This engineering journal documents how we designed, built and tested our autonomous vehicle for the World Robot Olympiad 2026 Future Engineers category. The following chapters explain our mechanical design, electronics, software, engineering decisions and the steps needed to reproduce the robot. We apply our technical decisions into our CAD models, circuit designs, code, and test results so another team can inspect our work rather than rely on descriptions alone.
+This engineering journal presents how we designed, built and tested our autonomous vehicle for the World Robot Olympiad 2026 Future Engineers category. The following chapters explain our mechanical design, electronics, software, engineering decisions and the steps needed to reproduce the robot. We apply our technical decisions into our CAD models, circuit designs, code, and test results so another team can inspect our work rather than rely on descriptions alone.
 
 ---
 
