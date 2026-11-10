@@ -34,7 +34,7 @@
 
 Repository of HyperLine Robotics Team competing in the **World Robot Olympiad (WRO) 2026**, Future Engineers category. This repository holds everything behind our fully autonomous robot: the full firmware, electronics, CAD models, the full documentation, and the guide that brings the robot from parts to life.
 
-This engineering journal documents how we designed, built and tested our autonomous vehicle for the World Robot Olympiad 2026 Future Engineers category. The following chapters explain our mechanical design, electronics, software, engineering decisions and the steps needed to reproduce the robot. We apply our technical decisions into our CAD models, circuit designs, code, and test results so another team can inspect our work rather than rely on descriptions alone.
+This engineering journal presents how we designed, built and tested our autonomous vehicle for the World Robot Olympiad 2026 Future Engineers category. The following chapters explain our mechanical design, electronics, software, engineering decisions and the steps needed to reproduce the robot. We apply our technical decisions into our CAD models, circuit designs, code, and test results so another team can inspect our work rather than rely on descriptions alone.
 
 ---
 
