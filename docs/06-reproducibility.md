@@ -13,13 +13,24 @@
 
 | WRO documentation criterion | Where it is covered | Evidence |
 | --- | --- | --- |
-| Fully reproducible vehicle | [Parts and manufacturing](#parts-and-manufacturing), [Building and flashing](#building-and-flashing) | Components, CAD, PCB production files, assembly demonstration and setup procedures |
+| Fully reproducible vehicle | [Parts and manufacturing](#parts-and-manufacturing), [Building and flashing](#building-and-flashing), [Calibration and setup](#calibration-and-setup) | Source revision, CAD, manufacturing files, firmware installation, practical calibration and driving demonstration |
 | Clear project structure | [Repository structure](#repository-structure) | Separate mechanical, electronic, software, test and documentation directories |
 | CAD, code and wiring | [Repository structure](#repository-structure), [Parts and manufacturing](#parts-and-manufacturing) | STEP models, electrical files, Arduino source and OpenMV source |
-| Documented testing workflow | [Testing workflow](#testing-workflow) | Isolated tests, live diagnostics, expected behavior and full-field validation |
+| Documented testing workflow | [Testing workflow](#testing-workflow) | Bench checks, sensor and actuator diagnostics, field sequence and real driving footage |
 | Meaningful development history | [Versions and development history](#versions-and-development-history) | V4 and V4.1 differences, older CAD, project-wide Git history and revision matching |
 
 Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the **full WRO 2026 repository**, including software, CAD, electrical design and documentation updates, rather than a V4.1-only series of commits. The project has undergone many iterations throughout the season. Old mechanical revisions are kept in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so the evolution of the design can be inspected without mistaking previous components for current ones.
+
+### Reproduction routes
+
+The repository preserves the program used in the filmed demonstration and a later modular V4.1 implementation. They are **two different software revisions** and should not be mixed when assembling a complete system.
+
+| Reproduction target | Fixed Git revision | Controller entry point | What it represents |
+| --- | --- | --- | --- |
+| **Filmed vehicle** | [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) | Source revision identified by the team as running during the [Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
+| **Modular V4.1 source** | [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) | [`src/HLR_FE_Separated/HLR_FE_Separated.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/045c57e7388c08f9281642a864de0ba3b099c0df/src/HLR_FE_Separated/HLR_FE_Separated.ino) | Later source revision with separate Open and Final files and four VL53L5CX interfaces |
+
+**Practical build sequence:** select one revision, fabricate its matching mechanical/electrical configuration, assemble the vehicle, install its controller and camera programs, perform [calibration](#calibration-and-setup), and follow the [testing workflow](#testing-workflow). The chassis, sensor wiring and firmware are treated as one system, not interchangeable parts from different development stages.
 
 ### Evidence from the assembled vehicle
 
@@ -95,62 +106,44 @@ The main V4.1 assemblies are listed below. Component variants and manufacturing 
 | Battery | GNB 2S LiHV, 7.6 V nominal, 300 mAh | [Power architecture](03-power-sensors.md) |
 | Printed supports | Camera, sensor, steering and battery mounts | [3D models](../3D-models/) |
 
-### Cost Analysis and Bill of Materials
+### Cost analysis and bill of materials
 
-The cost of reproducing our V4.1 autonomous vehicle depends on the selected components, PCB manufacturing, mechanical fabrication and assembly. We designed the robot around a combination of commercial electronics and custom-manufactured parts, balancing performance, compactness and manufacturing cost.
+Our robot combines commercial modules, custom PCBs, machined drivetrain parts and printed supports. The values below are **the cost entries supplied by the team for this build**, not live supplier quotations. Custom PCB figures include the assembled board, so the integrated motor driver and board components are not charged again.
 
-The following bill of materials covers the components required to reproduce the vehicle. We distinguish between **actual expenditure**, which reflects the amount paid by our team, and **estimated reproduction cost**, which represents the cost of obtaining equivalent components and manufacturing the same assemblies.
+| Component or assembly | Quantity | Cost per unit / set (USD) | Extended cost (USD) |
+| --- | ---: | ---: | ---: |
+| Arduino Nano ESP32 | 1 | $22.43 | $22.43 |
+| OpenMV RT1062 camera | 1 | $165.00 | $165.00 |
+| Assembled VL53L5CX sensor boards | 4 | $12.00 | $48.00 |
+| Assembled BMI088 IMU PCB | 1 | $20.00 | $20.00 |
+| Assembled main PCB chassis (including IFX9201SG) | 1 | $13.00 | $13.00 |
+| Pololu 50:1 HPCB geared motor with encoder | 1 | $27.00 | $27.00 |
+| MG90S steering servo | 1 | $4.00 | $4.00 |
+| TCS34725 floor-color sensor | 1 | $2.30* | $2.30* |
+| Pololu D24V50F5 5 V regulator | 1 | $32.95 | $32.95 |
+| GNB 2S LiHV 300 mAh battery | 1 | $5.10 | $5.10 |
+| Wheels and tires | 4 | $6.25 | $25.00 |
+| Differential, gears and drivetrain | 1 set | $17.00 | $17.00 |
+| 3D-printed components and mounts | 1 set | $10.00 | $10.00 |
+| Bearings, fasteners, connectors and wiring | 1 set | $10.00 | $10.00 |
+| **Recorded-cost subtotal, excluding provisional item** | | | **$399.48** |
+| **Illustrative total including TCS34725 estimate** | | | **$401.78*** |
 
-#### Electronic and mechanical components
-
-| Component | Quantity | Actual cost paid (USD) |
-|---|---:|---:|---:|
-| Arduino Nano ESP32 | 1 | 22.43$ |
-| OpenMV RT1062 camera | 1 | 165.00$ |
-| VL53L5CX custom sensor PCBs, assembled | 4 | 48.00$ |
-| BMI088 custom IMU PCB, assembled | 1 | 20.00$ |
-| Main PCB chassis, assembled | 1 | 13.00$ |
-| Pololu 50:1 HPCB motor with encoder | 1 | 27.00$ |
-| MG90S steering servo | 1 | 4.00$ |
-| TCS34725 color sensor | 1 | TBD | 2.30& |
-| Pololu D24V50F5 voltage regulator | 1 | 32.95$ |
-| GNB 2S LiHV 300 mAh battery | 1 | 5.10$ |
-| Wheels and tires | 4 | 25.00$ |
-| Differential, gears and drivetrain components | 1 set | 17.00$ |
-| 3D-printed structural components and mounts | 1 set | 10.00$ |
-| Bearings, fasteners, connectors and wiring | 1 set | 10.00$ | 
-| **Total robot cost** | | **379.35$** |
-
-The main PCB cost includes its integrated IFX9201SG motor driver and associated electronic components. Custom sensor-board costs include the corresponding PCB fabrication and component assembly. These integrated components are not counted separately to avoid duplication.
+*The original TCS34725 line contains both `TBD` and `$2.30`. We retain $2.30 as a **provisional estimate**, not a confirmed amount paid. The $401.78 figure includes that estimate; the sum of the other recorded amounts is $399.48. Shipping, tax, tooling, rejected fabrication runs and labor are not included in these component totals.*
 
 #### Manufacturing and cost considerations
 
-Several engineering decisions influenced the overall cost of V4.1.
+**Custom PCBs.** We combine the controller connectors and IFX9201SG driver on the structural main PCB and manufacture separate BMI088 and VL53L5CX boards. This reduces independent module mounts and wiring, but custom fabrication becomes part of the bill of materials. See the [PCB production packages](../electrical-schematics/).
 
-**Custom PCB integration.** Rather than using separate commercial breakout modules for every subsystem, we designed dedicated PCBs for the main controller assembly, BMI088 IMU and VL53L5CX sensors. This allowed us to control component placement, connector orientation and mechanical dimensions while reducing unnecessary wiring. Custom fabrication also introduces manufacturing and assembly costs, particularly for small production quantities.
+**Drivetrain and mechanics.** The 50:1 gearbox trades theoretical maximum speed for increased gearbox torque multiplication relative to V4's 30:1 arrangement. Printed supports allow changes without replacing the entire chassis. The [mechanical CAD](../3D-models/) and [Chapter 02](02-mobility.md) document the fits and dimensions.
 
-**Drivetrain selection.** We selected the Pololu 50:1 HPCB motor to provide greater gearbox torque multiplication than the earlier 30:1 configuration. This decision prioritized low-speed control, acceleration under load and maneuvering performance over maximum theoretical output speed.
-
-**Mechanical manufacturing.** The chassis combines the custom main PCB with manufactured drivetrain components and 3D-printed mounts. Additive manufacturing allows individual mechanical parts to be revised without replacing the complete assembly, reducing the cost of mechanical iterations.
-
-**Sensor architecture.** Four VL53L5CX modules provide multi-zone distance information, while the BMI088, TCS34725 and OpenMV RT1062 handle distinct sensing tasks. The additional electronics increase component cost but provide the spatial and motion information used by the navigation system.
-
-#### Reproduction cost methodology
-
-The estimated reproduction cost is calculated from the quantities required for one complete vehicle:
-
-**Total reproduction cost = Sum of (component quantity × unit replacement cost) + allocated manufacturing and assembly costs.**
-
-For custom PCBs, the calculation uses the cost attributable to the boards installed on one robot, rather than charging the entire production batch to a single assembly. Shipping, taxes and minimum-order quantities should be accounted for consistently when preparing the final estimate. Sponsored or previously owned components are recorded at their actual expenditure in the first cost column, while the reproduction estimate reflects their normal replacement cost. This distinction allows another team to estimate the investment needed to build the same vehicle independently. The analysis covers the robot itself. Competition registration, travel, accommodation, team logistics and development labor are excluded because they are not necessary material purchases for reproducing the vehicle.
-
-The manufacturing files, component specifications and assembly instructions are available in the [electrical schematics](../electrical-schematics/), [mechanical CAD](../3D-models/) and the preceding sections of this chapter.
-
+**Reproduction costing.** The table reflects one robot's installed quantities. For commercial purchases, a second team can substitute current prices for the same part numbers; for custom assemblies, batch manufacturing charges should be allocated across the installed units. Competition travel, accommodation and team administration are outside the vehicle reproduction cost.
 
 ### Mechanical CAD and assembly reference
 
 The STEP files in [`3D-models/`](../3D-models/) can be inspected in compatible CAD software to understand component geometry and how the assemblies fit together. The [technical drawings](technical-drawings/) provide dimensions, while the vehicle [photographs](../v-photos/) show the assembled orientation and cable routing.
 
-The principal assembly reference is our recorded demonstration:
+The recorded assembly sequence provides the visual reference for component orientation and placement:
 
 **[Watch the HyperLine Robotics assembly video](https://youtu.be/HSzWATB6nWQ).**
 
@@ -162,7 +155,7 @@ The electronics are organized into three manufacturing groups:
 2. [IMU PCB](../electrical-schematics/IMU/production-files/) for inertial measurements.
 3. [ToF sensor PCB](../electrical-schematics/TOF%20sensors/production-files/) for distance sensing.
 
-Fabricate each board using the corresponding production package and populate it according to its schematic and board revision. The electronic files and [chapter 03](03-power-sensors.md) should be consulted together because board fabrication files do not, by themselves, describe every connection between separate modules.
+The released manufacturing packages include Gerber, BOM and pick-and-place files for the main chassis, IMU and ToF boards. Fabricate each board using its matching package and populate it according to the schematic and board revision. The electronic files and [chapter 03](03-power-sensors.md) should be consulted together because board fabrication files do not, by themselves, describe every connection between separate modules.
 
 Before applying battery power, inspect solder joints, power polarity, connector orientation and continuity. Check that there is no unintended short between supply rails and ground. Confirm the expected regulated voltages before connecting sensitive modules. Disconnect power before modifying wiring.
 
@@ -170,22 +163,28 @@ Before applying battery power, inspect solder joints, power polarity, connector 
 
 ## Building and flashing
 
-### 1. Obtain one matching project revision
+### 1. Obtain a fixed project revision
 
-Clone the project or use GitHub's ZIP download:
+Clone the repository and check out the software configuration associated with the build being reproduced:
 
 ```bash
 git clone https://github.com/andreipopescufilimon/WRO2026_Future_Engineers.git
 cd WRO2026_Future_Engineers
 ```
 
-The [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the entire project, from the earlier mechanical designs through the later V4.1 hardware and software revisions. The team identifies [`de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the source revision used in the driving video. The filmed Arduino sketch is `src/HLR_FE/HLR_FE.ino`, which can be retrieved with:
+For the **published driving demonstration** (the earlier `HLR_FE` sketch), use:
 
 ```bash
 git checkout de34faf039a70443361197de540879f212e3de81
 ```
 
-The later V4.1 implementation is available at [`045c57e`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), under `src/HLR_FE_Separated/`. Its Open and Obstacle Challenge routines are organized into separate `.ino` tabs.
+For the **later modular V4.1 design** (`HLR_FE_Separated` with `Open.ino` and `Final.ino`), use:
+
+```bash
+git checkout 045c57e7388c08f9281642a864de0ba3b099c0df
+```
+
+The filmed program is identified by the team in the [driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw). The modular sketch is a later implementation, not the original recorded binary. Use the CAD, component variant, PCB production files and camera source **from the selected snapshot**. When switching revisions, reopen the corresponding sketch and review the wiring and calibration settings instead of reusing values blindly.
 
 ### 2. Assemble the mechanics
 
@@ -204,25 +203,29 @@ The servo neutral position, steering geometry and wheelbase are described in [02
 
 ### 3. Prepare the software environment
 
-The Nano ESP32 and OpenMV RT1062 use different development environments. The Open and Obstacle routines use a common V4.1 hardware layer but separate round implementations.
+The Arduino Nano ESP32 runs the vehicle controller; the OpenMV RT1062 runs the separate camera script. The source files are part of the selected project snapshot. The later V4.1 controller imports the following libraries and interfaces:
 
-| Device | Software | Source |
+| Device or dependency | Required interface | Installation or source reference |
 | --- | --- | --- |
-| Arduino Nano ESP32 | [Arduino IDE 2](https://www.arduino.cc/en/software), with the appropriate Nano ESP32 board package | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) |
-| OpenMV RT1062 | [OpenMV IDE](https://openmv.io/pages/download) and compatible camera firmware | [`src/camera.py`](../src/camera.py) |
+| Arduino Nano ESP32 board package | Nano digital/analog pin names, `Serial0`, `Wire`, GPIO and PWM | Install the **Arduino Nano ESP32** board platform through Arduino IDE Boards Manager |
+| `ESP32Encoder` | Encoder library included by the controller | Install through Arduino IDE Library Manager |
+| `ESP32Servo` | `Servo.attach()` and `Servo.write()` for front-wheel steering | Install through Arduino IDE Library Manager |
+| SparkFun VL53L5CX Arduino Library | `SparkFun_VL53L5CX` methods used by [`tof.ino`](../src/HLR_FE_Separated/tof.ino) | Install the SparkFun VL53L5CX Arduino Library |
+| BMI088 library | `BMI088.h` exposing `setAccScaleRange`, `setAccPoweMode`, `setGyroOutputDataRate` and `getGyroscopeZ` | Use a BMI088 implementation with the **same API as [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino)**; libraries with the same header name are not necessarily interchangeable |
+| OpenMV IDE and RT1062 firmware | `sensor`, `machine.UART` and `machine.LED` in MicroPython | Run [`src/camera.py`](../src/camera.py) on the RT1062 |
 
-The V4.1 controller uses the Arduino Nano ESP32 board package, `ESP32Encoder`, `ESP32Servo`, the SparkFun VL53L5CX Arduino Library and the BMI088 library compatible with the methods in [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino). The board package also provides `Wire` for I²C communication, including the TCS34725 colour sensor. The camera program runs separately on OpenMV RT1062 firmware.
+`Wire` is supplied by the Arduino board platform. The TCS34725 is accessed directly over its separate I²C bus, rather than through an additional Arduino color-sensor library.
 
-| Software / library | Function in the project |
-| --- | --- |
-| Arduino IDE and Arduino Nano ESP32 board package | Compile, upload and run the controller firmware |
-| `ESP32Encoder` | Wheel-encoder readings |
-| `ESP32Servo` | Front-steering servo output |
-| SparkFun VL53L5CX Arduino Library | Distance-sensor initialization and ranging |
-| `BMI088.h`-compatible library | IMU acquisition and heading estimation |
-| OpenMV IDE and RT1062 firmware | Camera programming and vision processing |
+**Dependency identification:** the Git snapshot fixes the project's source but does not encode the development PC's exact installed board-core and library version numbers. On a computer reproducing the build, Arduino IDE's **Boards Manager** and **Library Manager** identify the selected installations. Arduino CLI can record the same information:
 
-The header name `BMI088.h` is shared by more than one library implementation. The compatible API is the one used by the published sketch, so the selected library must expose those same methods.
+```bash
+arduino-cli version
+arduino-cli core list
+arduino-cli lib list
+arduino-cli board list
+```
+
+Use the selected Nano ESP32 board and the corresponding sketch revision when verifying the build. In Arduino IDE, **Sketch → Verify/Compile** displays errors, warnings and the actual dependency paths selected by the compiler. If a different BMI088 API is installed, resolve the library mismatch rather than changing the robot's pinout or sensor algorithm to silence errors.
 
 ### Published V4.1 implementation references
 
@@ -271,9 +274,52 @@ On the RT1062, **P4 = UART1 TX** and **P5 = UART1 RX**, at **19,200 baud** in th
 
 ---
 
+## Calibration and setup
+
+The steps below connect the assembled robot to the values in the **modular V4.1** firmware. The earlier filmed program has a different hardware and software layout and uses the constants in its own commit. This section is a compact index of the settings that affect repeatability; the calculations and full sensing rationale remain in [02. Mobility](02-mobility.md), [03. Power and sensors](03-power-sensors.md) and [04. Software](04-software.md).
+
+### Mechanical, sensor and communications calibration
+
+| Order | Subsystem | V4.1 source setting and procedure | Expected check |
+| ---: | --- | --- | --- |
+| 1 | **Steering neutral and stops** | [`HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino) sets `STEERING_CENTER = 85`, `STEERING_LEFT = 39`, `STEERING_RIGHT = 131`, and parking endpoints `40` / `138`. Center the linkage before fixing the servo horn; inspect both wheel clearances with the wheels raised. | The wheels are aligned at neutral; commanded travel does not force the links into the chassis or steering stops. Servo command values are not physical wheel angles. |
+| 2 | **Motor direction and encoder** | Rear motor PWM on D7, direction on D8; encoder A on D5 (rising-edge interrupt), B on D4 (direction). The source defines `WHEEL_DIAM = 29.0` mm and `MM_PER_TICK = 1.831` mm for its distance helper. Drive a measured straight distance on the actual surface and compare to `read_cm()`. | Positive wheel travel has the expected encoder direction and measured displacement agrees with the selected distance conversion. |
+| 3 | **BMI088 heading** | [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) estimates Z-axis bias over `DRIFT_TEST_TIME = 10` seconds at boot, with ±2000°/s gyro and ±6 g accelerometer settings. Keep the robot still during this interval, then rotate it manually both ways. | Heading increases/decreases consistently with the sign expected by the steering controller, without visible stationary jumps. |
+| 4 | **Four ToF matrices** | [`tof.ino`](../src/HLR_FE_Separated/tof.ino) releases one LPn pin at a time and assigns front A3=`0x30`, left A2=`0x31`, right A1=`0x32`, rear A0=`0x33`; each is 4×4, configured at 30 Hz. Test all four optical directions with a flat target and check that mount/wheels do not occlude the field of view. | All four sensors initialize with unique addresses and provide valid ranges for targets in their respective directions. |
+| 5 | **Front corner zones** | The Open controller uses front ToF zones `(2,3)` and `(3,3)` (1-based row/column) for a corner below 600 mm, with rearming once both are at least 800 mm. Data older than 150 ms is rejected. Check which physical side corresponds to those zones after mounting. | The correct wall and zones trigger a single turn, without mirrored indexing or repeated corner events. |
+| 6 | **Floor colors** | The TCS34725 uses separate I²C pins A6/A7. [`functions.ino`](../src/HLR_FE_Separated/functions.ino) reads normalized RGB channels; the source selects 16× gain and a short exposure. Present white, blue and red/orange field markings at the installed floor clearance. | White re-arms detection and colored markers set or confirm the intended travel direction. |
+| 7 | **RT1062 image and UART** | [`camera.py`](../src/camera.py) configures QVGA 320×240, `vflip=True`, `hmirror=True`, gain/AWB disabled, fixed 16,000 µs exposure and `UART(1, 19200)`. Connect P4 TX to Nano RX D0, and share ground. Recheck red/green blob thresholds under the actual lighting. | Red and green objects appear in the configured region of interest; the Nano receives correctly formatted UART messages. |
+| 8 | **Round selection and start** | D12 HIGH and D11 LOW selects Open; D11 HIGH and D12 LOW selects Final. Both HIGH or both LOW leave the program stopped. Restart after changing mode. D10 is an active-LOW start input. | The requested challenge starts only after initialization and the start action; invalid mode combinations never drive the motor. |
+
+For encoder calibration, with the same counting convention as the selected sketch, a useful correction after measuring one straight run is:
+
+\[
+\mathrm{MM\_PER\_TICK}_{\mathrm{new}}=\mathrm{MM\_PER\_TICK}_{\mathrm{old}}\frac{d_{\mathrm{measured}}}{d_{\mathrm{commanded}}}.
+\]
+
+A physical wheel diameter does **not** by itself establish the correct ticks-per-millimeter value, because interrupt edge counting and the drivetrain's actual motion must be considered. Repeat the distance check after any tire, wheel, encoder or gearbox change.
+
+### Challenge configuration reference
+
+The following numbers are **firmware configuration values**, not measured lap-time results. They identify the modular source revision for reproducing the controller behavior.
+
+| Setting | Open Challenge (`Open.ino`) | Obstacle / Final Challenge (`Final.ino`) |
+| --- | ---: | ---: |
+| `max_turns` | 12 | 13 |
+| Initial `robot_speed` command | 250 (first-marker logic temporarily uses 80) | 100 |
+| `kp` | 0.034 | 0.044 |
+| `ki` | 0 | 0 |
+| `kd` | 0.082 | 0.082 |
+| `delayTurns` | 1000 ms | 1500 ms |
+| Additional behavior | ToF-driven turns; corner PWM command 80 | Colored-pillar interaction and parking; `park_speed = 45` in main sketch |
+
+Motor speed values are controller PWM commands on an 8-bit scale, **not km/h or motor terminal voltage**. The nominal 6 V motor is intentionally operated from the robot's 2S LiHV drive rail as documented in [Chapter 03](03-power-sensors.md); avoid interpreting the PWM fraction as an electrical or thermal protection guarantee.
+
+---
+
 ## Running the vehicle
 
-After programming both devices, disconnect programming cables as appropriate for the power setup, mount and secure the battery, and switch on the robot. Allow the Nano ESP32, IMU, ToF sensors and RT1062 to initialize. Check basic actuator direction and sensor operation before attempting an autonomous run.
+After flashing both devices, disconnect programming cables as appropriate for the power setup and secure the LiHV battery. Select the mode with **one** 3.3 V HIGH input: D12 for Open or D11 for Final. The sketch latches that selection when powered on. During initialization, keep the vehicle stationary for the BMI088's 10-second bias calibration; the start input is D10 (active LOW). The controller then waits for a start command before driving. The [calibration and setup sequence](#calibration-and-setup) summarizes the checks that connect the code settings to the assembled geometry.
 
 ### Connect to the local web interface
 
@@ -314,7 +360,7 @@ The settings page provides runtime adjustments for the driving and maneuvering p
 
 ## Testing workflow
 
-We test the robot in three stages: individual subsystems, integrated stationary operation and full autonomous runs. This prevents a mechanical or electrical fault from being mistaken for a navigation problem.
+Our verification approach has three stages: individual subsystems, integrated stationary operation and full-field autonomous driving. This separates mechanical faults, sensor configuration errors and navigation behavior. Calibration settings are listed in [Calibration and setup](#calibration-and-setup); the [driving video](https://www.youtube.com/watch?v=bg92ulHXomw) documents the physical vehicle running both challenge configurations using the filmed source revision identified above.
 
 ### 1. Independent subsystem tests
 
@@ -340,7 +386,7 @@ A useful bench sequence is to rotate the robot by hand, move targets past the di
 
 ### 3. Full-field verification
 
-With subsystem checks completed, test the robot on a field matching the competition geometry. First use conservative speeds and a repeatable layout. Verify wall following, both travel directions, cornering and stable lap completion. Then test obstacle detection, correct passing side for red and green pillars, recovery and parallel parking as applicable to the selected challenge.
+For full-field verification, start from the assembled and calibrated vehicle, then run Open Challenge in both travel directions and Obstacle Challenge with the intended red/green pillar arrangement and parking geometry. Observe turn detection, obstacle pass side, heading recovery and the final stop. The video index and footage below document the robot on the field; the exact filming software revision is [`de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81).
 
 Field runs use the obstacle geometry and driving behavior described in [04. Software](04-software.md). Video evidence is collected under [`video/`](../video/), while design changes and engineering decisions are discussed in [05. Systems and testing](05-systems.md).
 
@@ -359,7 +405,7 @@ Our project includes a recorded assembly, physical driving footage for both chal
 | BMI088 and steering/drive | [Gyro implementation](../src/HLR_FE_Separated/gyro.ino), [motor implementation](../src/HLR_FE_Separated/motors.ino) | **Implemented in source:** IMU acquisition, steering and motor-control routines |
 | Battery and regulated-power reliability | [Power and sensor architecture](03-power-sensors.md) | **Documented:** 2S LiHV supply, regulator, power distribution and protection considerations |
 
-The videos and camera frame document the assembled robot and its operation. The controller and camera source provide the implementation details for recreating these systems.
+The videos and camera frame document the assembled robot and its operation. The historical controller and camera source correspond to the filmed revision identified above. The separated V4.1 source is provided as the newer modular implementation.
 
 The assembly recording, challenge footage and RT1062 frame buffer provide the practical examples accompanying this reproduction guide. The testing examples above describe how each subsystem is inspected before autonomous field operation.
 
@@ -384,18 +430,16 @@ The GitHub history preserves earlier mechanical and software configurations, the
 
 The filmed robot used the earlier `src/HLR_FE/` sketch. The later V4.1 source separates the Open and Obstacle Challenge routines in `src/HLR_FE_Separated/`, reflecting the changes in sensor handling and program structure.
 
-### Driving demonstration and V4.1 firmware revisions
+### Filming firmware and modular revision
 
-The original software associated with the real driving video is the team-identified commit [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81). That snapshot includes `src/HLR_FE/HLR_FE.ino` and the camera and project files. The newer V4.1 system can be inspected using [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) (10 November 2026), which includes the separated `src/HLR_FE_Separated/` controller sketch. These two snapshots have different software architectures and serve different reproduction purposes.
+The team identifies [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the code revision running in the [real Open and Obstacle Challenge footage](https://www.youtube.com/watch?v=bg92ulHXomw). That snapshot contains `src/HLR_FE/HLR_FE.ino`. Its source, camera program and mechanical/electrical documentation are accessible as a fixed historical Git state.
 
-| Release item | Reference |
+The later source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_Separated/`, which moves Open and Final behavior into their respective files and uses the four-matrix ToF interface. It is the basis of the modular configuration and calibration references in this chapter. This distinction keeps the historical demonstration and newer implementation individually traceable.
+
+| Release resource | Reference |
 | --- | --- |
-| Filmed source revision (team identification) | [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
-| Public newer V4.1 source checkpoint | [Commit `045c57e`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
-| Controller source used for filming | [`src/HLR_FE/HLR_FE.ino` at `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) |
-| Newer V4.1 controller source | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) |
-| Camera source | [`src/camera.py`](../src/camera.py), OpenMV RT1062 |
-| Mechanical and PCB production files | [CAD](../3D-models/) · [Electrical files](../electrical-schematics/) |
-| Real assembly demonstration | [Assembly video](https://youtu.be/HSzWATB6nWQ) |
-| Real driving demonstration | [Open and Obstacle footage](https://www.youtube.com/watch?v=bg92ulHXomw) |
-| Firmware integrity | [SHA-256 source manifest](validation/evidence/source-sha256.json) |
+| Filmed source and matching historical files | [Commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
+| Modular V4.1 controller and project snapshot | [Commit `045c57e`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
+| Assembled vehicle | [Assembly video](https://youtu.be/HSzWATB6nWQ) and [robot photographs](../v-photos/) |
+| Real-world autonomous operation | [Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
+| Physical sensor and control references | [Power and sensors](03-power-sensors.md), [mobility](02-mobility.md) and [systems](05-systems.md) |
