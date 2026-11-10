@@ -1,0 +1,35 @@
+subsystem,parameter,source_value,source_path,source_revision,evidence_class
+robot,Hardware version,V4.1,docs/06-reproducibility.md,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+controller,Controller,Arduino Nano ESP32,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Vision processor,OpenMV RT1062,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+motor,PWM output pin,D7,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+motor,Direction output pin,D8,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+steering,Servo pin,D2,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+steering,Left servo command,39,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+steering,Center servo command,85,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+steering,Right servo command,131,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+encoder,Channel A pin,D5,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+encoder,Channel B pin,D4,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+encoder,Distance calibration mm per counted tick,1.831,src/HLR_FE_Separated/HLR_FE_Separated.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+gyro,Stationary bias calibration seconds,10,src/HLR_FE_Separated/gyro.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+gyro,Gyro full-scale degrees per second,2000,src/HLR_FE_Separated/gyro.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Front sensor I2C address,0x30,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Left sensor I2C address,0x31,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Right sensor I2C address,0x32,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Back sensor I2C address,0x33,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Matrix width zones,4,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Matrix height zones,4,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Configured ranging frequency Hz,30,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+tof,Freshness limit milliseconds,150,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+open,Corner trigger both zones below mm,600,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+open,Corner rearm both zones at least mm,800,src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+open,Corner trigger cell 1 row column,"2,3",src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+open,Corner trigger cell 2 row column,"3,3",src/HLR_FE_Separated/tof.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+open,Target corner count,12,src/HLR_FE_Separated/Open.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+final,Parking trigger turn count,13,src/HLR_FE_Separated/Final.ino,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Camera UART baud,19200,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Close trigger bottom pixel Y,148,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Height classification 50mm maximum ratio,1.30,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Height classification 100mm minimum ratio,1.43,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Height classification 100mm maximum ratio,2.02,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED
+camera,Height classification 150mm minimum ratio,2.12,src/camera.py,REVIEWED_SOURCE_PATH_2026-11-10,SOURCE_DEFINED

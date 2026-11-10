@@ -1,0 +1,23 @@
+case_id,subsystem,input,expected_result,calculated_result,status,evidence_class
+tof_corner_both_near,ToF corner,400/520/True,CORNER,CORNER,PASS,DETERMINISTIC_SOURCE_LOGIC
+tof_one_far,ToF corner,450/690/True,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC
+tof_at_600,ToF corner,600/500/True,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC
+tof_both_clear,ToF corner,800/810/False,REARM,REARM,PASS,DETERMINISTIC_SOURCE_LOGIC
+tof_one_invalid,ToF corner,-1/430/True,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC
+tof_close_disarmed,ToF corner,490/450/False,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC
+tof_clear_at_exact_limit,ToF corner,800/800/False,REARM,REARM,PASS,DETERMINISTIC_SOURCE_LOGIC
+height_ratio_1.0,Camera ratio,1.0,50,50,PASS,DETERMINISTIC_SOURCE_LOGIC
+height_ratio_1.7,Camera ratio,1.7,100,100,PASS,DETERMINISTIC_SOURCE_LOGIC
+height_ratio_2.25,Camera ratio,2.25,150,150,PASS,DETERMINISTIC_SOURCE_LOGIC
+height_ratio_1.36,Camera ratio,1.36,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC
+height_ratio_2.07,Camera ratio,2.07,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC
+height_ratio_0.3,Camera ratio,0.3,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC
+steering_-1,Servo command mapping,-1,39,39,PASS,DETERMINISTIC_SOURCE_LOGIC
+steering_0,Servo command mapping,0,85,85,PASS,DETERMINISTIC_SOURCE_LOGIC
+steering_1,Servo command mapping,1,131,131,PASS,DETERMINISTIC_SOURCE_LOGIC
+steering_2,Servo command mapping,2,131,131,PASS,DETERMINISTIC_SOURCE_LOGIC
+steering_-2,Servo command mapping,-2,39,39,PASS,DETERMINISTIC_SOURCE_LOGIC
+encoder_ticks_0,Encoder conversion,0,0.0 mm,0.0 mm,PASS,DETERMINISTIC_SOURCE_LOGIC
+encoder_ticks_10,Encoder conversion,10,18.31 mm,18.31 mm,PASS,DETERMINISTIC_SOURCE_LOGIC
+encoder_ticks_50,Encoder conversion,50,91.55 mm,91.55 mm,PASS,DETERMINISTIC_SOURCE_LOGIC
+encoder_ticks_100,Encoder conversion,100,183.1 mm,183.1 mm,PASS,DETERMINISTIC_SOURCE_LOGIC

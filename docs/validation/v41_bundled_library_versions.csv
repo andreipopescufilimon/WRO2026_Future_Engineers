@@ -1,0 +1,6 @@
+library,version_in_repository,reference,evidence_class
+BMI088,1.0.0,src/libraries/,REPOSITORY_LIBRARY_METADATA
+ESP32Encoder,5.0.0,src/libraries/,REPOSITORY_LIBRARY_METADATA
+ESP32Servo,3.0.3,src/libraries/,REPOSITORY_LIBRARY_METADATA
+SparkFun VL53L5CX Arduino Library,1.0.3,src/libraries/,REPOSITORY_LIBRARY_METADATA
+Adafruit TCS34725,1.4.4,src/libraries/,REPOSITORY_LIBRARY_METADATA
