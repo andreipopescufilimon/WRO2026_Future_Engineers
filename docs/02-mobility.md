@@ -59,7 +59,7 @@ We describe longitudinal dimensions along the vehicle's $x$ axis and lateral dim
 | Approximate underbody clearance | $h_c$ | **5.8 mm** | **6.1 mm** |
 | Ready-to-run mass | $m$ | **226 g** | **226 g**|
 
-**The CAD envelope includes the camera and all modeled external components. Because silicone compresses and printed parts vary slightly, the competition measurement is the authority for the physical envelope.*
+**The CAD model accounts for the camera and all external components. However, silicone compression and minor 3D printing tolerances may affect the final dimensions, so the official competition measurement determines the robot's actual size.*
 
 The wheelbase and track are calculated from the wheel-center coordinates:
 
@@ -144,7 +144,7 @@ $$
 \frac{50}{30}=1.667
 $$
 
-That is **66.7% greater ideal gearbox torque multiplication**, offset by an ideal no-load output speed factor of $30/50=0.60$. Actual improvement depends on motor variant, battery voltage, gear efficiency and tire grip. V4.1 prioritizes usable torque at corner exits and controllable reverse/parking motion.
+That is **66.7% greater ideal gearbox torque multiplication**, offset by an ideal no-load output speed factor of $30/50=0.60$. Actual improvement depends on motor model, battery voltage, gear efficiency and tire grip. V4.1 prioritizes usable torque at corner exits and controllable reverse/parking motion.
 
 ### 3.2 Wheel speed and linear speed
 
