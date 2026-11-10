@@ -585,7 +585,7 @@ For V4.1, each of the four installed VL53L5CX boards is measured at **200, 400, 
 | Right | 200 / 400 / 600 / 1000 mm | Range samples, status and timestamps | [Physical results](validation/physical/SUMMARY.md#distance-sensor-accuracy) |
 | Back | 200 / 400 / 600 / 1000 mm | Range samples, status and timestamps | [Physical results](validation/physical/SUMMARY.md#distance-sensor-accuracy) |
 
-A second run with the motor enabled isolates vibration and electrical effects. The nominal **30 Hz** setting is a software configuration, not the observed delivered sample rate. The existing illustrative table below is retained to demonstrate the method and is deliberately **not** counted as experimental results.
+The nominal **30 Hz** setting is a software configuration, not the observed delivered sample rate. The existing illustrative table below is retained to demonstrate the method and is deliberately **not** counted as experimental results.
 
 The following values are an **illustrative calculation example**, not measurements from V4.1. Their RMSE figures are calculated from the four example mean errors; a physical accuracy report must compute RMSE across all valid captured frames and separately count invalid frames.
 
