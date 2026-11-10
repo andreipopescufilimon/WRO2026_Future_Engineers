@@ -109,7 +109,7 @@ The front placement provides an unobstructed forward view without relying on the
 | **Stall Torque:** ~0.74 kg·cm | **Stall Current:** 1.5A |
 | 🔗 **[Buy Here](https://www.pololu.com/product/5184)** | **Function:** Drives the robot |
 
-The gearbox provides output torque for acceleration and controlled parking. The encoder measures incremental motor rotation for odometry and distance-limited maneuvers. The nominal 6 V motor specification does **not** imply that applying a 7.6 V battery directly is safe: PWM duty, dynamic braking, mechanical loading, and winding temperature must be considered. Exact encoder connector orientation and the installed motor part number should match the mechanical BOM. [Pololu 50:1 HPCB encoder family](https://www.pololu.com/product/5187/specs).
+The gearbox provides output torque for acceleration and controlled parking. The encoder measures incremental motor rotation for odometry and distance-limited maneuvers. We **intentionally overvoltage the nominal 6 V motor** using the 2S LiHV battery through the IFX9201SG motor driver. The battery is 7.6 V nominal and may reach 8.7 V fully charged; the motor does not receive a separate regulated 6 V supply. Its applied voltage is controlled through PWM according to the driving state, including an Open Cruise request of 250/255 (98.04%). This is an intentional performance trade-off, not a claim that the motor is operating within its 6 V rating. PWM duty does not impose a hard voltage or current limit: prolonged high-load operation, stalls and winding heating can damage an overvolted motor. The IFX9201SG includes driver-side fault protections, but these do not establish a safe motor winding temperature. Exact encoder connector orientation and the installed motor part number should match the mechanical BOM. [Pololu 50:1 HPCB encoder family](https://www.pololu.com/product/5187/specs).
 
 #### 2.1.6 Motor driver: IFX9201SG
 
@@ -254,6 +254,21 @@ $$
 
 This form is useful for evaluating acceleration transients and establishing an energy budget without double-counting rail loads.
 
+#### Low-voltage supply and logic domains
+
+The battery feeds the D24V50F5, which produces the main 5 V rail. The ToF chip and BMI088 use 3.3 V-class supplies, but the chip supply, a module input supply and the I²C pull-up voltage are **three different connections**. They must not be treated as interchangeable.
+
+| Component | Documented board/module supply | 3.3 V conversion path | Interface voltage / note |
+|---|---|---|---|
+| Four custom VL53L5CX boards | 5 V at the custom-board supply input, as documented in §2.1.8 | Local 3.3 V regulation on each ToF board | VL53L5CX signal and I²C nets must use levels permitted by the actual board design; the precise pull-up/level-shifting topology is defined by the ToF PCB schematic |
+| Custom BMI088 board | BMI088 chip supply requirement: 3.0 to 3.6 V | Exact regulator/source net for the assembled custom IMU board is not identified in the supplied chapter | Sensor communication must remain within the voltage limits of both the BMI088 and Nano ESP32 |
+| TCS34725 floor sensor | 3 to 5 V for the specified Adafruit-style breakout, not necessarily the bare IC | Onboard regulator if the installed breakout is that version; exact installed module and input net are not established here | The actual SDA/SCL pull-up rail on A6/A7 must be checked against the installed breakout |
+| Arduino Nano ESP32 | Regulated 5 V system feed | Internal board voltage regulation | ESP32 GPIO operates at 3.3 V logic |
+| OpenMV RT1062 | Regulated 5 V system feed | Camera-board internal conversion | UART interface is 3.3 V logic |
+| MG90S servo | Regulated 5 V system feed | Not applicable | The command input is driven by the Nano ESP32 |
+
+The regulator and signal-net details that cannot be recovered from this chapter are not inferred from the sensor datasheets. The source of truth for those nets is the [main PCB](../electrical-schematics/Main%20PCB/production-files/), [IMU board](../electrical-schematics/IMU/production-files/) and [ToF board](../electrical-schematics/TOF%20sensors/production-files/) design. This table describes the documented arrangement without inventing a 3.3 V regulator that has not been identified in the released wiring.
+
 ### 3.3 Physical power measurement plan
 
 The test protocol covers three operating regimes: idle, normal driving and brief peaks. A peak-only budget cannot predict battery runtime, and an idle-only budget cannot reveal brownouts. The table below gives planning values, not measurements from a completed test.
@@ -266,7 +281,7 @@ The test protocol covers three operating regimes: idle, normal driving and brief
 | Four VL53L5CX sensors | 20 mA | 380 mA | 600 mA | 3.3 V |
 | BMI088 board | 4 mA | 5.15 mA | 10 mA | 3.3 V |
 | TCS34725 module | 2 mA | 6 mA | 25 mA | 3.3 V |
-| Pololu 50:1 HPCB drive motor | 0 A | 0.80 A | 1.50 A | Motor supply, nominal rating 6 V |
+| Pololu 50:1 HPCB drive motor | 0 A | 0.80 A | 1.50 A | Direct 2S LiHV motor path; motor rated 6 V |
 | Complete battery input | 0.19 A | 1.34 A | ~3.1 A | 2S LiHV, 7.6 V nominal |
 
 **Measurement procedure:** monitor the battery with a suitable current meter and the 5 V rail with a separate voltage probe. Capture the minimum regulator voltage during abrupt acceleration and steering reversals, then repeat with camera processing active. Record battery charge level, firmware mode and measurement bandwidth. A slow multimeter can miss short voltage dips; use an oscilloscope to inspect transient ripple and voltage sag on the 5 V rail.
@@ -378,6 +393,12 @@ This is useful for preparing reproducible electrical tests. **PWM duty does not 
 [Full `validation/power_budget.csv` dataset](validation/power_budget.csv). Use the [physical electrical measurement template](validation/measurement_templates/power_budget.csv) to record battery input current, regulator output current and voltage minima under real motor and servo load.
 <!-- END CODE-DERIVED DATA VIEW -->
 
+#### Intentional motor overvoltage
+
+The Pololu 50:1 drive motor is rated for 6 V, but our configuration **deliberately operates it above its nominal voltage**. The IFX9201SG's motor-power path is supplied from the 2S LiHV battery (7.6 V nominal, up to 8.7 V fully charged), not from the regulated 5 V electronics rail or a dedicated 6 V regulator. Speed requests are adjusted in software using the operating-state PWM values shown above. In Open Cruise, the requested 98.04% duty leaves the motor exposed to nearly the full battery voltage for much of the PWM cycle.
+
+The purpose of this decision is to prioritize motor speed and response during short challenge maneuvers. It also increases the risk of excessive current and winding temperature, particularly under heavy load or stalled conditions. The motor driver's protection functions provide driver protection, **not a guarantee that a nominal 6 V motor will remain thermally safe**. No measured motor temperature, winding-current limit or thermal qualification is asserted here.
+
 ### 3.4 Expected runtime
 
 An energy-based runtime estimate is:
@@ -476,6 +497,19 @@ d_{\mathrm{margin}}\ge v\tau+\frac{v^2}{2a_b}+d_{\mathrm{geometry}}
 $$
 
 where $a_b$ is the measured deceleration magnitude and $d_{\mathrm{geometry}}$ covers front overhang and required clearance. This explains why range thresholds cannot be chosen independently of speed and mechanics.
+
+#### Physical mounting and optical clearance
+
+The front, left, right and rear VL53L5CX boards are mounted to face their corresponding field boundaries. The image below and the [mechanical CAD](../3D-models/) show the installation context. **Mounting height cannot be read reliably from a schematic illustration**, and the supplied chapter does not specify numeric optical-center heights.
+
+| Sensor | Optical-axis orientation | Installed optical-center height | View clearance relevant to operation |
+|---|---|---|---|
+| Front | Forward, toward approaching walls | Refer to the corresponding CAD mounting face | Front structure and camera mount must not block the central ranging zones used for corner detection |
+| Left | Left, toward the side wall | Refer to CAD sensor mount | Wheel and side bodywork must clear the wall-facing view |
+| Right | Right, toward the side wall | Refer to CAD sensor mount | Wheel and side bodywork must clear the wall-facing view |
+| Rear | Backward, toward the rear boundary | Refer to CAD sensor mount | Rear bodywork, axle and wiring must clear the rear field of view |
+
+The table records direction and installation constraints without inventing millimetre values. A dimensioned drawing or measurements from the assembled chassis are needed to specify the four optical-center heights numerically.
 
 ### 4.3 BMI088 inertial measurement
 
@@ -643,6 +677,17 @@ The combined test is useful as a **failure reproduction** rather than a generic 
 The central systems trade-off is between **sensor richness and deterministic control timing**. Four matrix sensors and a camera improve the information available, but increase data-transfer and calibration work. We therefore use small, purpose-specific signals in the main controller: validated distance zones, marker events, integrated heading and camera commands.
 
 
+
+### Observed engineering progression
+
+The most directly documented outcomes are the change in physical hardware and the demonstrated operation of the robot. The V4.1 [assembled board photograph](docs-media/v41-assembled-robot-top.png) shows the integrated electronics, and the [real driving video](https://www.youtube.com/watch?v=bg92ulHXomw) documents autonomous runs. Those records establish an assembled, functioning vehicle, but do not quantify the individual contribution of each design change.
+
+| V4 limitation / design constraint | V4.1 change | Outcome supported by existing evidence |
+|---|---|---|
+| Single-zone distance data gives no spatial matrix around an obstacle | Four 4×4 VL53L5CX boards with sequential addressing | The V4.1 design and firmware expose sixteen zones per sensor, including the specific front cells used for corner detection |
+| Previous 30:1 gearing prioritizes output speed over torque multiplication | 50:1 gearbox installed | Greater nominal reduction is documented; the assembled V4.1 drivetrain and autonomous vehicle operation are shown, without a paired acceleration measurement |
+| Separate sensor and wiring integration consumes limited chassis space | Revised main PCB, IMU board and ToF boards | PCB design files and the real assembled electronics photograph document the integrated arrangement |
+| Camera processing alone cannot measure the floor marker directly | RT1062 obstacle recognition plus TCS34725 floor sensing | The RT1062 detection screenshot shows color segmentation, and the firmware contains a separate floor-marker sensing path |
 
 ### 6.1 Comparison evidence and retesting
 
