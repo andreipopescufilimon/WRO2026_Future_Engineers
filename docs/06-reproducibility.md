@@ -216,6 +216,8 @@ The Arduino Nano ESP32 runs the vehicle controller; the OpenMV RT1062 runs the s
 
 `Wire` is supplied by the Arduino board platform. The TCS34725 is accessed directly over its separate I²C bus, rather than through an additional Arduino color-sensor library.
 
+**Included Arduino libraries.** To make the software environment easier to reproduce, we have included the library versions used during development in [`src/libraries/`](../src/libraries/). The folder contains **Seeed Studio BMI088 v1.0.0**, **ESP32Encoder v5.0.0** by Kevin Harrington, and **Adafruit TCS34725 v1.4.4**. These copies preserve the library implementations alongside our source code, particularly the BMI088 interface used by the robot's gyroscope routines. To install them, copy each library directory into the Arduino sketchbook's `libraries` folder, restart Arduino IDE, and verify that the compiler selects these copies. The Arduino Nano ESP32 board package, `ESP32Servo` and SparkFun VL53L5CX library are installed separately through Arduino IDE.
+
 **Dependency identification:** the Git snapshot fixes the project's source but does not encode the development PC's exact installed board-core and library version numbers. On a computer reproducing the build, Arduino IDE's **Boards Manager** and **Library Manager** identify the selected installations. Arduino CLI can record the same information:
 
 ```bash
