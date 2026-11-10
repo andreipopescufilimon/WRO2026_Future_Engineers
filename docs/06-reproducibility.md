@@ -411,6 +411,98 @@ The videos and camera frame document the assembled robot and its operation. The 
 
 The assembly recording, challenge footage and RT1062 frame buffer provide the practical examples accompanying this reproduction guide. The testing examples above describe how each subsystem is inspected before autonomous field operation.
 
+
+### 4. Verifying one complete modular V4.1 revision
+
+The modular implementation must be checked as a **single hardware, controller and camera combination**. The earlier `de34faf` footage demonstrates the historical vehicle; it is not substituted for an execution record of `src/HLR_FE_Separated/`. The `045c57e` revision above identifies an earlier modular source checkpoint. When reproducing the latest Open/Final code, capture the **full Git SHA of the actual release being flashed** so the controller, camera code, bundled libraries and manufacturing resources can be traced to the same repository state.
+
+From a clean clone of the intended modular release, record its identity before installing or compiling:
+
+```bash
+git rev-parse HEAD
+git status --short
+python scripts/repro_preflight.py
+```
+
+The preflight checks required files, firmware declarations and source integrity; it also creates a `docs/validation/evidence/source-sha256.json` and a `docs/validation/evidence/static-preflight-results.md` when run from the repository root. These checks establish which files were inspected. They do **not** substitute for compilation or a physical driving test. Record any local firmware modifications alongside the SHA, since uncommitted changes are not represented by `git rev-parse HEAD` alone.
+
+For the **actual Nano ESP32 compilation** on the Windows development computer, install the board platform and the [provided libraries](../src/libraries/), then run the repository's existing build-capture tool from PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\capture_build_environment.ps1
+Get-Content .\docs\validation\evidence\local-build\arduino-build-result.txt
+```
+
+This tool records the selected Arduino CLI version, board platforms, installed libraries, Git revision, source-file hashes and full compile output in `docs/validation/evidence/local-build/`. A **successful build record** consists of `arduino-build-result.txt` reporting exit code `0` and an `arduino-build.log` showing the same build. If the compiler reports a missing library, ambiguous `BMI088.h`, or another error, fix the environment and rerun the capture. The recorded result is more useful than a claim that a sketch *should* compile. The library copies in `src/libraries/` identify the exact supplied implementations; the build log is also needed to identify the versions actually selected by the compiler.
+
+For the RT1062, open the matching `src/camera.py` with OpenMV IDE, record the camera firmware version shown by the connected camera, save the script to the camera and retain one captured frame and one UART message log. The controller and camera must agree on **19,200 baud**; the image demonstration and any height-classification results must identify the camera script revision used.
+
+| Evidence item | Source or output location | Minimum information for reproduction |
+| --- | --- | --- |
+| Reproduced repository release | `git rev-parse HEAD` and source manifest | Full Git commit SHA, local changes if any, matching controller and RT1062 scripts |
+| Arduino compilation | [`scripts/capture_build_environment.ps1`](../scripts/capture_build_environment.ps1) | Compile command, installed dependency versions, exit code and full compiler log |
+| Compilation summary | [`build_verification.csv`](validation/physical/build_verification.csv) | Test date, hardware revision, flashed source SHA, board/core versions, result and retained log path |
+| Source integrity | [`scripts/repro_preflight.py`](../scripts/repro_preflight.py) | File-presence and configuration checks plus SHA-256 manifest |
+| RT1062 setup | [`camera.py`](../src/camera.py) and OpenMV IDE | Camera firmware version, script revision, image capture and received UART data |
+| Physical checks | [`functional_checks.csv`](validation/physical/functional_checks.csv) | Each test's observed behavior, actual date, firmware SHA, outcome and supporting media/log |
+| Autonomous operation | [`challenge_runs.csv`](validation/physical/challenge_runs.csv) | Challenge mode, course direction, outcome, laps, filming source SHA and video |
+
+### 5. Physical subsystem checks tied to the same firmware
+
+The [subsystem verification guide](validation/physical/SUBSYSTEM_VERIFICATION.md) lists the bench procedure for each installed actuator, sensor and communications link. The [functional test ledger](validation/physical/functional_checks.csv) and [individual observation record](validation/physical/subsystem_test_record.csv) contain the corresponding test identifiers. A check becomes independently reviewable when it records **what the physical robot did**, not only the intended firmware behavior.
+
+| Check group | Test IDs | Observation to retain |
+| --- | --- | --- |
+| Rear drive | `V41-MOTOR-FWD`, `V41-MOTOR-REV` | Actual wheel rotation direction and whether the controller reset or the drivetrain bound |
+| Steering | `V41-SERVO-CENTER`, `V41-SERVO-LEFT`, `V41-SERVO-RIGHT` | Commands 85, 39 and 131, wheel/linkage response and clearance at each end |
+| Four VL53L5CX modules | `V41-TOF-FRONT`, `V41-TOF-LEFT`, `V41-TOF-RIGHT`, `V41-TOF-BACK` | Startup lines for addresses `0x30`, `0x31`, `0x32`, `0x33` and at least two actual target-distance readings per direction |
+| BMI088 | `V41-BMI088-YAW` | Ten-second stationary calibration, before/after heading values and the known direction of manual rotation |
+| RT1062 UART | `V41-OPENMV-UART` | Actual received `S...`, `RED` or `GREEN` message at 19,200 baud and which physical target caused it |
+| Encoder motion | `V41-ENCODER-200` | 200 mm commanded movement, measured chassis travel, ticks if available, surface and signed distance error |
+
+The existing [`tools/record_subsystem_checks.py`](../tools/record_subsystem_checks.py) writes a **dated** observation into the primary CSV after a test. Run it from the repository root after performing each check:
+
+```bash
+python tools/record_subsystem_checks.py --list
+python tools/record_subsystem_checks.py --test V41-ENCODER-200
+```
+
+The recorder requests the observed result, outcome, flashed firmware SHA, hardware revision and evidence path. Apply the same test ID and firmware SHA when updating the separate [`subsystem_test_record.csv`](validation/physical/subsystem_test_record.csv), so the two ledgers refer to the same physical event. Where possible, keep the raw serial capture, photographs, video or ruler reading in `docs/validation/evidence/` and link to the specific file rather than to an unrelated general demonstration.
+
+For numeric characterization, the appropriate datasets are [`tof_samples.csv`](validation/physical/tof_samples.csv), [`imu_samples.csv`](validation/physical/imu_samples.csv), [`power_runs.csv`](validation/physical/power_runs.csv) and [`camera_trials.csv`](validation/physical/camera_trials.csv). Each recorded range or sensor reading should retain its measurement conditions and the source revision. After entering genuine data, run `python scripts/summarize_validation.py` to create the `docs/validation/physical/SUMMARY.md`. Reference data and calculated software scenarios belong in their corresponding non-physical datasets; they should not be merged into measured results.
+
+### 6. Demonstrating the current Open, Obstacle and Surprise Rule implementation
+
+The modular V4.1 Open program chooses a course direction from the first valid TCS34725 floor marker, then uses two front ToF zones with **600 mm trigger** and **800 mm re-arm** thresholds for corners. The Obstacle program receives the RT1062's red/green and steering messages and uses the ToF sensors for distance-dependent positioning and parking. [Chapter 04](04-software.md) documents the exact state transitions and code; the following test matrix records how to verify the implemented behavior on a complete field.
+
+| Mode or feature | Physical procedure | What the recording must show | Dataset |
+| --- | --- | --- | --- |
+| Open, left course | Select D12 HIGH; present the blue floor marker; run a regulation-layout course | Direction selected, front ToF corners recognized, achieved corner/lap count and safe final stop | [`challenge_runs.csv`](validation/physical/challenge_runs.csv) |
+| Open, right course | Select D12 HIGH; present the red/orange marker; repeat | Opposite course direction and completed behavior, including any missed or duplicate turns | [`challenge_runs.csv`](validation/physical/challenge_runs.csv) |
+| Obstacle, left/right course | Select D11 HIGH; use the intended red/green signs and parking area | Follow command, correct pass side, recovery, accepted floor markers and parking attempt | [`challenge_runs.csv`](validation/physical/challenge_runs.csv) |
+| Camera sign heights | Present **50, 100 and 150 mm** high, **50 mm** wide signs, both red and green, at the test distances used by the team | Captured frame, actual predicted height, transmitted passing command and correct/incorrect classification | [`sign_height_trials.csv`](validation/physical/sign_height_trials.csv) |
+
+For camera-height tests, the algorithm's intended mapping is **50 mm and 150 mm: invert the visible red/green command; 100 mm: retain it**. The [camera source](../src/camera.py) also contains tracking, partial-visibility handling and an unknown-class fallback. Record both correctly classified and misclassified trials; a threshold written in software is not a measured classification success rate.
+
+Each video or run record for the modular release should include the full **source SHA actually flashed**, the camera revision, hardware version, challenge direction and outcome. This is separate from the real driving video for historical commit `de34faf`. A short continuous run with clearly identifiable firmware is more convincing evidence for the newer release than an unversioned performance claim. Keep failed or partial runs in the log as well as successful ones so another team can understand the operating limits.
+
+### 7. Final reproducibility audit
+
+Before submission, compare the repository's physical evidence and source files using the following acceptance checklist:
+
+| Audit item | Check before submission |
+| --- | --- |
+| One consistent release | The controller sketch, camera script, bundled libraries, PCB and mechanical revision match a recorded Git SHA |
+| Compilable firmware | A dated compiler log shows the **actual** Nano ESP32 build command, dependencies and exit code 0 |
+| Reassembled vehicle | Manufacturing files, dimensions, connector orientation, component positions and assembly media resolve from the same repository |
+| Physical subsystem checks | Each claimed PASS has a test date, actual observation, flashed revision and identifiable supporting evidence |
+| Repeated sensor behavior | ToF zone readings, IMU heading, encoder movement and UART message data can be inspected beyond source constants |
+| Obstacle and Open operation | At least one modular-version run is linked to its video, mode, layout, hardware revision and firmware SHA |
+| Camera Surprise Rule | Height-dependent behavior includes known-height targets, multiple distances, both colors and the captured decision |
+| GitHub links and generated reports | Chapter links resolve and generated results identify the recorded inputs used to produce them |
+
+This final audit adds a verification trail to the design, assembly and software instructions already provided above. It keeps the filmed historical program and the modular V4.1 implementation individually reproducible while allowing each physical observation to be traced to the version that produced it.
+
 ---
 
 ## Versions and development history
