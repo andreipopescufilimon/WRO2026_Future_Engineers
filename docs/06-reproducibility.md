@@ -1,5 +1,18 @@
 # 06. Reproducibility
 
+Electrical design, load path, sensor specifications, power consumption and PCB layout.
+
+| Chapter | Topic |
+|---|---|
+| [01 · Overview](01-overview.md) | Team, robot, challenges, evidence and results |
+| [02 · Mobility](02-mobility.md) | Chassis, drivetrain, steering, tires and geometry |
+| [03 · Power and sensors](03-power-sensors.md) | Electrical system, PCB, camera, IMU and validation |
+| [04 · Software](04-software.md) | Control, perception, state machines and challenge strategy |
+| [05 · Systems](05-systems.md) | Engineering trade-offs, iterations, performance and risk |
+| [06 · Reproducibility](06-reproducibility.md) | Assembly, firmware, costs and test procedures |
+
+---
+
 | WRO documentation criterion | Where it is covered | Evidence |
 | --- | --- | --- |
 | Fully reproducible vehicle | [Parts and manufacturing](#parts-and-manufacturing), [Building and flashing](#building-and-flashing) | Components, CAD, PCB production files, assembly demonstration and setup procedures |
