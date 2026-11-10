@@ -626,7 +626,7 @@ The gyroscope validation procedure records at least 60 seconds at rest after sta
 
 #### Stationary drift and vibration verification
 
-The stationary measurement must include a quiet condition with the drive off and an equivalent condition with the drivetrain running. Both, gyroscope and accelerometer, use the same calibration procedure and time base. The two conditions allow us to distinguish gyroscope offset drift from additional vibration or electrical disturbance. For repeated 90° turns, log the commanded and independently observed angle, not only the gyro-integrated value.
+The stationary measurement must include a quiet condition with the drive off and an equivalent condition with the drivetrain running. Gyroscope and accelerometer use the same calibration procedure and time base. The two conditions allow us to distinguish gyroscope offset drift from additional vibration or electrical disturbance. For repeated 90° turns, log the commanded and independently observed angle, not only the gyro-integrated value.
 
 | Condition | Samples to record | Derived quantity | Source |
 |---|---|---|---|
