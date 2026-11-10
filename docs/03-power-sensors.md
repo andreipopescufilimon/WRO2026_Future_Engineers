@@ -1,7 +1,5 @@
 # 03 | Power, electronics and sensor architecture
 
-Electrical design, load path, sensor specifications, power consumption and PCB layout.
-
 | Chapter | Topic |
 |---|---|
 | [01 · Overview](01-overview.md) | Team, robot, challenges, evidence and results |
