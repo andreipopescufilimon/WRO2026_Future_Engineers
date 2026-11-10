@@ -78,7 +78,7 @@ The Nano ESP32 is the coordinator of the electrical system. It communicates with
 
 #### 2.1.3 Custom inertial sensor: BMI088
 
-| <img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/2f218ef03b6aa341f2fc0c9e151cf439fa750abd/other/IMU.png" width="300"> | **Specifications** |
+| <img src="docs-media/v41-bmi088-board.png" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
 | **Interface:** I2C | **Supply Voltage:** 3.0V – 3.6V |
@@ -193,7 +193,7 @@ V4.1 uses a compact custom PCB to integrate the motor driver, distribution paths
 
 | Electrical schematic | Copper layout (Top) | Copper layout (Inner 1) | Copper layout (Inner 2) | Copper layout (Bottom) | Populated robot chassis |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| <a href="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/0abfdb8fb38865ae0860dda3fb301114849ac9e9/docs/docs-media/v41-schematic-design-export.png"><img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/0abfdb8fb38865ae0860dda3fb301114849ac9e9/docs/docs-media/v41-schematic-design-export.png" width="275" alt="HyperLine EasyEDA schematic drawing"></a> | <a href="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/0abfdb8fb38865ae0860dda3fb301114849ac9e9/docs/docs-media/v41-pcb-copper-view.png"><img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/0abfdb8fb38865ae0860dda3fb301114849ac9e9/docs/docs-media/v41-pcb-copper-view.png" width="275" alt="HyperLine main PCB copper routing"></a> | <a href="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/b62b3fb0fd9455b0198b56d0acaa4edb1f813c1a/docs/docs-media/v41-inner1-layer.png"><img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/b62b3fb0fd9455b0198b56d0acaa4edb1f813c1a/docs/docs-media/v41-inner1-layer.png" width="275" alt="inner 1"></a> | <a href="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/b62b3fb0fd9455b0198b56d0acaa4edb1f813c1a/docs/docs-media/v41-inner2-layer.png"><img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/b62b3fb0fd9455b0198b56d0acaa4edb1f813c1a/docs/docs-media/v41-inner2-layer.png" width="275" alt="inner 2"></a> | <a href="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/b62b3fb0fd9455b0198b56d0acaa4edb1f813c1a/docs/docs-media/v41-bottom-layer.png"><img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/b62b3fb0fd9455b0198b56d0acaa4edb1f813c1a/docs/docs-media/v41-bottom-layer.png" width="275" alt="bottom layer"></a> | <a href="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/0abfdb8fb38865ae0860dda3fb301114849ac9e9/docs/docs-media/v41-assembled-robot-top.png"><img src="https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/0abfdb8fb38865ae0860dda3fb301114849ac9e9/docs/docs-media/v41-assembled-robot-top.png" width="275" alt="Real assembled robot electronics top view"></a> |
+| <a href="docs-media/v41-schematic-design-export.png"><img src="docs-media/v41-schematic-design-export.png" width="275" alt="HyperLine EasyEDA schematic drawing"></a> | <a href="docs-media/v41-pcb-copper-view.png"><img src="docs-media/v41-pcb-copper-view.png" width="275" alt="HyperLine main PCB copper routing"></a> | <a href="docs-media/v41-inner1-layer.png"><img src="docs-media/v41-inner1-layer.png" width="275" alt="inner 1"></a> | <a href="docs-media/v41-inner2-layer.png"><img src="docs-media/v41-inner2-layer.png" width="275" alt="inner 2"></a> | <a href="docs-media/v41-bottom-layer.png"><img src="docs-media/v41-bottom-layer.png" width="275" alt="bottom layer"></a> | <a href="docs-media/v41-assembled-robot-top.png"><img src="docs-media/v41-assembled-robot-top.png" width="275" alt="Real assembled robot electronics top view"></a> |
 | EasyEDA drawing export | Main PCB routing and copper planes on top layer |  Main PCB routing and copper planes on first inner layer |  Main PCB routing and copper planes on second inner layer | Main PCB routing and copper planes on bottom layer | Actual packaging of the motor, battery and electronics |
 
 #### Functional power distribution
@@ -274,7 +274,29 @@ The test protocol covers three operating regimes: idle, normal driving and brief
 <!-- CODE-DERIVED DATA VIEW -->
 
 
-### 3.3.1 Model-based consumption budget
+### 3.3.1 Electrical measurements and power-path verification
+
+The component budget above is useful for selecting the regulator and anticipating peak loads. To evaluate the *assembled* V4.1 board, the measured quantities are battery input voltage and current, regulated 5 V voltage and current, and the minimum 5 V level during a drive or steering transient. A current value quoted on the 3.3 V rail is not added directly to a 5 V rail current. Power is calculated separately for each rail, then referred to the battery through its converter efficiency.
+
+| Operating state | Battery current | 5 V output | Most important check | Evidence record |
+|---|---|---|---|---|
+| Start-up and stationary idle | Physical logger required | Minimum and average voltage | Boot stability with four ToF devices initializing | [`power_runs.csv`](validation/physical/power_runs.csv) |
+| Straight driving | Physical logger required | Output voltage during motor load | Drive-current demand and controller restarts | Same dataset |
+| Rapid alternating steering | Peak-capable logging required | Minimum transient voltage | Servo spikes, rail dip and steering jitter | Same dataset |
+| Camera and all four ToFs active | Physical logger required | Loaded output voltage | Regulator stability with perception running | Same dataset |
+| Combined steering, driving and vision | Continuous capture required | Worst recorded dip | Coupled load, battery sag and reset behavior | Same dataset |
+
+**Measurement definition:** put the battery-current sensor upstream of the power split, measure the 5 V rail at the load connector, and record timestamps together with battery condition, firmware revision, operating mode and instrument bandwidth. A slow multimeter can capture average current but generally cannot establish the minimum voltage during fast servo activity. Record scope screenshots separately when short dips are important.
+
+The analysis script integrates actual sampled electrical power rather than substituting nominal battery energy for a measured discharge curve:
+
+$$
+E_{\mathrm{measured}} \approx \sum_{k=1}^{n-1} \frac{P_k+P_{k+1}}{2}(t_{k+1}-t_k), \qquad P_k=V_{\mathrm{bat},k}I_{\mathrm{bat},k}.
+$$
+
+The reproducible output, including mean/peak current, minimum measured 5 V and integrated energy, is collected in the [physical validation summary](validation/physical/SUMMARY.md). The currently published component specifications and scenario calculations do **not** by themselves establish a measured brownout margin or battery endurance. These results are reported only when a raw recording is available.
+
+### 3.3.2 Model-based consumption budget
 
 A useful power budget must distinguish **manufacturer-specified electrical values** from assumptions that have not yet been verified on the completed robot. The following table is a transparent calculation model for planning load and thermal tests. It is **not** a log of measured current.
 
@@ -331,7 +353,7 @@ These durations are **upper bounds using nominal pack energy**, not predictions 
 [Model scenarios (CSV)](validation/power_model_scenarios.csv) · [Blank physical power measurements](validation/measurement_templates/power_budget.csv).
 
 
-### 3.3.2 Configured PWM operating points
+### 3.3.3 Configured PWM operating points
 
 The drive controller uses 1 kHz, 8-bit PWM. Its nominal duty request is calculated by:
 
@@ -518,6 +540,19 @@ $$
 \mathrm{RMSE}=\sqrt{\frac{1}{N}\sum_{j=1}^N e_{d,j}^2}
 $$
 
+#### Physical distance-calibration evidence
+
+For V4.1, each of the four installed VL53L5CX boards is measured at **200, 400, 600 and 1000 mm**, using the same flat reference surface and measuring from the optical center. Preserve every returned reading and invalid frame, not only a mean value. The calibration dataset is [`validation/physical/tof_samples.csv`](validation/physical/tof_samples.csv); the [analysis script](../scripts/summarize_validation.py) calculates mean bias, RMSE over *individual valid samples*, invalid-frame count, and achieved frame rate from frame timestamps.
+
+| Sensor | Reference distances | Required physical evidence | Analysis result |
+|---|---|---|---|
+| Front | 200 / 400 / 600 / 1000 mm | Range samples, status and timestamps | [Physical results](validation/physical/SUMMARY.md#distance-sensor-accuracy) |
+| Left | 200 / 400 / 600 / 1000 mm | Range samples, status and timestamps | [Physical results](validation/physical/SUMMARY.md#distance-sensor-accuracy) |
+| Right | 200 / 400 / 600 / 1000 mm | Range samples, status and timestamps | [Physical results](validation/physical/SUMMARY.md#distance-sensor-accuracy) |
+| Back | 200 / 400 / 600 / 1000 mm | Range samples, status and timestamps | [Physical results](validation/physical/SUMMARY.md#distance-sensor-accuracy) |
+
+A second run with the motor enabled isolates vibration and electrical effects. The nominal **30 Hz** setting is a software configuration, not the observed delivered sample rate. The existing illustrative table below is retained to demonstrate the method and is deliberately **not** counted as experimental results.
+
 The following values are an **illustrative calculation example**, not measurements from V4.1. Their RMSE figures are calculated from the four example mean errors; a physical accuracy report must compute RMSE across all valid captured frames and separately count invalid frames.
 
 | Sensor | Reference positions | Illustrative mean ToF range | RMSE of example means | Illustrative invalid frames |
@@ -555,13 +590,45 @@ The controller uses both front matrix zones `(2,3)` and `(3,3)`. In the current 
 
 The gyroscope validation procedure records at least 60 seconds at rest after startup calibration, followed by 12 successive 90° rotations. Compare integrated heading to the known final orientation. Track bias (°/s), final heading error (°), and whether the error grows systematically with time.
 
+#### Stationary drift and vibration verification
+
+The stationary measurement must include a quiet condition with the drive off and an equivalent condition with the drivetrain running. Both use the same calibration procedure and time base. The two conditions allow us to distinguish gyroscope offset drift from additional vibration or electrical disturbance. For repeated 90° turns, log the commanded and independently observed angle, not only the gyro-integrated value.
+
+| Condition | Samples to record | Derived quantity | Source |
+|---|---|---|---|
+| Stationary, motor off | At least 60 s of gyro Z rate and heading | Mean rate bias, heading drift in °/min | [`imu_samples.csv`](validation/physical/imu_samples.csv) |
+| Stationary, motor on | Same duration, same mounting | Difference in bias and vibration-related variation | Same dataset |
+| 12 measured 90° rotations | Integrated and reference heading at each trial | Mean absolute and signed turn error | Same dataset |
+
+The [physical validation summary](validation/physical/SUMMARY.md#bmi088-drift-and-heading-accuracy) calculates drift and error directly from supplied time-stamped observations. An algorithmic 90° command or a bias-calibration routine is not a measurement of 90° turning accuracy.
+
+
 ### 5.3 Camera and color verification
 
 The camera validation procedure records images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, blob area, candidate count and the UART command sent. Repeat under different lighting conditions and with the camera facing a nearby wall at startup. This last condition is important because it tests whether automatic camera settings are stable when the initial field of view is unusual.
 
+#### Recorded detection performance
+
+The [RT1062 diagnostic image](docs-media/v41-openmv-RT1062-camera-view.png) documents the color-segmentation output on a real camera frame. It demonstrates that red and green candidates were identified in that frame; it is not a repeated-trial accuracy measurement. The evaluation is repeated at near, medium and far positions under normal and difficult lighting, including startup facing a nearby wall.
+
+| Observation | Required record | Calculation |
+|---|---|---|
+| Red pillar | Reference color, reported color, image and processing time | Detection proportion, incorrect classification |
+| Green pillar | Reference color, reported color, image and processing time | Detection proportion, incorrect classification |
+| No pillar / different lighting | Reported result and frame | False-positive rate |
+| Close wall at startup | Initial frame and subsequent detection | Recovery after camera initialization |
+
+The raw observations belong in [`camera_trials.csv`](validation/physical/camera_trials.csv). The [physical validation summary](validation/physical/SUMMARY.md#openmv-rt1062-classification) reports trial totals, correct detections, misses, wrong-color classifications and measured processing times. If a threshold or exposure change is compared, both conditions must use the same targets, lighting and counting method.
+
+
 ### 5.4 Power and bus stress test
 
 With all sensors running, cycle the steering servo and drive motor. Record (a) minimum 5 V voltage, (b) ToF frame age, (c) UART errors and (d) IMU sample gaps. A test passes only when no brownout occurs and sensor data remains within the required freshness window.
+
+The combined test is useful as a **failure reproduction** rather than a generic checklist. Keep one test ID for the load waveform, controller diagnostic log, camera UART log and ToF timestamp trace. If a reset, missed sensor frame or unstable steering event occurs, document the exact test, change one electrical or software condition, and repeat the identical load sequence. A successful corrected run should point to both the failure record and the retest rather than replacing the original observation.
+
+[Measured electrical summary](validation/physical/SUMMARY.md#electrical-load-and-5-v-stability) · [Raw electrical captures](validation/physical/power_runs.csv) · [Reproducibility checks](06-reproducibility.md#v41-functional-verification-results).
+
 
 ## 6. Iterations and engineering decisions
 
@@ -574,3 +641,30 @@ With all sensors running, cycle the steering servo and drive motor. Record (a) m
 | Structure | Existing PCB chassis concept | Revised routing, sensor boards and connectors | Compact integration demands careful mechanical and electrical verification |
 
 The central systems trade-off is between **sensor richness and deterministic control timing**. Four matrix sensors and a camera improve the information available, but increase data-transfer and calibration work. We therefore use small, purpose-specific signals in the main controller: validated distance zones, marker events, integrated heading and camera commands.
+
+
+
+### 6.1 Comparison evidence and retesting
+
+The V4.1 changes address specific engineering limitations, but the **choice of component is not itself proof of an observed performance gain**. To evaluate a change, compare V4 and V4.1 under the same target geometry and measured metric. Keep failures and corrective retests in the same record.
+
+| Design change | Matched comparison | Evidence to preserve | Status of quantitative conclusion |
+|---|---|---|---|
+| Single-zone ranging → four VL53L5CX matrices | Missed corners and distance errors at matched wall positions | Raw ToF samples and full-field run outcomes | Requires paired physical trials |
+| 30:1 → 50:1 gearbox | Start acceleration, drive current, turn entry and parking distance | Current trace, encoder logs and video | Torque-ratio calculation is available; dynamic improvement requires measurements |
+| Sensor modules → custom PCB integration | Mounting stability, bus faults and controller restarts | Board revision, wiring/scope captures, retests | PCB manufacturing evidence available; reliability improvement requires logs |
+| Camera threshold/exposure revisions | Red/green detection across the same target and lighting conditions | Frame captures, trial-level classification results | One camera screenshot available; comparative accuracy requires repeated trials |
+
+The shared [`revision_comparisons.csv`](validation/physical/revision_comparisons.csv) records matched V4/V4.1 results, while [`SUMMARY.md`](validation/physical/SUMMARY.md#v4-v41-engineering-comparison) displays numerical changes only when paired measurements exist. Negative outcomes remain in the experiment history. This allows a judge to trace an engineering decision through a test, a change and a retest without relying on selected screenshots or inferred percentages.
+
+### 6.2 Evidence available for this chapter
+
+| Evidence | Demonstrates | Link |
+|---|---|---|
+| Main PCB design, copper views and production files | Reproducible electrical topology and fabrication | [Section 2.3](#23-electrical-schematic-pcb-traces-and-assembled-board) |
+| Actual RT1062 detection image | One captured frame with color-segmentation output | [Section 4.5](#45-openmv-rt1062-vision-processor) |
+| ToF, motor PWM and camera firmware cases | Deterministic thresholds, modes and command paths | [Software-derived cases](validation/README.md) |
+| Static source and dataset checks | Reproducible file-integrity and analysis-script tests | [Source preflight](validation/evidence/static-preflight-results.md) |
+| Physical power, range, IMU and camera observations | Real measurement outcomes once recorded | [Physical results](validation/physical/SUMMARY.md) |
+
+The firmware-based scenarios and manufacturer ratings are retained because they explain design intent and make experiments reproducible. They are not substituted for test-bench measurements.
