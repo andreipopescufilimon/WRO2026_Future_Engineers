@@ -20,7 +20,13 @@ FILES = {
 def readrows(p):
     if not p.exists(): return []
     with p.open(newline='', encoding='utf-8-sig') as f:
-        return [r for r in csv.DictReader(f) if any(str(v or '').strip() for v in r.values())]
+        rows = [r for r in csv.DictReader(f) if any(str(v or '').strip() for v in r.values())]
+        # Only rows containing actual observations enter the physical summary.
+        rows = [r for r in rows if not str(r.get('notes', '')).startswith('TEST_PLAN')]
+        if p.name == 'functional_checks.csv':
+            rows = [r for r in rows if r.get('date_utc') and r.get('observed') and
+                    str(r.get('status', '')).strip().upper() in ('PASS', 'FAIL')]
+        return rows
 
 def number(v):
     try: return float(v)
