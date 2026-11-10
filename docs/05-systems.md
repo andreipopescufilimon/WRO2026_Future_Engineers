@@ -1,7 +1,5 @@
 # 05 | Systems thinking, engineering decisions and testing
 
-**HyperLine Robotics | WRO 2026 Future Engineers | V4.1**
-
 | Chapter | Topic |
 |---|---|
 | [01 · Overview](01-overview.md) | Vehicle concept, development and competition objectives |
