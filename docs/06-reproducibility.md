@@ -95,6 +95,57 @@ The main V4.1 assemblies are listed below. Component variants and manufacturing 
 | Battery | GNB 2S LiHV, 7.6 V nominal, 300 mAh | [Power architecture](03-power-sensors.md) |
 | Printed supports | Camera, sensor, steering and battery mounts | [3D models](../3D-models/) |
 
+### Cost Analysis and Bill of Materials
+
+The cost of reproducing our V4.1 autonomous vehicle depends on the selected components, PCB manufacturing, mechanical fabrication and assembly. We designed the robot around a combination of commercial electronics and custom-manufactured parts, balancing performance, compactness and manufacturing cost.
+
+The following bill of materials covers the components required to reproduce the vehicle. We distinguish between **actual expenditure**, which reflects the amount paid by our team, and **estimated reproduction cost**, which represents the cost of obtaining equivalent components and manufacturing the same assemblies.
+
+#### Electronic and mechanical components
+
+| Component | Quantity | Actual cost paid (USD) |
+|---|---:|---:|---:|
+| Arduino Nano ESP32 | 1 | 22.43$ |
+| OpenMV RT1062 camera | 1 | 165.00$ |
+| VL53L5CX custom sensor PCBs, assembled | 4 | 48.00$ |
+| BMI088 custom IMU PCB, assembled | 1 | 20.00$ |
+| Main PCB chassis, assembled | 1 | 13.00$ |
+| Pololu 50:1 HPCB motor with encoder | 1 | 27.00$ |
+| MG90S steering servo | 1 | 4.00$ |
+| TCS34725 color sensor | 1 | TBD | 2.30& |
+| Pololu D24V50F5 voltage regulator | 1 | 32.95$ |
+| GNB 2S LiHV 300 mAh battery | 1 | 5.10$ |
+| Wheels and tires | 4 | 25.00$ |
+| Differential, gears and drivetrain components | 1 set | 17.00$ |
+| 3D-printed structural components and mounts | 1 set | 10.00$ |
+| Bearings, fasteners, connectors and wiring | 1 set | 10.00$ | 
+| **Total robot cost** | | **379.35$** |
+
+The main PCB cost includes its integrated IFX9201SG motor driver and associated electronic components. Custom sensor-board costs include the corresponding PCB fabrication and component assembly. These integrated components are not counted separately to avoid duplication.
+
+#### Manufacturing and cost considerations
+
+Several engineering decisions influenced the overall cost of V4.1.
+
+**Custom PCB integration.** Rather than using separate commercial breakout modules for every subsystem, we designed dedicated PCBs for the main controller assembly, BMI088 IMU and VL53L5CX sensors. This allowed us to control component placement, connector orientation and mechanical dimensions while reducing unnecessary wiring. Custom fabrication also introduces manufacturing and assembly costs, particularly for small production quantities.
+
+**Drivetrain selection.** We selected the Pololu 50:1 HPCB motor to provide greater gearbox torque multiplication than the earlier 30:1 configuration. This decision prioritized low-speed control, acceleration under load and maneuvering performance over maximum theoretical output speed.
+
+**Mechanical manufacturing.** The chassis combines the custom main PCB with manufactured drivetrain components and 3D-printed mounts. Additive manufacturing allows individual mechanical parts to be revised without replacing the complete assembly, reducing the cost of mechanical iterations.
+
+**Sensor architecture.** Four VL53L5CX modules provide multi-zone distance information, while the BMI088, TCS34725 and OpenMV RT1062 handle distinct sensing tasks. The additional electronics increase component cost but provide the spatial and motion information used by the navigation system.
+
+#### Reproduction cost methodology
+
+The estimated reproduction cost is calculated from the quantities required for one complete vehicle:
+
+**Total reproduction cost = Sum of (component quantity × unit replacement cost) + allocated manufacturing and assembly costs.**
+
+For custom PCBs, the calculation uses the cost attributable to the boards installed on one robot, rather than charging the entire production batch to a single assembly. Shipping, taxes and minimum-order quantities should be accounted for consistently when preparing the final estimate. Sponsored or previously owned components are recorded at their actual expenditure in the first cost column, while the reproduction estimate reflects their normal replacement cost. This distinction allows another team to estimate the investment needed to build the same vehicle independently. The analysis covers the robot itself. Competition registration, travel, accommodation, team logistics and development labor are excluded because they are not necessary material purchases for reproducing the vehicle.
+
+The manufacturing files, component specifications and assembly instructions are available in the [electrical schematics](../electrical-schematics/), [mechanical CAD](../3D-models/) and the preceding sections of this chapter.
+
+
 ### Mechanical CAD and assembly reference
 
 The STEP files in [`3D-models/`](../3D-models/) can be inspected in compatible CAD software to understand component geometry and how the assemblies fit together. The [technical drawings](technical-drawings/) provide dimensions, while the vehicle [photographs](../v-photos/) show the assembled orientation and cable routing.
