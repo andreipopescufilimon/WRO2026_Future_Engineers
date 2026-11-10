@@ -1,7 +1,0 @@
-component,rail_or_configuration,assumed_current_a,voltage_v,model_power_w,basis
-Arduino Nano ESP32,5 V input,0.2,5.0,1.000,Planning input-current assumption from original component selection; verify by measurement
-OpenMV N6,5 V input,0.15,5.0,0.750,Manufacturer full-power specification: 150 mA at 5 V
-MG90S steering servo,5 V input,0.12,5.0,0.600,Planning moving-average current; transient/stall spikes require measurement
-Four VL53L5CX (sensor silicon),"3.3 V, continuous mode",,,1.252,4 x 0.313 W from ST 3V3/3V3 continuous-mode example; custom-board overhead excluded
-BMI088 (sensor silicon),3.3 V supply,0.00515,3.3,0.017,Bosch 5.15 mA full-operation product specification; board overhead excluded
-TCS34725 module,3.3 V / verify board,,,0.020,"Planning allowance, not a datasheet or measured result"

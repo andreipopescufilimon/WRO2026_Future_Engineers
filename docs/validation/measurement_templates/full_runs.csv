@@ -1,1 +1,0 @@
-run_id,date_utc,revision,firmware_commit,mode,field_layout_id,direction,start_location,battery_v_start,battery_v_end,finish_time_s,corners_detected,obstacles_seen,wrong_side_passes,parking_valid,run_valid,failure_code,notes

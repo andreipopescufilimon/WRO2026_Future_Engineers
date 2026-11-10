@@ -1,8 +1,0 @@
-test_id,mode,battery_v_measure,battery_a_measure,five_v_min_v_measure,five_v_current_a_measure,motor_current_a_measure,servo_peak_a_measure,camera_current_a_measure,acceptance_criterion,data_status
-P01,start_and_initialize,,,,,,,,Nano and camera boot without voltage collapse,awaiting_physical_capture
-P02,stationary_vision_processing,,,,,,,,Image UART messages continue without resets,awaiting_physical_capture
-P03,steering_sweep_and_reverse,,,,,,,,No servo binding or 5V rail reset,awaiting_physical_capture
-P04,motor_accel_and_brake,,,,,,,,No brownout or H bridge fault,awaiting_physical_capture
-P05,four_tof_continuous,,,,,,,,All 4 matrices acquire frames reliably,awaiting_physical_capture
-P06,full_open_run,,,,,,,,All laps complete without voltage-related reset,awaiting_physical_capture
-P07,full_obstacle_run,,,,,,,,"Camera, ToF and steering remain responsive",awaiting_physical_capture
