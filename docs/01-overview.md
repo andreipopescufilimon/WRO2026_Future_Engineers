@@ -37,7 +37,7 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 
 | System | V4: national version | V4.1: current version | Engineering motivation / trade-off |
 |---|---|---|---|
-| Distance sensing | Pololu PWM-signal distance sensor | Custom TOF sensors capable of reading distanced up to 4m at a speed of 60Hz | Faster, farther and more reliable distance reading, as well as being able to read a 8 by 8 matrix of distances that can act as a LIDAR |
+| Distance sensing | Pololu PWM-signal distance sensor | Custom TOF sensors capable of reading distances up to 4m at a speed of 60Hz | Faster, farther and more reliable distance reading, as well as being able to read a 8 by 8 matrix of distances that can act as a LIDAR |
 | Drive motor | Pololu 30:1 HPCB motor | Upgraded to **Pololu 50:1 HPCB** motor, as it gives almost twice as much torque | Higher torque motor, it improves acceleration and low-speed maneuvers |
 | Wheel rims | Light 3D printed rims | Changed to heavier custom made 45# Steel rims | Revised wheel rims changes mass distribution on the silicone tire, resulting into higher wheel grip, this makes turning and braking more efficient |
 | General layout | PCB-based chassis, front steering, rear differential | Same overall vehicle geometry, with revised components | Preserves the same robot layout as it showed to be very reliable, only upgrading some subsystems to remove found issues during testing |
