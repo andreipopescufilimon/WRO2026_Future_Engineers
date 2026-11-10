@@ -1,15 +1,13 @@
 # 02 | Mobility and mechanical design
 
-## Documentation guide
-
-| WRO documentation area | Chapter | What to find there |
-|---|---|---|
-| Overview | [01 - Overview](01-overview.md) | Project Overview | 
-| Mobility and mechanical design | [02 - Mobility](02-mobility.md) | Chassis, rear differential, drivetrain, wheel design, steering geometry, mechanical calculations |
-| Power and sensor management | [03 - Power & sensors](03-power-sensors.md) | Battery, custom PCBs, camera, IMU, ToF sensors, electrical architecture, validation |
-| Software and autonomous operation | [04 - Software](04-software.md) | Software used for vision, navigation, control, communication, open challenge, obstacle challenge, parking |
-| Engineering process and testing | [05 - Systems](05-systems.md) | V1 to V4.1 decisions, subsystem integration, trade-offs, measurements, test results |
-| reproducibility | [06 - reproducibility](06-reproducibility.md) | CAD, manufacturing files, wiring, assembly guide, firmware setup, calibration |
+| Chapter | Topic |
+|---|---|
+| [01 · Overview](01-overview.md) | Team, robot, challenges, evidence and results |
+| [02 · Mobility](02-mobility.md) | Chassis, drivetrain, steering, tires and geometry |
+| [03 · Power and sensors](03-power-sensors.md) | Electrical system, PCB, camera, IMU and validation |
+| [04 · Software](04-software.md) | Control, perception, state machines and challenge strategy |
+| [05 · Systems](05-systems.md) | Engineering trade-offs, iterations, performance and risk |
+| [06 · Reproducibility](06-reproducibility.md) | Assembly, firmware, costs and test procedures |
 
 ---
 
