@@ -1,0 +1,42 @@
+csv_path,category,data_rows,header_columns,includes_measured_physical_readings,notes
+docs/validation/camera_tests.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,8,18,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/full_runs.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,2,32,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/gyro_test.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,9,21,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/measurement_templates/camera_tests.csv,PHYSICAL_TEMPLATE,0,12,NO,Header-only measurement template.
+docs/validation/measurement_templates/full_runs.csv,PHYSICAL_TEMPLATE,0,18,NO,Header-only measurement template.
+docs/validation/measurement_templates/gyro_test.csv,PHYSICAL_TEMPLATE,0,10,NO,Header-only measurement template.
+docs/validation/measurement_templates/odometry.csv,PHYSICAL_TEMPLATE,0,12,NO,Header-only measurement template.
+docs/validation/measurement_templates/parking.csv,PHYSICAL_TEMPLATE,0,17,NO,Header-only measurement template.
+docs/validation/measurement_templates/power_budget.csv,PHYSICAL_TEMPLATE,0,13,NO,Header-only measurement template.
+docs/validation/measurement_templates/steering_calibration.csv,PHYSICAL_TEMPLATE,0,10,NO,Header-only measurement template.
+docs/validation/measurement_templates/tof_corners.csv,PHYSICAL_TEMPLATE,0,13,NO,Header-only measurement template.
+docs/validation/odometry.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,13,24,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/parking.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,4,31,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/physical/build_verification.csv,PHYSICAL_RECORD_OR_REFERENCE,0,15,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/camera_trials.csv,PHYSICAL_RECORD_OR_REFERENCE,0,11,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/challenge_runs.csv,PHYSICAL_RECORD_OR_REFERENCE,0,13,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/functional_checks.csv,PHYSICAL_RECORD_OR_REFERENCE,12,9,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/imu_samples.csv,PHYSICAL_RECORD_OR_REFERENCE,0,10,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/power_runs.csv,PHYSICAL_RECORD_OR_REFERENCE,0,13,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/published_demonstrations.csv,PHYSICAL_RECORD_OR_REFERENCE,3,8,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/revision_comparisons.csv,PHYSICAL_RECORD_OR_REFERENCE,0,11,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/sign_height_trials.csv,PHYSICAL_RECORD_OR_REFERENCE,0,17,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/source_configuration.csv,PHYSICAL_RECORD_OR_REFERENCE,16,7,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/subsystem_test_record.csv,PHYSICAL_RECORD_OR_REFERENCE,12,9,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/physical/tof_samples.csv,PHYSICAL_RECORD_OR_REFERENCE,0,11,NO_CONFIRMED_SAMPLES,No new physical result invented. Team-marked functional statuses lack dated observations.
+docs/validation/power_budget.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,11,22,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/power_component_ratings.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,10,8,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/power_model_assumptions.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,6,6,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/power_model_scenarios.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,7,8,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/power_reference_calculations.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,11,5,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/power_test_matrix.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,7,11,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/simulated/camera_trials.csv,SIMULATED_EXAMPLE,648,11,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/challenge_runs.csv,SIMULATED_EXAMPLE,24,13,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/functional_checks.csv,SIMULATED_EXAMPLE,14,9,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/imu_samples.csv,SIMULATED_EXAMPLE,854,10,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/power_runs.csv,SIMULATED_EXAMPLE,1446,13,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/revision_comparisons.csv,SIMULATED_EXAMPLE,200,11,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/sign_height_trials.csv,SIMULATED_EXAMPLE,240,17,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/simulated/tof_samples.csv,SIMULATED_EXAMPLE,1280,11,NO,Populated simulated example. Never evidence of a hardware test.
+docs/validation/steering_calibration.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,10,22,NO,Source-defined or modeled values; do not mistake for measurements.
+docs/validation/tof_corners.csv,SOURCE_CALCULATION_OR_DETERMINISTIC_CASE,13,30,NO,Source-defined or modeled values; do not mistake for measurements.

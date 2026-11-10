@@ -1,34 +1,14 @@
-# V4.1 physical validation dataset
+# V4.1 physical measurement records
 
-These seven CSVs are intentionally header-only until **real readings from the assembled robot** are recorded. They are not mock examples or calculated predictions. Each row should include its source revision, date and test ID.
+This directory is for **genuine observations captured from the assembled robot**.
 
-| File | Capture method | Derived results |
-|---|---|---|
-| `power_runs.csv` | Meter/shunt at battery input; oscilloscope or logger on 5 V bus; record time series during idle, propulsion, steering and combined loads | Mean and peak battery current, minimum 5 V and pack energy |
-| `tof_samples.csv` | At 200, 400, 600 and 1000 mm, use a flat target and record each frame for Front/Left/Right/Back; retain invalid frames | Mean bias, RMSE across **individual** frames, invalid counts and measured frame rate |
-| `imu_samples.csv` | Record 60 s stationary (motor off and on) plus 12 measured 90° turns, using a reference angle | Bias, drift (°/min) and mean turn error |
-| `camera_trials.csv` | Place red and green pillars at multiple distances and lighting conditions; preserve every trial | Detection accuracy, misses, wrong colours, mean processing time |
-| `challenge_runs.csv` | Open and Final field runs under repeatable conditions, including failures and evidence links | Count of documented completed runs |
-| `functional_checks.csv` | One record for each real bench verification, including evidence and PASS/FAIL | Auditable subsystem check ledger |
-| `revision_comparisons.csv` | Matched V4 and V4.1 trials using identical test geometry and metric definitions | Paired before/after difference, not an inferred win |
+- `functional_checks.csv` retains the team's twelve previously listed checks. The original status `RUNNED AND CHECKED` is preserved, but the record has no individual measurement, date, exact flashed commit, or link yet. This is not a verified `PASS`.
+- `source_configuration.csv` documents values checked in the firmware source. Those values are not measured hardware outputs.
+- `published_demonstrations.csv` indexes real published footage. The filming firmware at `de34faf` differs from the later modular firmware.
+- `power_runs.csv`, `tof_samples.csv`, `imu_samples.csv`, `camera_trials.csv`, `challenge_runs.csv` and `revision_comparisons.csv` are intentionally header-only, ready for measurements.
+- `build_verification.csv` stores the actual build environment and compiler result once a build is performed.
+- `sign_height_trials.csv` is for captured camera classification trials, not generated mockups.
 
-After collecting data, from the repository root run:
+Run real subsystem checks with `python tools/record_subsystem_checks.py --list` and then `python tools/record_subsystem_checks.py --test V41-MOTOR-FWD`. For numerical sensors, add measured samples to the matching CSV using the original headers.
 
-```bash
-python scripts/summarize_validation.py
-```
-
-The generated [`SUMMARY.md`](SUMMARY.md) is the numerical record referenced by Chapters 03 and 06. Do not change trial outcomes after analysis; preserve raw input and photos/videos. Use a calibrated instrument or describe its accuracy and bandwidth, particularly for sub-millisecond voltage dips and motor inrush. **A README, a firmware test case or an image is not a physical test result.**
-
-For plots of real power waveforms, ToF errors, stationary gyro drift and camera classifications, install Matplotlib and run:
-
-```bash
-python -m pip install matplotlib
-python scripts/plot_physical.py
-```
-
-Plots are created **only** when sufficient recorded data exists. They are not generated from the deterministic algorithm scenarios and must not be presented as experiment results without associated raw CSVs.
-
-## Firmware-specific subsystem verification
-
-Use [SUBSYSTEM_VERIFICATION.md](SUBSYSTEM_VERIFICATION.md) and the populated test ledger [functional_checks.csv](functional_checks.csv) to record the real V4.1 motor, steering, ToF, gyro, UART and encoder bench checks. All test statuses start as `NOT_RUN`; source-defined behavior is documented separately in [source_configuration.csv](source_configuration.csv). Project demonstrations and team-identified filming source are indexed in [published_demonstrations.csv](published_demonstrations.csv). Do not interpret the presence of a row as a completed test.
+The filled numerical CSVs in `../simulated/` are examples, **not measured V4.1 results**. Do not copy them here or run `scripts/summarize_validation.py` on those example files as though they were field evidence.
