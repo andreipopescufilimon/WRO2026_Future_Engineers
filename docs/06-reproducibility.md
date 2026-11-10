@@ -20,7 +20,6 @@
 | Meaningful development history | [Versions and development history](#versions-and-development-history) | V4 and V4.1 differences, older CAD, project-wide Git history and revision matching |
 
 Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the **full WRO 2026 repository**, including software, CAD, electrical design and documentation updates, rather than a V4.1-only series of commits. The project has undergone many iterations throughout the season. Old mechanical revisions are kept in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so the evolution of the design can be inspected without mistaking previous components for current ones.
-
 ---
 
 ## Repository structure
@@ -167,9 +166,9 @@ The TCS34725 is accessed through `Wire` transactions in `functions.ino` and does
 
 **Recording the versions used:**
 
-1. Open **Help → About** in Arduino IDE and OpenMV IDE; copy both desktop application versions into the table.
-2. In Arduino IDE **Boards Manager**, inspect the installed board platform for **Arduino Nano ESP32**. Note its exact provider, version, and selected board. In **Library Manager**, locate the installed `ESP32Encoder`, `ESP32Servo`, SparkFun VL53L5CX and BMI088 libraries and note their authors and versions. If `BMI088.h` was installed manually, record the repository URL or source folder and its revision.
-3. If Arduino CLI is installed, save the output of the following commands as additional evidence:
+1. Open **Help → About** in both **Arduino IDE** and **OpenMV IDE**. Record the exact installed desktop application versions in the dependency table, rather than the version currently offered on their websites.
+2. In Arduino IDE **Boards Manager**, find the installed platform for **Arduino Nano ESP32** and record its **provider, package version and board identifier**. Then open **Library Manager** and record the installed **name, author and version** for `ESP32Encoder`, `ESP32Servo`, SparkFun VL53L5CX and the BMI088 library. If `BMI088.h` was installed manually, record its repository URL, local installation path and exact commit or tagged version. Where multiple copies exist, identify the one selected by the compiler.
+3. If **Arduino CLI** is installed, save the results of these four commands together with the build record:
 
    ```bash
    arduino-cli version
@@ -178,15 +177,21 @@ The TCS34725 is accessed through `Wire` transactions in `functions.ino` and does
    arduino-cli board list
    ```
 
-   The `arduino-cli` executable is optional; the version record must match the libraries actually selected during compilation, especially if duplicates exist in different Arduino library folders.
-4. With the RT1062 connected in OpenMV IDE, run the following in the OpenMV script console to capture firmware/build information, and compare it with the firmware shown in the IDE's camera connection information:
+   These commands report the CLI version, installed board packages, installed libraries and connected boards. They do **not** establish which copies of duplicate libraries the compiler selected. Keep the verbose compilation output to confirm the actual dependency paths. Arduino CLI is optional if the same information is captured from the IDE.
+4. Connect the **OpenMV RT1062** in OpenMV IDE and run the following directly on the camera to record the MicroPython/OpenMV firmware build:
 
    ```python
    import os
+   import sys
+
    print(os.uname())
+   print(sys.implementation)
    ```
 
-5. Compile the **exact published** `src/HLR_FE_Separated/HLR_FE_Separated.ino` sketch, preserve the complete Arduino build output, and enter its result in the build-verification table below. Keep the source commit hash alongside the version list. Update this record whenever a library, board core or camera firmware changes.
+   Save the console output as `docs/validation/evidence/local-build/openmv-firmware.txt` and compare it with the firmware information shown in the IDE's camera connection or firmware information panel. Record the OpenMV IDE version separately because the desktop IDE version and camera firmware version are not necessarily the same.
+5. Compile the **exact published** `src/HLR_FE_Separated/HLR_FE_Separated.ino` sketch. Save the complete **Verify** output, including selected board, dependency paths, warnings, final result and build date. Run `git rev-parse HEAD` and `git status --short` in the repository, so the log identifies the source revision and any uncommitted changes. Enter the result in the build-verification table below. Update the dependency record whenever the board core, libraries or camera firmware change.
+
+Keep the version record, build log and RT1062 firmware output under `docs/validation/evidence/local-build/`. Publish them only after checking for personal file paths or other private information in the logs. A listed version or captured console output is documentation of the environment, not proof of a successful build unless the matching compiler output also shows success.
 
 For the Windows development computer, [`scripts/capture_build_environment.ps1`](../scripts/capture_build_environment.ps1) collects `arduino-cli` version, installed board cores, installed libraries, current Git commit, firmware checksums and an Arduino compile log. Run it from PowerShell with the appropriate Nano ESP32 FQBN after installing the actual dependencies:
 
