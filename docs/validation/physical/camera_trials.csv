@@ -1,1 +1,9 @@
 test_id,date_utc,firmware_commit,lighting,reference_color,detected_color,distance_mm,processing_ms,uart_message,image_file,notes
+PLAN-CAMERA-RED-200,,,indoor,red,,200,,,,TEST_PLAN
+PLAN-CAMERA-RED-400,,,indoor,red,,400,,,,TEST_PLAN
+PLAN-CAMERA-RED-600,,,indoor,red,,600,,,,TEST_PLAN
+PLAN-CAMERA-RED-1000,,,indoor,red,,1000,,,,TEST_PLAN
+PLAN-CAMERA-GREEN-200,,,indoor,green,,200,,,,TEST_PLAN
+PLAN-CAMERA-GREEN-400,,,indoor,green,,400,,,,TEST_PLAN
+PLAN-CAMERA-GREEN-600,,,indoor,green,,600,,,,TEST_PLAN
+PLAN-CAMERA-GREEN-1000,,,indoor,green,,1000,,,,TEST_PLAN

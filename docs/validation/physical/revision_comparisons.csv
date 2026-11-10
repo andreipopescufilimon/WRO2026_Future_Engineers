@@ -1,1 +1,9 @@
 test_id,date_utc,revision,firmware_commit,subsystem,metric,test_condition,value,unit,evidence_url,notes
+PLAN-COMP-HEADING_DRIFT-V4,,V4,,heading,heading_drift,stationary_60s,,deg/min,,TEST_PLAN
+PLAN-COMP-HEADING_DRIFT-V41,,V4.1,,heading,heading_drift,stationary_60s,,deg/min,,TEST_PLAN
+PLAN-COMP-STEERING_ERROR-V4,,V4,,steering,steering_error,neutral_and_limits,,deg,,TEST_PLAN
+PLAN-COMP-STEERING_ERROR-V41,,V4.1,,steering,steering_error,neutral_and_limits,,deg,,TEST_PLAN
+PLAN-COMP-TOF_BIAS-V4,,V4,,tof,tof_bias,flat_target_400mm,,mm,,TEST_PLAN
+PLAN-COMP-TOF_BIAS-V41,,V4.1,,tof,tof_bias,flat_target_400mm,,mm,,TEST_PLAN
+PLAN-COMP-LAP_TIME-V4,,V4,,lap,lap_time,same_open_layout,,s,,TEST_PLAN
+PLAN-COMP-LAP_TIME-V41,,V4.1,,lap,lap_time,same_open_layout,,s,,TEST_PLAN

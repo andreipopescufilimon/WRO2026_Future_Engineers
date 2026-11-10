@@ -1,1 +1,7 @@
 trial_id,timestamp_ms,sensor,zone_row,zone_col,reference_distance_mm,reported_distance_mm,frame_age_ms,turn_event,false_event,missed_event,vehicle_speed_m_s,notes
+EX-CORNER-1,160,front,2,3,970,973,14,0,0,0,0.53,SIMULATED_EXAMPLE
+EX-CORNER-2,320,front,2,3,810,797,16,0,0,0,0.41,SIMULATED_EXAMPLE
+EX-CORNER-3,480,front,2,3,650,640,18,0,0,0,0.79,SIMULATED_EXAMPLE
+EX-CORNER-4,640,front,2,3,590,583,26,1,0,0,0.94,SIMULATED_EXAMPLE
+EX-CORNER-5,800,front,2,3,500,512,28,1,0,0,0.91,SIMULATED_EXAMPLE
+EX-CORNER-6,960,front,2,3,830,827,22,0,0,0,0.75,SIMULATED_EXAMPLE

@@ -1,1 +1,2 @@
 test_id,date_utc,hardware_revision,firmware_commit,nano_esp32_core_version,arduino_cli_version,bmi088_version,esp32encoder_version,esp32servo_version,sparkfun_vl53l5cx_version,camera_firmware_version,compile_command,compile_outcome,log_path,notes
+PLAN-MODULAR-BUILD,,V4.1,,,,1.0.0,5.0.0,,,,arduino-cli compile src/HLR_FE_Separated,NOT_RECORDED,,TEST_PLAN

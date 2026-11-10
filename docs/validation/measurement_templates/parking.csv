@@ -1,1 +1,5 @@
 trial_id,date_utc,revision,firmware_commit,direction,entry_pose,slot_length_mm,slot_width_mm,commanded_forward_mm,measured_forward_mm,commanded_reverse_mm,measured_reverse_mm,front_tof_final_mm,side_tof_final_mm,final_yaw_error_deg,parking_valid,notes
+EX-PARK-1,2026-11-03T16:09:00Z,V4.1,SIMULATED,LEFT,near_slot,500,250,190,187.1,130,130.6,285.5,181.1,2.42,1,
+EX-PARK-2,2026-11-01T15:01:00Z,V4.1,SIMULATED,RIGHT,near_slot,500,250,190,191.1,130,133.0,286.1,171.1,1.72,1,
+EX-PARK-3,2026-11-05T14:59:00Z,V4.1,SIMULATED,LEFT,near_slot,500,250,190,192.0,130,131.0,287.8,176.9,1.3,1,
+EX-PARK-4,2026-11-05T15:34:00Z,V4.1,SIMULATED,RIGHT,near_slot,500,250,190,184.7,130,133.3,275.0,177.7,-1.42,1,

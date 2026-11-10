@@ -1,1 +1,6 @@
 test_id,date_utc,firmware_commit,state,t_s,battery_v,battery_a,rail5_v,rail5_a,motor_enabled,servo_active,instrument,notes
+PLAN-PWR-01,,,idle,,,,,,0,0,,TEST_PLAN
+PLAN-PWR-02,,,motor_forward,,,,,,1,0,,TEST_PLAN
+PLAN-PWR-03,,,motor_reverse,,,,,,1,0,,TEST_PLAN
+PLAN-PWR-04,,,steering,,,,,,0,1,,TEST_PLAN
+PLAN-PWR-05,,,combined,,,,,,1,1,,TEST_PLAN

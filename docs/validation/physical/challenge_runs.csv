@@ -1,1 +1,5 @@
 run_id,date_utc,firmware_commit,challenge,direction,field_layout,battery_start_v,outcome,completed_laps,parking_outcome,elapsed_s,video_url,notes
+PLAN-OPEN-LEFT,,,Open,left,regulation_field,,NOT_RECORDED,,,,,TEST_PLAN
+PLAN-OPEN-RIGHT,,,Open,right,regulation_field,,NOT_RECORDED,,,,,TEST_PLAN
+PLAN-OBSTACLE-LEFT,,,Obstacle,left,regulation_field,,NOT_RECORDED,,,,,TEST_PLAN
+PLAN-OBSTACLE-RIGHT,,,Obstacle,right,regulation_field,,NOT_RECORDED,,,,,TEST_PLAN

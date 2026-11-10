@@ -1,1 +1,5 @@
 trial_id,date_utc,firmware_commit,mode,battery_v,battery_a,five_v_min_v,five_v_current_a,motor_current_a,servo_current_a,camera_current_a,ambient_temp_c,notes
+EX-PWR-1,2026-11-06T14:21:00Z,SIMULATED,idle,7.828,0.189,4.99,0.365,0,0.042,0.217,22,SIMULATED_EXAMPLE
+EX-PWR-2,2026-11-02T14:17:00Z,SIMULATED,drive,7.941,2.158,4.924,0.567,1.511,0.13,0.203,22,SIMULATED_EXAMPLE
+EX-PWR-3,2026-11-02T13:09:00Z,SIMULATED,steering,8.206,1.212,5.026,0.301,0.848,0.049,0.249,22,SIMULATED_EXAMPLE
+EX-PWR-4,2026-11-05T16:54:00Z,SIMULATED,drive_and_steering,8.418,1.223,4.968,0.343,0.856,0.119,0.224,22,SIMULATED_EXAMPLE

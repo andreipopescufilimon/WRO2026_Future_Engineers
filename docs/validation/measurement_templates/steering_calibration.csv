@@ -1,1 +1,6 @@
 trial_id,date_utc,firmware_commit,servo_command_deg,left_wheel_angle_deg,right_wheel_angle_deg,radius_left_mm,radius_right_mm,surface,notes
+EX-STEER-1,2026-11-02T13:35:00Z,SIMULATED,39,-33.6,-34.7,,,smooth_board,SIMULATED_EXAMPLE
+EX-STEER-2,2026-11-02T13:35:00Z,SIMULATED,60,-17.5,-17.2,,,smooth_board,SIMULATED_EXAMPLE
+EX-STEER-3,2026-11-02T13:35:00Z,SIMULATED,85,0.2,1.1,,,smooth_board,SIMULATED_EXAMPLE
+EX-STEER-4,2026-11-02T13:35:00Z,SIMULATED,110,18.3,17.3,,,smooth_board,SIMULATED_EXAMPLE
+EX-STEER-5,2026-11-02T13:35:00Z,SIMULATED,131,36.9,36.2,,,smooth_board,SIMULATED_EXAMPLE

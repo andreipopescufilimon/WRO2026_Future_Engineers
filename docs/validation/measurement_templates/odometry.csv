@@ -1,1 +1,5 @@
 trial_id,date_utc,firmware_commit,wheel_diameter_mm,target_mm,encoder_ticks,reported_mm,ruler_distance_mm,battery_v,direction,surface,notes
+EX-ENC-1,2026-11-07T11:23:00Z,SIMULATED,29,140,75,137.32,125.11,8.13,forward,smooth_board,SIMULATED_EXAMPLE
+EX-ENC-2,2026-11-05T13:08:00Z,SIMULATED,29,200,110,201.41,202.22,8.13,forward,smooth_board,SIMULATED_EXAMPLE
+EX-ENC-3,2026-11-04T10:52:00Z,SIMULATED,29,300,164,300.28,307.47,8.13,forward,smooth_board,SIMULATED_EXAMPLE
+EX-ENC-4,2026-11-01T09:59:00Z,SIMULATED,29,400,220,402.82,404.64,8.13,forward,smooth_board,SIMULATED_EXAMPLE

@@ -1,1 +1,17 @@
 test_id,date_utc,firmware_commit,sensor,reference_mm,measured_mm,valid,frame_timestamp_ms,motor_running,target_surface,notes
+PLAN-TOF-FRONT-200,,,front,200,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-FRONT-400,,,front,400,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-FRONT-600,,,front,600,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-FRONT-1000,,,front,1000,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-LEFT-200,,,left,200,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-LEFT-400,,,left,400,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-LEFT-600,,,left,600,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-LEFT-1000,,,left,1000,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-RIGHT-200,,,right,200,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-RIGHT-400,,,right,400,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-RIGHT-600,,,right,600,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-RIGHT-1000,,,right,1000,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-BACK-200,,,back,200,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-BACK-400,,,back,400,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-BACK-600,,,back,600,,,,0,flat_matte,TEST_PLAN
+PLAN-TOF-BACK-1000,,,back,1000,,,,0,flat_matte,TEST_PLAN

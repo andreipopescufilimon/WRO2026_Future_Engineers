@@ -1,1 +1,5 @@
 test_id,date_utc,firmware_commit,condition,t_s,gyro_z_dps,integrated_heading_deg,reference_heading_deg,motor_running,notes
+PLAN-IMU-STATIONARY_MOTOR_OFF,,,stationary_motor_off,,,,0,0,TEST_PLAN
+PLAN-IMU-STATIONARY_MOTOR_ON,,,stationary_motor_on,,,,0,1,TEST_PLAN
+PLAN-IMU-MANUAL_TURN_LEFT_90,,,manual_turn_left_90,,,,90,0,TEST_PLAN
+PLAN-IMU-MANUAL_TURN_RIGHT_90,,,manual_turn_right_90,,,,-90,0,TEST_PLAN
