@@ -332,6 +332,44 @@ If there is no valid zone, the function returns `-1`. The actual optical orienta
 <p align="center"><img src="docs-media/v41-tof-zones.png" width="720" alt="4 by 4 VL53L5CX zone indexing and selected front corner zones"></p>
 <p align="center"><sub>Figure 4.1. Four-by-four distance cells used by the V4.1 ranging code. The two front-corner cells are row 2/column 3 and row 3/column 3.</sub></p>
 
+```cpp
+// Read a specific zone from a 4x4 VL53L5CX matrix.
+// Rows and columns are numbered from 1 to 4.
+int tof_zone_mm(DistanceDir dir, uint8_t row, uint8_t col) {
+  if (row < 1 || row > 4 || col < 1 || col > 4) return -1;
+
+  ToFUnit &u = tofUnits[(uint8_t)dir];
+
+  // Reject offline sensors and frames older than 150 ms.
+  if (!u.online || !u.lastFrameMs ||
+      millis() - u.lastFrameMs > TOF_FRESH_MS) return -1;
+
+  uint16_t v = u.mm[(row - 1) * 4 + (col - 1)];
+
+  return v == 0 ? -1 : (int)v;
+}
+
+// Convert the 4x4 matrix into one distance measurement.
+// Select the closest valid reading from the central 2x2 zones.
+float readDistanceMM(DistanceDir dir) {
+  tof_poll();
+
+  int nearest = 32767;
+
+  for (uint8_t row = 2; row <= 3; row++) {
+    for (uint8_t col = 2; col <= 3; col++) {
+      int d = tof_zone_mm(dir, row, col);
+
+      if (d > 0 && d < nearest) nearest = d;
+    }
+  }
+
+  return (nearest == 32767) ? -1.0f : (float)nearest;
+}
+```
+
+The tof_zone_mm() function accesses an individual cell of the 4 × 4 distance matrix and rejects unavailable, invalid or outdated readings. The readDistanceMM() function provides a common distance interface for the navigation and parking algorithms by selecting the closest valid measurement from the central four zones. This allows the movement functions to use the new VL53L5CX sensors without depending on the older PWM-based distance measurement system.
+
 ### 4.3 Reading frequency by challenge mode
 
 `tof_poll()` checks the device data-ready flag before obtaining a frame. In **Open mode**, it polls only the **front ToF** for the corner-control loop. The other three boards are still initialized, but they are not transferred continuously by this function while Open navigation is active. In **Final mode**, all four devices are considered. The 30 Hz device configuration corresponds to a nominal 33.3 ms per frame; it is not proof that the complete main loop runs at that frequency.
