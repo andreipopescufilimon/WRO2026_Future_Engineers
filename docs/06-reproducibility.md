@@ -21,6 +21,20 @@
 
 Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commits/main/) covers the **full WRO 2026 repository**, including software, CAD, electrical design and documentation updates, rather than a V4.1-only series of commits. The project has undergone many iterations throughout the season. Old mechanical revisions are kept in [`3D-models/old-3D-models/`](../3D-models/old-3D-models/) so the evolution of the design can be inspected without mistaking previous components for current ones.
 
+### Evidence from the assembled vehicle
+
+We built the V4.1 vehicle with custom PCB assemblies, documented its components and recorded the assembly and autonomous-driving demonstrations. The photographs and videos show the physical vehicle, while the firmware, CAD and manufacturing files explain how to build the same system.
+
+| Evidence | Recorded result | Reference |
+| --- | --- | --- |
+| Mechanical and electrical assembly | The built vehicle and its PCB, drivetrain, steering and sensor placement are documented in photographs and an assembly recording | [Assembly video](https://youtu.be/HSzWATB6nWQ) · [Vehicle photographs](../v-photos/) |
+| Autonomous driving | Our published video documents the physical robot driving in both Open and Obstacle challenges | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) · [Video description](../video/video.md) |
+| Camera perception | An RT1062 frame captures red and green detections on the actual vision interface | [Captured camera view](docs-media/v41-openmv-RT1062-camera-view.png) |
+| Electronic and mechanical release | The source repository includes STEP models, PCB manufacturing files, the Arduino V4.1 sketch and the RT1062 script | [Mechanical CAD](../3D-models/) · [PCB files](../electrical-schematics/) · [Controller source](../src/HLR_FE_Separated/) · [Camera source](../src/camera.py) |
+| Source verification | Ten static source/document checks and the numerical-analysis unit tests have recorded results; these checks are separate from a physical driving test | [Source preflight](validation/evidence/static-preflight-results.md) · [Analysis test output](validation/evidence/analysis-tests.txt) |
+
+The driving recording is **physical demonstration evidence**. A separate, dated record is required to establish exactly which Git commit and installed software versions produced that demonstration.
+
 ---
 
 ## Repository structure
@@ -123,7 +137,7 @@ To record the exact revision used on a reproduced build, run:
 git rev-parse HEAD
 ```
 
-Keep this commit identifier with your test results. If the repository contains a dedicated V4.1 tag or release, use its associated files. A tag is not required to clone the project, but a fixed revision makes later results easier to compare.
+Keep this commit identifier with your test results. One documented, publicly accessible source snapshot is commit [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), inspected on 10 November 2026. It identifies repository contents at a fixed point, **not** by itself the exact controller binary installed for the driving video. To reproduce that published snapshot, use `git checkout 045c57e7388c08f9281642a864de0ba3b099c0df` after cloning.
 
 ### 2. Assemble the mechanics
 
@@ -150,18 +164,18 @@ The Nano ESP32 and OpenMV RT1062 use different development environments. The Ope
 | Arduino Nano ESP32 | [Arduino IDE 2](https://www.arduino.cc/en/software), with the appropriate Nano ESP32 board package | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) |
 | OpenMV RT1062 | [OpenMV IDE](https://openmv.io/pages/download) and compatible camera firmware | [`src/camera.py`](../src/camera.py) |
 
-The table below is the **V4.1 build-environment record**. We keep the installed versions together with the Git commit and compilation output, so that another team can reproduce the same software environment rather than installing an arbitrary newer release. Versions must be transcribed from the **computer and camera used for the successful build**. The current source package identifies the required dependencies but does not include that machine's installed-version report.
+The source files identify the board and the libraries required by the V4.1 program. The table below is the environment identification record for reproducing the physical build. The version numbers must come from the actual development computer and RT1062, rather than a library website or a guess. An archived, successful compilation report has not yet been published with the repository.
 
-| Dependency | Role / exact identification | Version used for verified V4.1 build |
+| Dependency | Role / exact identification | Archived installed version |
 | --- | --- | --- |
-| Arduino IDE | Desktop environment used to compile and upload the Nano ESP32 sketch | Not captured in a verified build record |
-| Arduino Nano ESP32 board package | Board platform, provider, installed core and board identifier (FQBN) | Not captured in a verified build record |
-| `ESP32Encoder` | Library providing `ESP32Encoder.h`; record installed library's name and author | Not captured in a verified build record |
-| `ESP32Servo` | Library providing `ESP32Servo.h`; record installed library's name and author | Not captured in a verified build record |
-| SparkFun VL53L5CX Arduino Library | Library providing `SparkFun_VL53L5CX_Library.h`, used by `tof.ino` | Not captured in a verified build record |
-| BMI088 library | Exact library name, author or repository, and version or commit providing `BMI088.h` with the methods used in `gyro.ino` | Library identity and revision not captured |
-| OpenMV IDE | Desktop IDE used to save and test the camera script | Not captured in a verified build record |
-| OpenMV RT1062 firmware | Firmware running on the camera when `src/camera.py` was validated | Not captured on the RT1062 |
+| Arduino IDE | Desktop environment used to compile and upload the Nano ESP32 sketch | Not archived |
+| Arduino Nano ESP32 board package | Board platform, provider, installed core and board identifier (FQBN) | Not archived |
+| `ESP32Encoder` | Library providing `ESP32Encoder.h`; record installed library's name and author | Not archived |
+| `ESP32Servo` | Library providing `ESP32Servo.h`; record installed library's name and author | Not archived |
+| SparkFun VL53L5CX Arduino Library | Library providing `SparkFun_VL53L5CX_Library.h`, used by `tof.ino` | Not archived |
+| BMI088 library | Exact library name, author or repository, and version or commit providing `BMI088.h` with the methods used in `gyro.ino` | Not archived |
+| OpenMV IDE | Desktop IDE used to save and test the camera script | Not archived |
+| OpenMV RT1062 firmware | Firmware running on the camera when `src/camera.py` was validated | Not archived |
 
 The TCS34725 is accessed through `Wire` transactions in `functions.ino` and does not require a separate TCS34725 Arduino library. `Wire` is supplied by the selected Arduino board platform. The libraries listed above must use the interfaces called by the published V4.1 code; in particular, **`BMI088.h` is not a unique library identifier**, so its author and source revision need to be recorded.
 
@@ -200,24 +214,24 @@ For the Windows development computer, [`scripts/capture_build_environment.ps1`](
 powershell -ExecutionPolicy Bypass -File scripts\capture_build_environment.ps1 -FQBN arduino:esp32:nano_nora
 ```
 
-The captured output is saved under `docs/validation/evidence/local-build/`; review it before publishing because a successful script invocation is not necessarily a successful compiler exit code. The script cannot recover a previously used Arduino IDE version or camera firmware that was never recorded. Keep the OpenMV firmware build (`os.uname()`) and a saved camera power-cycle test alongside that folder.
+The captured output is saved under `docs/validation/evidence/local-build/`. Review the compilation exit code and full output before recording a successful build. The capture script cannot recover a previously used Arduino IDE version or camera firmware that was never recorded. Keep the OpenMV firmware build (`os.uname()`) and a saved camera power-cycle test alongside that folder.
 
 
 ### V4.1 build-verification record
 
-| Build item | Required evidence | Result / revision |
+The repository already contains the physical assembly documentation and the full separated V4.1 source code. The published evidence is distinguished below from the remaining information that can only be obtained from the original programming computer.
+
+| Item | Verified or documented information | Evidence |
 | --- | --- | --- |
-| Repository state | `git rev-parse HEAD`; check for uncommitted build-related changes | Source-file hashes published; final tested Git commit not yet established |
-| Selected board | Arduino Nano ESP32 and selected FQBN | Nano ESP32; installed FQBN/version to be captured on build computer |
-| Controller firmware | `src/HLR_FE_Separated/HLR_FE_Separated.ino` and all six supporting tabs | No successful V4.1 compile log available for independent inspection |
-| Compiler output | Complete successful **Verify** output, including any warnings | [Local build evidence folder](validation/evidence/README.md), compile log not yet published |
-| USB upload | Upload completed and firmware restarted on the actual Nano ESP32 | No upload log supplied for this source revision |
-| RT1062 startup | Saved `camera.py` runs automatically after power cycling the camera | One detection screenshot available; camera firmware version and power-cycle record not supplied |
-| Version lock | This dependency table matches the environment used for that build | Actual environment capture not yet provided |
+| Published source revision | Repository snapshot `045c57e7388c08f9281642a864de0ba3b099c0df` (10 November 2026); not asserted to be the version used in the driving recording | [Snapshot](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
+| V4.1 controller source | `src/HLR_FE_Separated/HLR_FE_Separated.ino` with `Open.ino`, `Final.ino` and the hardware-control tabs | [Controller firmware](../src/HLR_FE_Separated/) |
+| Source consistency | Static source and local-file checks have recorded PASS results; these do not compile the ESP32 program | [Static preflight](validation/evidence/static-preflight-results.md) · [Checksums](validation/evidence/source-sha256.json) |
+| RT1062 image-processing demonstration | Captured camera frame shows red and green object detections | [Camera view](docs-media/v41-openmv-RT1062-camera-view.png) |
+| Physical autonomous driving | We published our real-world driving demonstration for both Open and Obstacle modes | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
+| Successful Arduino compile, upload and dependency versions | The required source and capture script are available; a compiler log and installed-version report from the robot's development computer are not archived | [Capture script](../scripts/capture_build_environment.ps1) · [Evidence directory](validation/evidence/README.md) |
+| Firmware-to-run linkage | We have published real driving footage, but the source revision actually flashed for that recording has not been identified in a dated build record | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) · [Physical test records](validation/physical/SUMMARY.md) |
 
-The [static-source preflight report](validation/evidence/static-preflight-results.md) and [SHA-256 integrity manifest](validation/evidence/source-sha256.json) provide a separate, repeatable check of the **supplied** V4.1 source files, module interfaces, and documentation references. The [analysis unit-test output](validation/evidence/analysis-tests.txt) documents that numerical summaries can be recalculated without inventing data. These checks are useful evidence of release consistency, but they are **not** a compiled Arduino binary or physical test.
-
-For a reproducible submission, the compilation record must show a successful build **without errors**. A local compile without a saved log, or a commit whose firmware differs from the tested sketch, does not fully establish the build environment.
+To complete the build record, save one successful Arduino **Verify** output, its `git rev-parse HEAD`, the installed dependencies and the RT1062 firmware information. The published [environment-capture script](../scripts/capture_build_environment.ps1) gathers most of the Arduino information. This final step does not change the existing assembly video, driving evidence or firmware design; it establishes the exact environment in which they can be reproduced.
 
 ### 4. Flash the Arduino Nano ESP32
 
@@ -327,24 +341,24 @@ For meaningful comparisons, record the same field layout, battery condition, fir
 
 ### V4.1 functional verification results
 
-This record separates **source-level verification**, **existing recorded evidence** and **physical verification**. The assembled vehicle's test status is not inferred from the presence of code. Dated subsystem checks are recorded in [`functional_checks.csv`](validation/physical/functional_checks.csv), and challenge runs in [`challenge_runs.csv`](validation/physical/challenge_runs.csv) and published in the [physical summary](validation/physical/SUMMARY.md). For an auditable PASS, the test record must include the firmware revision, test conditions, outcome and log or video.
+Our project provides a recorded assembly, a physical driving demonstration for both challenge configurations and an actual RT1062 detection frame. The table links those outcomes directly to the published evidence. It also identifies the hardware checks for which a dated measurement file has not yet been archived. We do not count a successful source-code check as a physical test.
 
-| Test | Available observation | Verification status | Evidence |
-| --- | --- | --- | --- |
-| V4.1 controller source integrity | Seven sketch tabs supplied; static checks exercise declared interfaces and file paths | **Static preflight**; Arduino compilation still requires a saved build log | [Preflight results](validation/evidence/static-preflight-results.md) |
-| OpenMV RT1062 detection | Camera image contains red and green segmentation output | **Captured image available**; repeated classification and UART accuracy not established | [RT1062 detection image](docs-media/v41-openmv-RT1062-camera-view.png) |
-| Four VL53L5CX devices | Four drivers and unique startup addresses `0x30` to `0x33` declared in source | **Configuration verified in source**; physical range results not recorded | [`tof.ino`](../src/HLR_FE_Separated/tof.ino) · [range log](validation/physical/tof_samples.csv) |
-| BMI088 heading | Startup bias, range and gyro integration are implemented in the sketch | **Configuration verified in source**; 60 s drift and 90° turn measurements not recorded | [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) · [IMU log](validation/physical/imu_samples.csv) |
-| Steering and propulsion | Servo and motor interfaces have independent test sketches | **Test procedure available**; dated V4.1 bench result not recorded | [Individual motor test](../src/tests/motor_test/) · [steering test](../src/tests/servo_steering/) |
-| Open Challenge | Public project driving video exists | **Published demonstration**; exact V4.1 commit, conditions and lap count not established | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) · [run log](validation/physical/challenge_runs.csv) |
-| Obstacle Challenge | The same public video is linked by the project as a demonstration of both challenges | **Published demonstration**; Final-mode outcome and version match require a dated log | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) · [run log](validation/physical/challenge_runs.csv) |
-| Power and combined-bus stability | Component ratings, power model and test method are documented | **Model available**; physical 5 V minima and input-current traces not recorded | [Power chapter](03-power-sensors.md#331-electrical-measurements-and-power-path-verification) · [power log](validation/physical/power_runs.csv) |
+| Test | Evidence from the robot or repository | Documented result |
+| --- | --- | --- |
+| Physical vehicle assembly | [Assembly video](https://youtu.be/HSzWATB6nWQ), [vehicle photographs](../v-photos/) | **Documented:** completed robot and assembly process shown |
+| Open Challenge operation | [Recorded driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), [video index](../video/video.md) | **Recorded:** autonomous Open-mode driving footage; firmware revision and timed lap log not linked |
+| Obstacle Challenge operation | [Recorded driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), [video index](../video/video.md) | **Recorded:** autonomous Obstacle-mode driving footage; firmware revision and scored-run record not linked |
+| RT1062 red and green perception | [Captured camera screenshot](docs-media/v41-openmv-RT1062-camera-view.png) | **Captured:** red and green image detections visible; repeated-trial accuracy not reported |
+| Controller firmware and source | [V4.1 sketch](../src/HLR_FE_Separated/), [static preflight](validation/evidence/static-preflight-results.md) | **Available:** source modules and consistent interface declarations; successful Arduino compiler output not archived |
+| Four VL53L5CX modules | [Sensor implementation](../src/HLR_FE_Separated/tof.ino), [sensor calibration section](03-power-sensors.md#51-distance-sensor-calibration-matrix) | **Implemented:** four addresses and 4×4 ranging configuration; physical RMSE log not archived |
+| BMI088 and steering/drive | [Gyro implementation](../src/HLR_FE_Separated/gyro.ino), [motor implementation](../src/HLR_FE_Separated/motors.ino), [individual tests](../src/tests/) | **Implemented:** control and dedicated test code; dated standalone drift/actuator test record not archived |
+| Battery and regulated-power reliability | [Measured-data collection procedure](03-power-sensors.md#33-physical-power-measurement-plan), [physical log summary](validation/physical/SUMMARY.md) | **Documented:** electrical architecture and test procedure; physical current and 5 V transient traces not archived |
 
-The [physical functional-check ledger](validation/physical/SUMMARY.md#subsystem-functional-test-outcomes) is generated only from dated hardware observations.
-
-The [assembly video](https://youtu.be/HSzWATB6nWQ) also demonstrates the assembly procedure, but it does not by itself verify firmware compatibility. The [source integrity manifest](validation/evidence/source-sha256.json) identifies the exact packaged files. A complete V4.1 PASS record is established only when the build log, hardware check, and matching dated run are retained. No synthetic test scenarios are presented as real hardware outcomes.
+The videos and camera frame show real work with the vehicle. The separate [physical test ledger](validation/physical/SUMMARY.md) is intended for timed measurements and results associated with a specific source revision. It should not be used to infer measurements absent from the recordings.
 
 ### Final verification checklist
+
+This checklist is for anyone building a second vehicle or performing a fresh release test. It does not replace the assembly, camera or driving evidence already linked above.
 
 - [ ] Mechanical parts match the selected CAD revision and move freely.
 - [ ] Battery polarity, regulated voltages and board connections have been checked.
@@ -380,19 +394,22 @@ These commits provide reference points for the mechanical and electronics revisi
 
 ### Reproducible V4.1 revision
 
-The V4.1 commit shown above is a **development-history reference**. A fully reproducible V4.1 release must be identified by the **exact full Git commit tested** with the assembled robot. That commit must contain the matching `src/HLR_FE_Separated/` files, `src/camera.py`, mechanical CAD, electrical production files and this documentation. If the development-history commit does not contain that complete set, use the later commit containing the validated release instead.
+For a stable public starting point, the repository can be checked out at [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) (10 November 2026). This is a **published source snapshot**, with the controller sketch, OpenMV code and manufacturing references available to a reader. The earlier `fee1a844` commit is retained as a development checkpoint, not as the current firmware release.
 
-| Release evidence | Reproduction reference |
+| Release item | Reference |
 | --- | --- |
-| Fully tested V4.1 commit | Not identified as a tested commit; [source-file SHA-256 manifest](validation/evidence/source-sha256.json) locks this package until the matching release is committed |
-| Controller and camera versions | [V4.1 build environment and verification](#3-prepare-the-software-environment) |
-| Mechanical and PCB revision | [Manufacturing files](#parts-and-manufacturing) from the same commit |
-| Independent subsystem tests | [Functional verification results](#v41-functional-verification-results) |
-| Open and Obstacle challenge videos | [`video/`](../video/) and the [published driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
-| Date of final verified test | A dated V4.1 test record is not yet available in the published evidence |
+| Public V4.1 source checkpoint | [Commit `045c57e`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
+| Controller source | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) |
+| Camera source | [`src/camera.py`](../src/camera.py), OpenMV RT1062 |
+| Mechanical and PCB production files | [CAD](../3D-models/) · [Electrical files](../electrical-schematics/) |
+| Real assembly demonstration | [Assembly video](https://youtu.be/HSzWATB6nWQ) |
+| Real driving demonstration | [Open and Obstacle footage](https://www.youtube.com/watch?v=bg92ulHXomw) |
+| Firmware integrity | [SHA-256 source manifest](validation/evidence/source-sha256.json) |
+| Exact hardware-tested commit | The video has not been linked to a firmware hash or dated source record; the public checkpoint above must not be described as the proven running firmware |
 
-The complete repository commit history also records the earlier development checkpoints. Confirm that the three required WRO checkpoint commits satisfy the competition dates: one at least two months before the event, another at least one month before, and another at least two weeks before. The last of these is the principal evaluation snapshot under the 2026 rules. Record the relevant commit links and dates with the release evidence rather than treating a file's current modification date as proof of the earlier checkpoints.
+A matching test record should contain the tested commit, build environment, date and corresponding driving footage. This is the remaining traceability information needed to connect the filmed physical robot to one exact reproducible release.
 
+The complete repository history also includes earlier development checkpoints. Under the 2026 rules, check that the required milestone commits satisfy the event deadlines. Record commit links and dates rather than inferring the development timeline from a file's latest modification date.
 
 ### Automated source verification and physical test records
 
@@ -404,6 +421,6 @@ python -m unittest discover -s tests -v
 python scripts/summarize_validation.py
 ```
 
-The first command checks the supplied V4.1 source modules, configured camera/ToF interfaces and local documentation assets. The unit tests verify the calculation script against known arithmetic fixtures. The final command summarizes **only logged physical readings**, so empty CSVs generate an explicit unrecorded status, not a false PASS. Results and per-file hashes are saved in [`docs/validation/evidence/`](validation/evidence/), while new measurements belong in [`docs/validation/physical/`](validation/physical/).
+The first command checks the supplied V4.1 source modules, configured camera/ToF interfaces and local documentation assets. The unit tests verify the calculation script against known arithmetic fixtures. The final command summarizes **only logged physical readings**, and report unrecorded readings as unavailable. Results and per-file hashes are saved in [`docs/validation/evidence/`](validation/evidence/), while new measurements belong in [`docs/validation/physical/`](validation/physical/).
 
-The accompanying [GitHub Actions workflow](../.github/workflows/v41-documentation-preflight.yml) can rerun these checks after the files are committed. This automated workflow does **not** compile the controller or substitute for sensor measurements. A complete V4.1 release requires a build log from the tested Arduino environment, an OpenMV RT1062 firmware record and dated hardware runs recorded under the same Git commit.
+These checks do **not** compile the controller or substitute for sensor measurements. A complete V4.1 release requires a build log from the tested Arduino environment, an OpenMV RT1062 firmware record and dated hardware runs recorded under the same Git commit.
