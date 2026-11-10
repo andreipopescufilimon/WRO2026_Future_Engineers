@@ -23,7 +23,7 @@ This engineering journal documents how we designed, built and tested our autonom
 
 Our robot is a compact **front-steered, rear-wheel-driven autonomous vehicle**. Its main structural element is a custom PCB chassis, which also carries the electrical connections for the controller and sensors. A geared drive motor transfers power through a mechanical drivetrain composed of 2 gears, to the rear differential, while a servo moves the front wheels through a parallel steering linkage. Silicone tyres provide traction on the map surface.
 
-The **Arduino Nano ESP32** handles navigation and motion control. The **OpenMV N6** processes camera images to identify coloured traffic signs and other visuals, then sends its observations to the main controller. A **custom BMI088 IMU** provides rotation and acceleration measurements, while our **custom TOF distance sensors** supply additional information about walls and parking boundaries. The sensors, code and steering mechanism work together to navigate the track autonomously.
+The **Arduino Nano ESP32** handles navigation and motion control. The **OpenMV RT1062** processes camera images to identify coloured traffic signs and other visuals, then sends its observations to the main controller. A **custom BMI088 IMU** provides rotation and acceleration measurements, while our **custom TOF distance sensors** supply additional information about walls and parking boundaries. The sensors, code and steering mechanism work together to navigate the track autonomously.
 
 ### V4.1 CAD model
 
@@ -50,7 +50,7 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 | Configuration | Front steering, rear drive with differential | [Mobility](02-mobility.md), [3D models](../3D-models/) |
 | Main structure | Custom PCB chassis and printed mounts | [Electrical schematics](../electrical-schematics/), [3D models](../3D-models/) |
 | Main controller | Arduino Nano ESP32 | [Power and sensors](03-power-sensors.md), [firmware](../src/) |
-| Vision processor | OpenMV N6 | [Camera software](../src/camera.py), [software](04-software.md) |
+| Vision processor | OpenMV RT1062 | [Camera software](../src/camera.py), [software](04-software.md) |
 | Inertial sensing | Custom BMI088 IMU | [Power and sensors](03-power-sensors.md) |
 | Distance sensors | Custom VL53L5CXV0GC ToF sensors | [Power and sensors](03-power-sensors.md), [ToF board files](../electrical-schematics/TOF%20sensors/production-files/) |
 | Propulsion | Updated higher-torque geared motor driving rear axle | [Mobility](02-mobility.md) |
