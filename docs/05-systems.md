@@ -2,12 +2,12 @@
 
 | Chapter | Topic |
 |---|---|
-| [01 · Overview](01-overview.md) | Vehicle concept, development and competition objectives |
-| [02 · Mobility](02-mobility.md) | Drivetrain, steering geometry, chassis and wheels |
-| [03 · Power and sensors](03-power-sensors.md) | Power paths, motor driver, ToF, BMI088 and camera |
-| [04 · Software](04-software.md) | Navigation states, sensor processing and control |
-| **05 · Systems thinking** | Constraints, design decisions, iterations, failure analysis and evidence |
-| [06 · Reproducibility](06-reproducibility.md) | Manufacturing, assembly, software versions and reproduction |
+| [01 · Overview](01-overview.md) | Team, robot, challenges, evidence and results |
+| [02 · Mobility](02-mobility.md) | Chassis, drivetrain, steering, tires and geometry |
+| [03 · Power and sensors](03-power-sensors.md) | Electrical system, PCB, camera, IMU and validation |
+| [04 · Software](04-software.md) | Control, perception, state machines and challenge strategy |
+| [05 · Systems](05-systems.md) | Engineering trade-offs, iterations, performance and risk |
+| [06 · Reproducibility](06-reproducibility.md) | Assembly, firmware, costs and test procedures |
 
 ---
 
