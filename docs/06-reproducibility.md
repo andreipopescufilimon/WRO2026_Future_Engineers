@@ -331,11 +331,11 @@ The GitHub history preserves earlier mechanical and software configurations, the
 | **Filmed robot software** | [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | Team-identified source revision used for the real Open and Obstacle Challenge recording; Arduino entry point `src/HLR_FE/HLR_FE.ino` |
 | **V4.1 development checkpoint** | [View historical commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/fee1a8440b3251d7454f14fb1ae3a48e173f498c) | Electronics manufacturing-file update from the V4.1 development period |
 
-The filmed robot used the earlier `src/HLR_FE/` sketch according to the team's filming record. The later V4.1 source separates the Open and Obstacle Challenge routines in `src/HLR_FE_Separated/`, reflecting the changes in sensor handling and program structure.
+The filmed robot used the earlier `src/HLR_FE/` sketch. The later V4.1 source separates the Open and Obstacle Challenge routines in `src/HLR_FE_Separated/`, reflecting the changes in sensor handling and program structure.
 
 ### Driving demonstration and V4.1 firmware revisions
 
-The original software associated with the real driving video is the team-identified commit [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81). That snapshot includes `src/HLR_FE/HLR_FE.ino` and the contemporaneous camera and project files. The newer V4.1 system can be inspected using [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) (10 November 2026), which includes the separated `src/HLR_FE_Separated/` controller sketch. These two snapshots have different software architectures and serve different reproduction purposes.
+The original software associated with the real driving video is the team-identified commit [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81). That snapshot includes `src/HLR_FE/HLR_FE.ino` and the camera and project files. The newer V4.1 system can be inspected using [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) (10 November 2026), which includes the separated `src/HLR_FE_Separated/` controller sketch. These two snapshots have different software architectures and serve different reproduction purposes.
 
 | Release item | Reference |
 | --- | --- |
@@ -348,5 +348,3 @@ The original software associated with the real driving video is the team-identif
 | Real assembly demonstration | [Assembly video](https://youtu.be/HSzWATB6nWQ) |
 | Real driving demonstration | [Open and Obstacle footage](https://www.youtube.com/watch?v=bg92ulHXomw) |
 | Firmware integrity | [SHA-256 source manifest](validation/evidence/source-sha256.json) |
-
-The historical controller source, later V4.1 implementation and real driving demonstration are available through the linked commits and repository directories. Together with the CAD, PCB production files and assembly video, these provide a documented route from source and fabrication files to the physical robot.
