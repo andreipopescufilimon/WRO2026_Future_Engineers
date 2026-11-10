@@ -412,6 +412,32 @@ The videos and camera frame document the assembled robot and its operation. The 
 The assembly recording, challenge footage and RT1062 frame buffer provide the practical examples accompanying this reproduction guide. The testing examples above describe how each subsystem is inspected before autonomous field operation.
 
 
+### Verified V4.1 hardware and firmware release
+
+This table identifies the V4.1 configuration to reproduce and the existing records that establish which parts have been verified. The fixed Git snapshot identifies the **source**, while the build log, upload record and physical run must identify the **same flashed revision** before the release can be described as fully verified. The candidate snapshot below is not, by itself, evidence that the robot was operated with that software.
+
+| Release item | Identifiable configuration or evidence record |
+| --- | --- |
+| Hardware revision | V4.1, as documented in the [assembly procedure](#2-assemble-the-mechanics), [PCB manufacturing packages](../electrical-schematics/) and [vehicle photographs](../v-photos/) |
+| Main controller | Arduino Nano ESP32 |
+| Vision processor | OpenMV RT1062 |
+| Fixed candidate Git snapshot | [`4e5da95c8b87787be97cb1e5f976c625865338bb`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/4e5da95c8b87787be97cb1e5f976c625865338bb), repository checkpoint on 10 November 2026; record the actual flashed SHA if different |
+| Controller firmware | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/), including `HLR_FE_Separated.ino`, `Open.ino`, `Final.ino` and the shared hardware tabs |
+| Camera firmware source | [`src/camera.py`](../src/camera.py); use the version from the same fixed Git snapshot as the controller and record the camera firmware/IDE version |
+| Bundled Arduino libraries | [BMI088 1.0.0](../src/libraries/BMI088/library.properties), [ESP32Encoder 5.0.0](../src/libraries/ESP32Encoder/library.properties), [ESP32Servo 3.0.3](../src/libraries/ESP32Servo/library.properties), [SparkFun VL53L5CX 1.0.3](../src/libraries/SparkFun_VL53L5CX_Arduino_Library/library.properties). [Adafruit TCS34725 1.4.4](../src/libraries/Adafruit_TCS34725/library.properties) is also bundled; the autonomous sketch accesses this sensor directly over I²C |
+| Board-core and installed build environment | Record actual Nano ESP32 core, Arduino CLI/IDE versions and compiler-selected library paths using [`capture_build_environment.ps1`](../scripts/capture_build_environment.ps1) |
+| Compilation result and original compiler output | [`build_verification.csv`](validation/physical/build_verification.csv) and the `docs/validation/evidence/local-build/arduino-build.log` output generated on the development computer; a dated **exit code 0** is required to claim a successful build |
+| Controller upload | Record date, flashed source SHA, upload command or IDE confirmation, selected board/port and the robot's startup serial output alongside the build evidence |
+| Physical subsystem checks | [`functional_checks.csv`](validation/physical/functional_checks.csv) and [`subsystem_test_record.csv`](validation/physical/subsystem_test_record.csv), using dated observations and the actual flashed SHA |
+| Autonomous driving verification | [`challenge_runs.csv`](validation/physical/challenge_runs.csv), containing mode, course direction, observed outcome, source SHA and a matching recording |
+| Historical driving demonstration | [Published Open and Obstacle footage](https://www.youtube.com/watch?v=bg92ulHXomw), associated by the team with historical commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81), not automatically with this modular source snapshot |
+
+**Firmware verification.** After checking out the chosen release SHA with a clean working tree, run the [existing build-capture script](../scripts/capture_build_environment.ps1). Preserve `arduino-build.log`, `arduino-build-result.txt`, `board-platforms.txt` and `installed-libraries.txt`, then enter the observed result in [`build_verification.csv`](validation/physical/build_verification.csv). A successful compilation shows that this combination of source and dependencies builds; it does not by itself establish a successful upload or autonomous operation.
+
+**Physical verification.** Upload the compiled sketch to the assembled Arduino Nano ESP32, save the IDE or CLI upload confirmation, and test the motor, steering, four ToF sensors, BMI088 heading, RT1062 UART and encoder. Link the original readings or recordings in the [functional test ledger](validation/physical/functional_checks.csv). The table and test IDs already exist; no additional testing framework is required.
+
+**Autonomous operation.** Record at least one Open or Obstacle run with the same flashed firmware revision, including its date, course direction, outcome and video link in [`challenge_runs.csv`](validation/physical/challenge_runs.csv). The source SHA in that row should match the build and physical-check records. Once these three evidence stages are connected, the documented V4.1 source becomes a traceable **built and operated release**, not just an identifiable repository revision.
+
 ### 4. Verifying one complete modular V4.1 revision
 
 The modular implementation must be checked as a **single hardware, controller and camera combination**. The earlier `de34faf` footage demonstrates the historical vehicle; it is not substituted for an execution record of `src/HLR_FE_Separated/`. The `045c57e` revision above identifies an earlier modular source checkpoint. When reproducing the latest Open/Final code, capture the **full Git SHA of the actual release being flashed** so the controller, camera code, bundled libraries and manufacturing resources can be traced to the same repository state.
