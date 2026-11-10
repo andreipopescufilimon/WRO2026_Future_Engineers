@@ -170,7 +170,7 @@ $$
 C=\pi D=\pi\cdot29.0=91.106\ \mathrm{mm}
 $$
 
-The encoder hardware and firmware must be treated as a complete system. The controller declares `PPR = 12` and `QUAD_EDGES = 48`, but the active counting routine attaches an interrupt to **A rising only** and reads channel B for direction. Therefore the physical tick rate per wheel revolution must be measured instead of assuming that the nominal quadrature constant is the actual decoder resolution.
+The encoder hardware and firmware must be treated as a complete system. The controller declares `PPR = 12` and `QUAD_EDGES = 48`, but the active counting routine attaches an interrupt to **channel A rising only** and reads channel B for direction. Therefore the physical tick rate per wheel revolution must be measured instead of assuming that the nominal quadrature constant is the actual decoder resolution.
 
 The ideal conversion for $N$ **actual counted ticks per wheel revolution** is:
 
