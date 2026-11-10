@@ -1,0 +1,8 @@
+test_empty_datasets_never_claim_success (test_validation.TestAnalysis.test_empty_datasets_never_claim_success) ... ok
+test_no_power_energy_without_time_series (test_validation.TestAnalysis.test_no_power_energy_without_time_series) ... ok
+test_rmse_arithmetic_from_explicit_fixture (test_validation.TestAnalysis.test_rmse_arithmetic_from_explicit_fixture) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK
