@@ -1,6 +1,7 @@
 library,version_in_repository,reference,evidence_class
-BMI088,1.0.0,src/libraries/,REPOSITORY_LIBRARY_METADATA
-ESP32Encoder,5.0.0,src/libraries/,REPOSITORY_LIBRARY_METADATA
-ESP32Servo,3.0.3,src/libraries/,REPOSITORY_LIBRARY_METADATA
-SparkFun VL53L5CX Arduino Library,1.0.3,src/libraries/,REPOSITORY_LIBRARY_METADATA
-Adafruit TCS34725,1.4.4,src/libraries/,REPOSITORY_LIBRARY_METADATA
+Adafruit TCS34725,1.4.4,src/libraries/Adafruit_TCS34725/library.properties,REPOSITORY_LIBRARY_METADATA
+Grove 6-Axis Accelerometer&Gyroscope(BMI088),1.0.0,src/libraries/BMI088/library.properties,REPOSITORY_LIBRARY_METADATA
+ESP32Encoder,5.0.0,src/libraries/ESP32Encoder/library.properties,REPOSITORY_LIBRARY_METADATA
+ESP32Servo,3.0.3,src/libraries/ESP32Servo/library.properties,REPOSITORY_LIBRARY_METADATA
+EspSoftwareSerial,8.1.0,src/libraries/EspSoftwareSerial/library.properties,REPOSITORY_LIBRARY_METADATA
+SparkFun VL53L5CX Arduino Library,1.0.3,src/libraries/SparkFun_VL53L5CX_Arduino_Library/library.properties,REPOSITORY_LIBRARY_METADATA

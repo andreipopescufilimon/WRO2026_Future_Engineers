@@ -1,0 +1,22 @@
+case_id,case_type,input,expected,result,check,data_class,qualification
+HEIGHT-01,Sign ratio class,0.300,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-02,Sign ratio class,0.400,50,50,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-03,Sign ratio class,1.000,50,50,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-04,Sign ratio class,1.300,50,50,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-05,Sign ratio class,1.360,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-06,Sign ratio class,1.430,100,100,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-07,Sign ratio class,1.700,100,100,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-08,Sign ratio class,2.020,100,100,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-09,Sign ratio class,2.070,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-10,Sign ratio class,2.120,150,150,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-11,Sign ratio class,2.500,150,150,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-12,Sign ratio class,4.500,150,150,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+HEIGHT-13,Sign ratio class,4.600,UNKNOWN,UNKNOWN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-RED-50,Sign color mapping,RED/1,GREEN,GREEN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-GREEN-50,Sign color mapping,GREEN/1,RED,RED,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-RED-100,Sign color mapping,RED/1.8,RED,RED,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-GREEN-100,Sign color mapping,GREEN/1.8,GREEN,GREEN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-RED-150,Sign color mapping,RED/2.5,GREEN,GREEN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-GREEN-150,Sign color mapping,GREEN/2.5,RED,RED,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-RED-UNKNOWN,Sign color mapping,RED/1.4,RED,RED,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented
+PASS-GREEN-UNKNOWN,Sign color mapping,GREEN/1.4,GREEN,GREEN,PASS,DETERMINISTIC_SOURCE_LOGIC,Algorithm boundary check; no camera frames or physical outcomes represented

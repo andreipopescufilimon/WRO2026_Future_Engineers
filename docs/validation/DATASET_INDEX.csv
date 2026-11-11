@@ -1,43 +1,52 @@
-csv_path,category,data_rows,header_columns,includes_measured_physical_readings,notes
-docs/validation/DATASET_INDEX.csv,INDEX,42,6,NO,Dataset inventory
-docs/validation/camera_tests.csv,SOURCE_DERIVED,8,18,NO,SOURCE_DERIVED
-docs/validation/full_runs.csv,SOURCE_DERIVED,2,32,NO,SOURCE_DERIVED
-docs/validation/gyro_test.csv,SOURCE_DERIVED,9,21,NO,SOURCE_DERIVED
-docs/validation/measurement_templates/camera_tests.csv,SIMULATED_EXAMPLE,8,12,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/full_runs.csv,SIMULATED_EXAMPLE,4,18,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/gyro_test.csv,SIMULATED_EXAMPLE,6,10,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/odometry.csv,SIMULATED_EXAMPLE,4,12,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/parking.csv,SIMULATED_EXAMPLE,4,17,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/power_budget.csv,SIMULATED_EXAMPLE,4,13,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/steering_calibration.csv,SIMULATED_EXAMPLE,5,10,NO,SIMULATED_EXAMPLE
-docs/validation/measurement_templates/tof_corners.csv,SIMULATED_EXAMPLE,6,13,NO,SIMULATED_EXAMPLE
-docs/validation/odometry.csv,SOURCE_DERIVED,13,24,NO,SOURCE_DERIVED
-docs/validation/parking.csv,SOURCE_DERIVED,4,31,NO,SOURCE_DERIVED
-docs/validation/physical/build_verification.csv,TEST_PLAN,1,15,NO,TEST_PLAN
-docs/validation/physical/camera_trials.csv,TEST_PLAN,8,11,NO,TEST_PLAN
-docs/validation/physical/challenge_runs.csv,TEST_PLAN,4,13,NO,TEST_PLAN
-docs/validation/physical/functional_checks.csv,TEAM_CHECK_LEDGER,12,9,NO,TEAM_CHECK_LEDGER
-docs/validation/physical/imu_samples.csv,TEST_PLAN,4,10,NO,TEST_PLAN
-docs/validation/physical/power_runs.csv,TEST_PLAN,5,13,NO,TEST_PLAN
-docs/validation/physical/published_demonstrations.csv,PUBLISHED_EVIDENCE,3,8,NO,Firmware / recorded reference
-docs/validation/physical/revision_comparisons.csv,TEST_PLAN,8,11,NO,TEST_PLAN
-docs/validation/physical/sign_height_trials.csv,TEST_PLAN,18,17,NO,TEST_PLAN
-docs/validation/physical/source_configuration.csv,SOURCE_CONFIGURATION,16,7,NO,Firmware / recorded reference
-docs/validation/physical/subsystem_test_record.csv,TEST_PLAN,12,9,NO,TEST_PLAN
-docs/validation/physical/tof_samples.csv,TEST_PLAN,16,11,NO,TEST_PLAN
-docs/validation/power_budget.csv,SOURCE_DERIVED,11,22,NO,SOURCE_DERIVED
-docs/validation/power_component_ratings.csv,SOURCE_DERIVED,10,8,NO,SOURCE_DERIVED
-docs/validation/power_model_assumptions.csv,SOURCE_DERIVED,6,6,NO,SOURCE_DERIVED
-docs/validation/power_model_scenarios.csv,SOURCE_DERIVED,7,8,NO,SOURCE_DERIVED
-docs/validation/power_reference_calculations.csv,SOURCE_DERIVED,11,5,NO,SOURCE_DERIVED
-docs/validation/power_test_matrix.csv,SOURCE_DERIVED,7,11,NO,SOURCE_DERIVED
-docs/validation/simulated/camera_trials.csv,SIMULATED,648,11,NO,SIMULATED
-docs/validation/simulated/challenge_runs.csv,SIMULATED,24,13,NO,SIMULATED
-docs/validation/simulated/functional_checks.csv,SIMULATED,14,9,NO,SIMULATED
-docs/validation/simulated/imu_samples.csv,SIMULATED,854,10,NO,SIMULATED
-docs/validation/simulated/power_runs.csv,SIMULATED,1446,13,NO,SIMULATED
-docs/validation/simulated/revision_comparisons.csv,SIMULATED,200,11,NO,SIMULATED
-docs/validation/simulated/sign_height_trials.csv,SIMULATED,240,17,NO,SIMULATED
-docs/validation/simulated/tof_samples.csv,SIMULATED,1280,11,NO,SIMULATED
-docs/validation/steering_calibration.csv,SOURCE_DERIVED,10,22,NO,SOURCE_DERIVED
-docs/validation/tof_corners.csv,SOURCE_DERIVED,13,30,NO,SOURCE_DERIVED
+csv_path,category,data_rows,qualification
+camera_tests.csv,SOURCE_OR_CALCULATED,12,Use evidence class; do not represent examples as physical measurements
+full_runs.csv,SOURCE_OR_CALCULATED,2,Use evidence class; do not represent examples as physical measurements
+gyro_test.csv,SOURCE_OR_CALCULATED,9,Use evidence class; do not represent examples as physical measurements
+historical/camera_area_trigger_legacy_examples.csv,HISTORICAL_NOT_ACTIVE,8,Use evidence class; do not represent examples as physical measurements
+measurement_templates/camera_tests.csv,MEASUREMENT_TEMPLATE,8,Use evidence class; do not represent examples as physical measurements
+measurement_templates/full_runs.csv,MEASUREMENT_TEMPLATE,4,Use evidence class; do not represent examples as physical measurements
+measurement_templates/gyro_test.csv,MEASUREMENT_TEMPLATE,6,Use evidence class; do not represent examples as physical measurements
+measurement_templates/odometry.csv,MEASUREMENT_TEMPLATE,4,Use evidence class; do not represent examples as physical measurements
+measurement_templates/parking.csv,MEASUREMENT_TEMPLATE,4,Use evidence class; do not represent examples as physical measurements
+measurement_templates/power_budget.csv,MEASUREMENT_TEMPLATE,4,Use evidence class; do not represent examples as physical measurements
+measurement_templates/steering_calibration.csv,MEASUREMENT_TEMPLATE,5,Use evidence class; do not represent examples as physical measurements
+measurement_templates/tof_corners.csv,MEASUREMENT_TEMPLATE,6,Use evidence class; do not represent examples as physical measurements
+odometry.csv,SOURCE_OR_CALCULATED,13,Use evidence class; do not represent examples as physical measurements
+parking.csv,SOURCE_OR_CALCULATED,4,Use evidence class; do not represent examples as physical measurements
+physical/build_verification.csv,PHYSICAL_RECORD_OR_TEST_PLAN,1,Use evidence class; do not represent examples as physical measurements
+physical/camera_trials.csv,PHYSICAL_RECORD_OR_TEST_PLAN,8,Use evidence class; do not represent examples as physical measurements
+physical/challenge_runs.csv,PHYSICAL_RECORD_OR_TEST_PLAN,4,Use evidence class; do not represent examples as physical measurements
+physical/functional_checks.csv,PHYSICAL_RECORD_OR_TEST_PLAN,12,Use evidence class; do not represent examples as physical measurements
+physical/imu_samples.csv,PHYSICAL_RECORD_OR_TEST_PLAN,4,Use evidence class; do not represent examples as physical measurements
+physical/power_runs.csv,PHYSICAL_RECORD_OR_TEST_PLAN,5,Use evidence class; do not represent examples as physical measurements
+physical/published_demonstrations.csv,PHYSICAL_RECORD_OR_TEST_PLAN,3,Use evidence class; do not represent examples as physical measurements
+physical/revision_comparisons.csv,PHYSICAL_RECORD_OR_TEST_PLAN,8,Use evidence class; do not represent examples as physical measurements
+physical/sign_height_trials.csv,PHYSICAL_RECORD_OR_TEST_PLAN,18,Use evidence class; do not represent examples as physical measurements
+physical/source_configuration.csv,PHYSICAL_RECORD_OR_TEST_PLAN,16,Use evidence class; do not represent examples as physical measurements
+physical/subsystem_test_record.csv,PHYSICAL_RECORD_OR_TEST_PLAN,12,Use evidence class; do not represent examples as physical measurements
+physical/tof_samples.csv,PHYSICAL_RECORD_OR_TEST_PLAN,16,Use evidence class; do not represent examples as physical measurements
+power_budget.csv,SOURCE_OR_CALCULATED,11,Use evidence class; do not represent examples as physical measurements
+power_component_ratings.csv,SOURCE_OR_CALCULATED,10,Use evidence class; do not represent examples as physical measurements
+power_model_assumptions.csv,SOURCE_OR_CALCULATED,6,Use evidence class; do not represent examples as physical measurements
+power_model_scenarios.csv,SOURCE_OR_CALCULATED,7,Use evidence class; do not represent examples as physical measurements
+power_reference_calculations.csv,SOURCE_OR_CALCULATED,11,Use evidence class; do not represent examples as physical measurements
+power_test_matrix.csv,SOURCE_OR_CALCULATED,7,Use evidence class; do not represent examples as physical measurements
+simulated/camera_trials.csv,SIMULATED,648,Use evidence class; do not represent examples as physical measurements
+simulated/challenge_runs.csv,SIMULATED,24,Use evidence class; do not represent examples as physical measurements
+simulated/functional_checks.csv,SIMULATED,14,Use evidence class; do not represent examples as physical measurements
+simulated/imu_samples.csv,SIMULATED,854,Use evidence class; do not represent examples as physical measurements
+simulated/power_runs.csv,SIMULATED,1446,Use evidence class; do not represent examples as physical measurements
+simulated/revision_comparisons.csv,SIMULATED,200,Use evidence class; do not represent examples as physical measurements
+simulated/sign_height_trials.csv,SIMULATED,240,Use evidence class; do not represent examples as physical measurements
+simulated/tof_samples.csv,SIMULATED,1280,Use evidence class; do not represent examples as physical measurements
+steering_calibration.csv,SOURCE_OR_CALCULATED,10,Use evidence class; do not represent examples as physical measurements
+tof_corners.csv,SOURCE_OR_CALCULATED,13,Use evidence class; do not represent examples as physical measurements
+v41_bundled_library_versions.csv,SOURCE_OR_CALCULATED,6,Use evidence class; do not represent examples as physical measurements
+v41_camera_function_unit_tests.csv,SOURCE_OR_CALCULATED,23,Use evidence class; do not represent examples as physical measurements
+v41_camera_height_logic_cases.csv,SOURCE_OR_CALCULATED,21,Use evidence class; do not represent examples as physical measurements
+v41_deterministic_logic_checks.csv,SOURCE_OR_CALCULATED,47,Use evidence class; do not represent examples as physical measurements
+v41_release_manifest.csv,SOURCE_OR_CALCULATED,10,Use evidence class; do not represent examples as physical measurements
+v41_release_verification_matrix.csv,SOURCE_OR_CALCULATED,9,Use evidence class; do not represent examples as physical measurements
+v41_software_source_consistency.csv,SOURCE_OR_CALCULATED,15,Use evidence class; do not represent examples as physical measurements
+v41_source_configuration_verified.csv,SOURCE_OR_CALCULATED,47,Use evidence class; do not represent examples as physical measurements
+v41_tof_corner_logic_cases.csv,SOURCE_OR_CALCULATED,12,Use evidence class; do not represent examples as physical measurements

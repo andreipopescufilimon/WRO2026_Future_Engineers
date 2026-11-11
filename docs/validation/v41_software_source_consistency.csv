@@ -1,0 +1,16 @@
+requirement,expected_in_source,source_path,static_result,evidence_class
+Camera height rule,SURPRISE_RULE = True,src/camera.py,PASS,STATIC_SOURCE_CHECK
+Camera height function,def get_cube_height(,src/camera.py,PASS,STATIC_SOURCE_CHECK
+Camera effective passing color,def get_passing_color(,src/camera.py,PASS,STATIC_SOURCE_CHECK
+Camera height lock,HEIGHT_CONFIRM_FRAMES = 2,src/camera.py,PASS,STATIC_SOURCE_CHECK
+Camera close-position rule,CLOSE_BOTTOM_Y = 148,src/camera.py,PASS,STATIC_SOURCE_CHECK
+Camera exposure,exposure_us=40000,src/camera.py,PASS,STATIC_SOURCE_CHECK
+Camera UART,"UART(1, 19200)",src/camera.py,PASS,STATIC_SOURCE_CHECK
+Nano UART,Serial0.begin(19200),src/HLR_FE_Separated/HLR_FE_Separated.ino,PASS,STATIC_SOURCE_CHECK
+Nano Open select,#define MODE_OPEN_PIN D12,src/HLR_FE_Separated/HLR_FE_Separated.ino,PASS,STATIC_SOURCE_CHECK
+Nano Final select,#define MODE_FINAL_PIN D11,src/HLR_FE_Separated/HLR_FE_Separated.ino,PASS,STATIC_SOURCE_CHECK
+ToF addressing,0x30 / 0x31 / 0x32 / 0x33,src/HLR_FE_Separated/tof.ino,PASS,STATIC_SOURCE_CHECK
+Open ToF trigger,"2,3 and 3,3",src/HLR_FE_Separated/tof.ino,PASS,STATIC_SOURCE_CHECK
+Open challenge code,void open_execute(),src/HLR_FE_Separated/Open.ino,PASS,STATIC_SOURCE_CHECK
+Obstacle challenge code,void final_execute(),src/HLR_FE_Separated/Final.ino,PASS,STATIC_SOURCE_CHECK
+Camera Python grammar,Python compile(),src/camera.py,PASS,STATIC_SOURCE_CHECK

@@ -1,0 +1,10 @@
+id,requirement,repository_path,present_state,evidence_qualification
+V41-SOURCE,Code and hardware source identified,src/HLR_FE_Separated/; src/camera.py,SOURCE_AVAILABLE,The matching controller and camera source are included in this patch
+V41-CAMERA,Height and bottom-Y algorithm in repository,src/camera.py,SOURCE_AVAILABLE,Camera source must be uploaded before published source matches chapter 04
+V41-STATIC,Static source consistency,docs/validation/v41_software_source_consistency.csv,PASS,Source-level checks only
+V41-CI,Automated compilation workflow,.github/workflows/verify-v41.yml,WORKFLOW_PREPARED,Requires actual GitHub Actions run
+V41-BUILD,Successful Arduino Nano ESP32 compile,docs/validation/physical/build_verification.csv,PENDING_RUN,Actual compiler output and exit code required
+V41-UPLOAD,Firmware loaded onto physical Arduino Nano ESP32,docs/validation/physical/build_verification.csv,PENDING_EVIDENCE,Cannot be established by cloud compilation alone
+V41-CHECK,Dated verified motor/servo/ToF/IMU/UART/encoder tests,docs/validation/physical/functional_checks.csv,0/12 VERIFIED,Requires observed values and actual firmware revision
+V41-RUN,Dated physical modular firmware run,docs/validation/physical/challenge_runs.csv,0/4 DOCUMENTED,Older footage is not evidence of newer flashed binary
+V41-SIGN,Camera 50/100/150 mm measured trials,docs/validation/physical/sign_height_trials.csv,PENDING_EVIDENCE,Deterministic ratio classification exists separately

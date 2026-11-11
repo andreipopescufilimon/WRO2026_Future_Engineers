@@ -1,0 +1,13 @@
+case_id,input_zones_and_age,turn_threshold_mm,rearm_threshold_mm,freshness_limit_ms,expected_state,calculated_state,check,data_class,note
+TOF-01,400/520mm; age=10ms; armed=1,600,800,150,TURN,TURN,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-02,450/690mm; age=20ms; armed=1,600,800,150,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-03,600/500mm; age=20ms; armed=1,600,800,150,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-04,800/810mm; age=25ms; armed=0,600,800,150,REARM,REARM,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-05,-1/430mm; age=10ms; armed=1,600,800,150,INVALID,INVALID,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-06,490/450mm; age=20ms; armed=0,600,800,150,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-07,800/800mm; age=10ms; armed=0,600,800,150,REARM,REARM,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-08,599/599mm; age=150ms; armed=1,600,800,150,TURN,TURN,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-09,599/599mm; age=151ms; armed=1,600,800,150,INVALID,INVALID,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-10,799/799mm; age=25ms; armed=0,600,800,150,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-11,801/500mm; age=25ms; armed=1,600,800,150,HOLD,HOLD,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
+TOF-12,100/100mm; age=0ms; armed=1,600,800,150,TURN,TURN,PASS,DETERMINISTIC_SOURCE_LOGIC,Derived from tof.ino; not a VL53L5CX physical sample
