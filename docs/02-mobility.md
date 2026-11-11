@@ -268,9 +268,9 @@ The steering interface maps normalized commands between $-1$ and $+1$ to the con
 | Parking left endpoint | 40 |
 | Parking right endpoint | 138 |
 
-These numbers are **servo command values** used with the Arduino servo API. The real wheel angle must be measured with an angle gauge. Record both front wheels at at least five normalized command positions.
+These numbers are **servo command values** used with the Arduino servo API. The real wheel angle must be measured with an angle gauge. Record both front wheels at at least five normalized command positions. The angle values in the following table are **illustrative target angles for explaining the calibration procedure**, not physically measured wheel angles.
 
-| Normalized command | Left front measured | Right front measured | Average actual wheel angle |
+| Normalized command | Example left angle | Example right angle | Example average angle |
 |---:|---:|---:|---:|
 | -1.0 | -55.0° | -55.0° | -55.0° |
 | -0.5 | -27.5° | -27.5° | -27.5° |
@@ -278,7 +278,7 @@ These numbers are **servo command values** used with the Arduino servo API. The 
 | +0.5 | +27.5° | +27.5° | +27.5° |
 | +1.0 | +55.0° | +55.0° | +55.0° |
 
-We use these readings to estimate mechanical asymmetry, servo deadband and the true minimum turning radius. Any calibration curve should be stored alongside the test date and mechanical revision.
+Replace these illustrative values with physical readings before using them to estimate mechanical asymmetry, servo deadband and the true minimum turning radius. Any measured calibration curve should be stored alongside the test date and mechanical revision.
 
 ## 5. Tires, rims, contact and rotational inertia
 
@@ -426,14 +426,14 @@ The following tests document both performance and the limits of the mechanical m
 | M07 Traction | Increase speed in a known-radius turn | Speed at first consistent slip | What is the safe cornering envelope? |
 | M08 Thermal and wear | Repeated drive and reverse cycles | Motor case temp, gear wear, loose joints | Does the transmission remain repeatable? |
 
-**M03 recording table:**
+**M03 illustrative calculation example (not a record of measured track runs):**
 
 | Command | Trial 1 radius | Trial 2 radius | Trial 3 radius | Mean | Standard deviation |
 |---|---:|---:|---:|---:|---:|
 | Left, 20° | 225 mm | 229 mm | 227 mm | 227.0 mm | 2.00 mm |
 | Right, 20° | 221 mm | 224 mm | 223 mm | 222.7 mm | 1.53 mm |
 
-The standard deviation of repeat trials is:
+For these illustrative radii, the sample standard deviation is calculated as:
 
 $$
 s=\sqrt{\frac{1}{n-1}\sum_{j=1}^{n}(R_j-\bar R)^2}
