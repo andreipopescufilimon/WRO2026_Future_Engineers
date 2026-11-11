@@ -1,0 +1,77 @@
+name: V4.1 modular firmware build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/HLR_FE_Separated/**'
+      - 'src/libraries/**'
+      - 'src/camera.py'
+      - '.github/workflows/verify-v41.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compile-nano-esp32:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact revision
+        uses: actions/checkout@v4
+      - name: Prepare evidence directory and source hashes
+        shell: bash
+        run: |
+          mkdir -p build-evidence
+          git rev-parse HEAD > build-evidence/source-commit.txt
+          date -u +'%Y-%m-%dT%H:%M:%SZ' > build-evidence/build-date-utc.txt
+          find src/HLR_FE_Separated src/camera.py -type f -print0 | sort -z | xargs -0 sha256sum > build-evidence/source-sha256.txt
+          find src/libraries -name library.properties -type f -print0 | sort -z | xargs -0 grep -H -E '^(name|version)=' > build-evidence/bundled-libraries.txt
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+        with:
+          version: '1.x'
+      - name: Install pinned Nano ESP32 core
+        shell: bash
+        run: |
+          set -o pipefail
+          arduino-cli version 2>&1 | tee build-evidence/arduino-cli-version.txt
+          arduino-cli core update-index 2>&1 | tee build-evidence/core-index.log
+          arduino-cli core install 'arduino:esp32@2.0.18-arduino.5' 2>&1 | tee build-evidence/core-install.log
+          arduino-cli core list 2>&1 | tee build-evidence/installed-cores.txt
+      - name: Parse camera script syntax
+        shell: bash
+        run: |
+          python - <<'PYCAM' 2>&1 | tee build-evidence/camera-syntax.log
+          from pathlib import Path
+          compile(Path('src/camera.py').read_text(encoding='utf-8'), 'src/camera.py', 'exec')
+          print('PASS: Python syntax only; no physical camera execution claimed')
+          PYCAM
+      - name: Execute camera height pure-function tests
+        shell: bash
+        run: python tools/test_camera_height_functions.py --output build-evidence/camera-unit-tests.csv
+      - name: Compile V4.1 Arduino sketch and capture actual exit code
+        shell: bash
+        run: |
+          set +e
+          arduino-cli compile \
+            --fqbn arduino:esp32:nano_nora \
+            --libraries src/libraries \
+            --warnings all \
+            --verbose \
+            src/HLR_FE_Separated > build-evidence/compile.log 2>&1
+          code=$?
+          printf '%s\n' "$code" > build-evidence/exit-code.txt
+          tail -n 100 build-evidence/compile.log
+          exit "$code"
+      - name: Convert recorded build result to CSV
+        if: always()
+        shell: bash
+        run: python tools/export_ci_build_csv.py --evidence build-evidence
+      - name: Downloadable compiler logs and build record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v41-build-evidence-${{ github.sha }}
+          path: build-evidence/
+          retention-days: 90
+          if-no-files-found: warn
