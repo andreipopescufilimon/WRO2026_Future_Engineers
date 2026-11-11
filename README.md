@@ -220,3 +220,11 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 |---|---|
 | Driving demonstration | [Watch the recorded performance](https://www.youtube.com/watch?v=bg92ulHXomw) |
 | Assembly demonstration | [Watch the assembly](https://youtu.be/HSzWATB6nWQ) |
+
+---
+
+### Community Contribution: WRO Future Engineers Randomizer
+
+Beyond developing our autonomous vehicle, we wanted to contribute something useful to the wider WRO Future Engineers community. We created the **[WRO Future Engineers Randomizer](https://wro-fe-randomizer.hyperlinerobotics.com/)**, a publicly available web tool designed to help teams prepare for the unpredictable conditions of the 2026 competition. The platform generates randomized field configurations, including starting positions, red and green traffic sign placements, based on the competition format. We developed it to make testing more diverse and efficient, allowing teams to challenge their navigation algorithms with different layouts instead of repeatedly practicing on the same field configuration. By making this tool available to other competitors, we hope to help more teams improve their robots, identify weaknesses in their algorithms, and prepare for international competitions.
+
+**Try the tool:** https://wro-fe-randomizer.hyperlinerobotics.com/
