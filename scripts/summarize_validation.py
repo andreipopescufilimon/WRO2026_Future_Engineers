@@ -110,7 +110,7 @@ def summarize(base):
         succ=sum(str(r.get('outcome','')).strip().lower() in ('pass','completed','success') for r in rs)
         vids=sum(bool(str(r.get('video_url','')).strip()) for r in rs)
         lines+=[f'| {mode} | {len(rs)} | {succ} | {vids} |']
-    lines+=['','## V4 → V4.1 engineering comparison','','| Subsystem | Test method / metric | V4 result | V4.1 result | Assessment |','|---|---|---|---|---|']
+    lines+=['','<a id="v4-v41-engineering-comparison"></a>','## V4 → V4.1 engineering comparison','','| Subsystem | Test method / metric | V4 result | V4.1 result | Assessment |','|---|---|---|---|---|']
     by=defaultdict(list)
     for r in d['iterations']: by[(r.get('subsystem',''),r.get('metric',''),r.get('test_condition',''))].append(r)
     if not by: lines+=['| No paired revision measurements provided | not available | not available | not available | Cannot quantify improvement |']
