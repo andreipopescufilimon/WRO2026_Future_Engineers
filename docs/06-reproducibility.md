@@ -290,7 +290,7 @@ The steps below connect the assembled robot to the values in the **modular V4.1*
 | 4 | **Four ToF matrices** | [`tof.ino`](../src/HLR_FE_Separated/tof.ino) releases one LPn pin at a time and assigns front A3=`0x30`, left A2=`0x31`, right A1=`0x32`, rear A0=`0x33`; each is 4×4, configured at 30 Hz. Test all four optical directions with a flat target and check that mount/wheels do not occlude the field of view. | All four sensors initialize with unique addresses and provide valid ranges for targets in their respective directions. |
 | 5 | **Front corner zones** | The Open controller uses front ToF zones `(2,3)` and `(3,3)` (1-based row/column) for a corner below 600 mm, with rearming once both are at least 800 mm. Data older than 150 ms is rejected. Check which physical side corresponds to those zones after mounting. | The correct wall and zones trigger a single turn, without mirrored indexing or repeated corner events. |
 | 6 | **Floor colors** | The TCS34725 uses separate I²C pins A6/A7. [`functions.ino`](../src/HLR_FE_Separated/functions.ino) reads normalized RGB channels; the source selects 16× gain and a short exposure. Present white, blue and red/orange field markings at the installed floor clearance. | White re-arms detection and colored markers set or confirm the intended travel direction. |
-| 7 | **RT1062 image and UART** | [`camera.py`](../src/camera.py) configures QVGA 320×240, `vflip=True`, `hmirror=True`, gain/AWB disabled, fixed 40,000 µs exposure and `UART(1, 19200)`. Connect P4 TX to Nano RX D0, and share ground. Recheck red/green blob thresholds under the actual lighting. | Red and green objects appear in the configured region of interest; the Nano receives correctly formatted UART messages. |
+| 7 | **RT1062 image and UART** | [`camera.py`](../src/camera.py) configures QVGA 320×240, `vflip=True`, `hmirror=True`, gain/AWB disabled, fixed 16,000 µs exposure and `UART(1, 19200)`. Connect P4 TX to Nano RX D0, and share ground. Recheck red/green blob thresholds under the actual lighting. | Red and green objects appear in the configured region of interest; the Nano receives correctly formatted UART messages. |
 | 8 | **Round selection and start** | D12 HIGH and D11 LOW selects Open; D11 HIGH and D12 LOW selects Final. Both HIGH or both LOW leave the program stopped. Restart after changing mode. D10 is an active-LOW start input. | The requested challenge starts only after initialization and the start action; invalid mode combinations never drive the motor. |
 
 For encoder calibration, with the same counting convention as the selected sketch, a useful correction after measuring one straight run is:
@@ -414,7 +414,7 @@ The assembly recording, challenge footage and RT1062 frame buffer provide the pr
 
 ### Verified V4.1 hardware and firmware release
 
-This table identifies the V4.1 configuration to reproduce and the existing records that establish which parts have been verified. The fixed Git snapshot identifies the **source**, while the build log, upload record and physical run must identify the **same flashed revision** before the release can be described as fully verified. The candidate snapshot below is not, by itself, evidence that the robot was operated with that software.
+This table identifies the V4.1 configuration to reproduce and the existing records that establish which parts have been verified. A historical Git snapshot may identify a former source baseline, but this uploaded ZIP has **no `.git` metadata**, so the snapshot cannot be assumed to match the archive byte-for-byte. The build log, upload record and physical run must identify the **same actual flashed revision** before the current release can be described as fully verified. The candidate snapshot below is not, by itself, evidence that the robot was operated with that software.
 
 | Release item | Identifiable configuration or evidence record |
 | --- | --- |
@@ -425,14 +425,14 @@ This table identifies the V4.1 configuration to reproduce and the existing recor
 | Controller firmware | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/), including `HLR_FE_Separated.ino`, `Open.ino`, `Final.ino` and the shared hardware tabs |
 | Camera firmware source | [`src/camera.py`](../src/camera.py); use the version from the same fixed Git snapshot as the controller and record the camera firmware/IDE version |
 | Bundled Arduino libraries | [BMI088 1.0.0](../src/libraries/BMI088/library.properties), [ESP32Encoder 5.0.0](../src/libraries/ESP32Encoder/library.properties), [ESP32Servo 3.0.3](../src/libraries/ESP32Servo/library.properties), [SparkFun VL53L5CX 1.0.3](../src/libraries/SparkFun_VL53L5CX_Arduino_Library/library.properties). [Adafruit TCS34725 1.4.4](../src/libraries/Adafruit_TCS34725/library.properties) is also bundled; the autonomous sketch accesses this sensor directly over I²C |
-| Board-core and installed build environment | Record actual Nano ESP32 core, Arduino CLI/IDE versions and compiler-selected library paths using [`capture_build_environment.ps1`](../scripts/capture_build_environment.ps1) |
+| Board-core and installed build environment | Record the Arduino CLI version, installed board platforms and libraries with `arduino-cli version`, `arduino-cli core list` and `arduino-cli lib list`; retain the build output from the GitHub Actions workflow or local compilation |
 | Compilation result and original compiler output | [`build_verification.csv`](validation/physical/build_verification.csv) and the `docs/validation/evidence/local-build/arduino-build.log` output generated on the development computer; a dated **exit code 0** is required to claim a successful build |
 | Controller upload | Record date, flashed source SHA, upload command or IDE confirmation, selected board/port and the robot's startup serial output alongside the build evidence |
 | Physical subsystem checks | [`functional_checks.csv`](validation/physical/functional_checks.csv) and [`subsystem_test_record.csv`](validation/physical/subsystem_test_record.csv), using dated observations and the actual flashed SHA |
 | Autonomous driving verification | [`challenge_runs.csv`](validation/physical/challenge_runs.csv), containing mode, course direction, observed outcome, source SHA and a matching recording |
 | Historical driving demonstration | [Published Open and Obstacle footage](https://www.youtube.com/watch?v=bg92ulHXomw), associated by the team with historical commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81), not automatically with this modular source snapshot |
 
-**Firmware verification.** After checking out the chosen release SHA with a clean working tree, run the [existing build-capture script](../scripts/capture_build_environment.ps1). Preserve `arduino-build.log`, `arduino-build-result.txt`, `board-platforms.txt` and `installed-libraries.txt`, then enter the observed result in [`build_verification.csv`](validation/physical/build_verification.csv). A successful compilation shows that this combination of source and dependencies builds; it does not by itself establish a successful upload or autonomous operation.
+**Firmware verification.** After checking out the intended release SHA with a clean working tree, compile the modular sketch using Arduino CLI or the [GitHub Actions build workflow](../.github/workflows/verify-v41.yml). Keep the full compiler output and actual exit status, plus the installed board-platform and library versions. Enter the observed result in [`build_verification.csv`](validation/physical/build_verification.csv). A successful compilation shows that this combination of source and dependencies builds; it does not by itself establish a successful upload or autonomous operation.
 
 **Physical verification.** Upload the compiled sketch to the assembled Arduino Nano ESP32, save the IDE or CLI upload confirmation, and test the motor, steering, four ToF sensors, BMI088 heading, RT1062 UART and encoder. Link the original readings or recordings in the [functional test ledger](validation/physical/functional_checks.csv). The table and test IDs already exist; no additional testing framework is required.
 
@@ -452,23 +452,25 @@ python scripts/repro_preflight.py
 
 The preflight checks required files, firmware declarations and source integrity; it also creates a `docs/validation/evidence/source-sha256.json` and a `docs/validation/evidence/static-preflight-results.md` when run from the repository root. These checks establish which files were inspected. They do **not** substitute for compilation or a physical driving test. Record any local firmware modifications alongside the SHA, since uncommitted changes are not represented by `git rev-parse HEAD` alone.
 
-For the **actual Nano ESP32 compilation** on the Windows development computer, install the board platform and the [provided libraries](../src/libraries/), then run the repository's existing build-capture tool from PowerShell:
+For an **actual Nano ESP32 compilation** on Windows, Linux or macOS, install Arduino CLI and the selected board platform, then run these commands from the repository root in a terminal:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\capture_build_environment.ps1
-Get-Content .\docs\validation\evidence\local-build\arduino-build-result.txt
+```bash
+arduino-cli version
+arduino-cli core list
+arduino-cli lib list
+arduino-cli compile --fqbn arduino:esp32:nano_nora --libraries src/libraries --warnings all --verbose src/HLR_FE_Separated
 ```
 
-This tool records the selected Arduino CLI version, board platforms, installed libraries, Git revision, source-file hashes and full compile output in `docs/validation/evidence/local-build/`.
+Retain the full compiler output and its actual success or failure status, alongside the exact source revision and library/platform versions. The GitHub Actions workflow described below collects these files automatically and provides a downloadable build-evidence artifact. Running the commands above is a build attempt, not a claim that compilation succeeded. If a local build fails, keep its error log and resolve the environment before marking the result as verified.
 
-**Build without a local development computer:** The [GitHub Actions V4.1 compilation workflow](../.github/workflows/verify-v41.yml) runs the same modular sketch in a GitHub-hosted runner. From GitHub, open **Actions → V4.1 modular firmware build → Run workflow**. The run page identifies the exact source SHA, and its downloadable `v41-build-evidence-*` artifact contains the actual compiler log, installed core version and library inventory. Only a successful workflow proves that the sketch compiled in that environment. It does not prove controller upload or driving performance. A **successful build record** consists of `arduino-build-result.txt` reporting exit code `0` and an `arduino-build.log` showing the same build. If the compiler reports a missing library, ambiguous `BMI088.h`, or another error, fix the environment and rerun the capture. The recorded result is more useful than a claim that a sketch *should* compile. The library copies in `src/libraries/` identify the exact supplied implementations; the build log is also needed to identify the versions actually selected by the compiler.
+**Build without a local development computer:** The [GitHub Actions V4.1 compilation workflow](../.github/workflows/verify-v41.yml) runs the same modular sketch in a GitHub-hosted runner. From GitHub, open **Actions → V4.1 modular firmware build → Run workflow**. The run page identifies the exact source SHA, and its downloadable `v41-build-evidence-*` artifact contains the actual compiler log, installed core version and library inventory. Only a successful workflow proves that the sketch compiled in that environment. It does not prove controller upload or driving performance. A **successful build record** includes an actual exit code `0` and the matching compiler log (the workflow artifact uses `exit-code.txt` and `compile.log`). If the compiler reports a missing library, ambiguous `BMI088.h`, or another error, fix the environment and rerun the capture. The recorded result is more useful than a claim that a sketch *should* compile. The library copies in `src/libraries/` identify the exact supplied implementations; the build log is also needed to identify the versions actually selected by the compiler.
 
-For the RT1062, open the matching `src/camera.py` with OpenMV IDE, record the camera firmware version shown by the connected camera, save the script to the camera and retain one captured frame and one UART message log. The controller and camera must agree on **19,200 baud**; the image demonstration and any height-classification results must identify the camera script revision used.
+For the RT1062, open the matching `src/camera.py` with OpenMV IDE, record the camera firmware version shown by the connected camera, save the script to the camera and retain one captured frame and one UART message log. The controller and camera must agree on **19,200 baud**; the image demonstration and any future height-classification results must identify the **separate, later camera script revision** that actually implements those features. The current bundled camera source does not classify height.
 
 | Evidence item | Source or output location | Minimum information for reproduction |
 | --- | --- | --- |
 | Reproduced repository release | `git rev-parse HEAD` and source manifest | Full Git commit SHA, local changes if any, matching controller and RT1062 scripts |
-| Arduino compilation | [`scripts/capture_build_environment.ps1`](../scripts/capture_build_environment.ps1) | Compile command, installed dependency versions, exit code and full compiler log |
+| Arduino compilation | [GitHub Actions V4.1 build workflow](../.github/workflows/verify-v41.yml) or local `arduino-cli compile` | Actual compile command, installed dependency versions, exit code and full compiler log |
 | Compilation summary | [`build_verification.csv`](validation/physical/build_verification.csv) | Test date, hardware revision, flashed source SHA, board/core versions, result and retained log path |
 | Source integrity | [`scripts/repro_preflight.py`](../scripts/repro_preflight.py) | File-presence and configuration checks plus SHA-256 manifest |
 | RT1062 setup | [`camera.py`](../src/camera.py) and OpenMV IDE | Camera firmware version, script revision, image capture and received UART data |
@@ -510,9 +512,13 @@ The modular V4.1 Open program chooses a course direction from the first valid TC
 | Obstacle, left/right course | Select D11 HIGH; use the intended red/green signs and parking area | Follow command, correct pass side, recovery, accepted floor markers and parking attempt | [`challenge_runs.csv`](validation/physical/challenge_runs.csv) |
 | Camera sign heights | Present **50, 100 and 150 mm** high, **50 mm** wide signs, both red and green, at the test distances used by the team | Captured frame, actual predicted height, transmitted passing command and correct/incorrect classification | [`sign_height_trials.csv`](validation/physical/sign_height_trials.csv) |
 
-For camera-height tests, the algorithm's intended mapping is **50 mm and 150 mm: invert the visible red/green command; 100 mm: retain it**. The [camera source](../src/camera.py) also contains tracking, partial-visibility handling and an unknown-class fallback. Record both correctly classified and misclassified trials; a threshold written in software is not a measured classification success rate.
+For camera-height tests, the previously proposed mapping is **50 mm and 150 mm: invert the visible red/green command; 100 mm: retain it**. That mapping and the associated tracking and partial-visibility handling are **not present in the included camera source** and cannot be represented as implemented or tested. Record both correctly classified and misclassified trials; a threshold written in software is not a measured classification success rate.
 
 Each video or run record for the modular release should include the full **source SHA actually flashed**, the camera revision, hardware version, challenge direction and outcome. This is separate from the real driving video for historical commit `de34faf`. A short continuous run with clearly identifiable firmware is more convincing evidence for the newer release than an unversioned performance claim. Keep failed or partial runs in the log as well as successful ones so another team can understand the operating limits.
+
+### Optional recovered camera candidates
+
+Two earlier user-authored files are archived in [`src/camera_candidates/`](../src/camera_candidates/) and can help close the 2026 Surprise Rule implementation gap. The v11 camera candidate's pure logic passes [23/23 reproducible tests](validation/v11_camera_candidate_unit_tests.csv). These tests **do not certify that the candidate was run on an actual RT1062**. Until flashed, calibrated and recorded under the same software release as the Nano controller, the primary `src/camera.py` remains the source of the published repository behavior.
 
 ### 7. Final reproducibility audit
 
@@ -526,7 +532,7 @@ Before submission, compare the repository's physical evidence and source files u
 | Physical subsystem checks | Each claimed PASS has a test date, actual observation, flashed revision and identifiable supporting evidence |
 | Repeated sensor behavior | ToF zone readings, IMU heading, encoder movement and UART message data can be inspected beyond source constants |
 | Obstacle and Open operation | At least one modular-version run is linked to its video, mode, layout, hardware revision and firmware SHA |
-| Camera Surprise Rule | Height-dependent behavior includes known-height targets, multiple distances, both colors and the captured decision |
+| Camera Surprise Rule | The uploaded source lacks sign-height classification; retain this as an open implementation and physical-verification requirement |
 | GitHub links and generated reports | Chapter links resolve and generated results identify the recorded inputs used to produce them |
 
 This final audit adds a verification trail to the design, assembly and software instructions already provided above. It keeps the filmed historical program and the modular V4.1 implementation individually reproducible while allowing each physical observation to be traced to the version that produced it.
