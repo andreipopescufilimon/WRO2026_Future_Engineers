@@ -21,34 +21,26 @@ The earlier vehicle used a camera-driven corner/line interpretation and single-v
 
 ### 1.1 Controller organization
 
-The current World Final Arduino sketch is split into tabs that compile together as one program. This arrangement separates the two challenge strategies without duplicating the low-level hardware drivers.
+The V4.1 Arduino sketch is split into tabs that compile together as one program. This arrangement separates the two challenge strategies without duplicating the low-level hardware drivers.
 
 | File | Main responsibility |
 |---|---|
-| [`HLR_FE_World_Final.ino`](../src/HLR_FE_World_Final/HLR_FE_World_Final.ino) | Pin definitions, shared constants, robot states, mode selection, initialization and main dispatch |
-| [`Open.ino`](../src/HLR_FE_World_Final/Open.ino) | First-marker direction lock, ToF corner events, Open-round heading control and finish |
-| [`Final.ino`](../src/HLR_FE_World_Final/Final.ino) | Obstacle Challenge states, floor-marker events, parking exit and final parking |
-| [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) | Four VL53L5CX devices, unique I²C addresses, 4 × 4 frame acquisition, range filtering and front-corner logic |
-| [`gyro.ino`](../src/HLR_FE_World_Final/gyro.ino) | BMI088 setup, stationary-rate calibration and integrated yaw |
-| [`motors.ino`](../src/HLR_FE_World_Final/motors.ino) | IFX9201SG PWM/direction output, MG90S steering, encoder, movement and positioning routines |
-| [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) | TCS34725 I²C acquisition/classification, shared cube-avoidance movement and communication helpers |
-| [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino) | Final-mode read-only Wi-Fi status, recent gyro/motor/state history and browser dashboard |
-| [`camera.py`](../src/camera.py) | Separate OpenMV RT1062 script: area-based red/green detection, PD following, direction messages and UART output. No 50/100/150 mm height logic in this file |
+| [`HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino) | Pin definitions, shared constants, robot states, mode selection, initialization and main dispatch |
+| [`Open.ino`](../src/HLR_FE_Separated/Open.ino) | First-marker direction lock, ToF corner events, Open-round heading control and finish |
+| [`Final.ino`](../src/HLR_FE_Separated/Final.ino) | Obstacle Challenge states, floor-marker events, parking exit and final parking |
+| [`tof.ino`](../src/HLR_FE_Separated/tof.ino) | Four VL53L5CX devices, unique I²C addresses, 4 × 4 frame acquisition, range filtering and front-corner logic |
+| [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) | BMI088 setup, stationary-rate calibration and integrated yaw |
+| [`motors.ino`](../src/HLR_FE_Separated/motors.ino) | IFX9201SG PWM/direction output, MG90S steering, encoder, movement and positioning routines |
+| [`functions.ino`](../src/HLR_FE_Separated/functions.ino) | TCS34725 I²C acquisition/classification, shared cube-avoidance movement and communication helpers |
+| [`camera.py`](../src/camera.py) | OpenMV RT1062 red/green detection, object following, optional sign-height classification and UART messages |
 
-The eight `.ino` files remain inside one `src/HLR_FE_World_Final/` directory. Arduino IDE compiles these tabs together. The OpenMV Python code is flashed separately to the camera; it is **not** executed on the Arduino.
+The seven `.ino` files remain inside one `src/HLR_FE_Separated/` directory. Arduino IDE compiles these tabs together. The OpenMV Python code is flashed separately to the camera; it is **not** executed on the Arduino.
 
 ### 1.2 Historical source and the recorded driving demonstration
 
 The team identifies commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the software used for the [published Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw). Its Arduino entry point is the older [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino).
 
-The later V4.1 implementation under [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) has a different architecture and new ToF-based Open navigation. The video documents the physical robot and the identified historical code; it should not be interpreted as a test of every change in the newer separated sketch. This chapter describes **the newer code as written**, using the actual bundled area-based camera script. The separate Surprise Rule height-sensitive candidates are experimental and not attributed to the released `src/camera.py`.
-
-
-### 1.3 Read-only Final-mode telemetry
-
-The current source adds [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino). When **Final** mode is selected, the Nano ESP32 attempts to start a Wi-Fi access point (`HyperLine`) and a read-only web interface at `http://192.168.4.1/` (actual address is printed at startup). The telemetry module exposes HTTP `GET /api` for current state and `GET /history` for the recent sample buffer. No motor-control commands are exposed through the webpage.
-
-The in-memory history is limited to **480 samples**, scheduled at approximately **10 Hz**, and tracks yaw, target heading, gyro rate, motor PWM and movement phase. The code returns an empty history during active motor movement to avoid transferring a large history response while steering. This records **firmware capabilities**, not a measured claim that the dashboard was verified on a particular hardware build. Wi-Fi startup failures are logged while the robot's movement logic can continue.
+The later V4.1 implementation under [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) has a different architecture and new ToF-based Open navigation. The video documents the physical robot and the identified historical code; it should not be interpreted as a test of every change in the newer separated sketch. This chapter describes **the newer code as written**, using the supplied camera script with height-detection logic.
 
 ## 2. System architecture and execution flow
 
@@ -107,7 +99,7 @@ A challenge is selected **before the board starts**:
 Both inputs are configured as `INPUT_PULLDOWN`. A valid selection calls exactly one of `open_configure()` or `final_configure()`. The sketch then initializes the servo and motor driver, encoder, both serial ports, BMI088, TCS34725 and ToF sensors. The BMI088 calibrates while stationary for **10 seconds**. The start button on D10 keeps the motor at zero until pressed. After the start delay, Final mode performs `final_exit_parking()` before entering normal navigation; Open mode enters `open_execute()`.
 
 ```cpp
-// HLR_FE_World_Final.ino, simplified directly from the mode dispatch
+// HLR_FE_Separated.ino, simplified directly from the mode dispatch
 bool finalSelected = digitalRead(MODE_FINAL_PIN) == HIGH;
 bool openSelected  = digitalRead(MODE_OPEN_PIN) == HIGH;
 if (finalSelected == openSelected) {
@@ -298,13 +290,13 @@ Although the source names some variables `pid_error`, the current straight-drivi
 | `move_straight_until_distance()` | Stop or transition at a left/right wall-distance threshold | Side ToF and BMI088 |
 | `move_gyro_until_side_detect_cycle()` | Detect side-wall present/absent/present transitions | Side ToF and BMI088 |
 
-The movement functions are implemented in [`motors.ino`](../src/HLR_FE_World_Final/motors.ino). Some are **blocking loops** and some do not have an explicit timeout when a required distance never becomes valid. This is an implementation limitation, not an independently verified safety feature. For example, `move_to_distance()` searches forward at a low PWM when its ToF reading is invalid; an unplugged sensor is not equivalent to a valid clear path.
+The movement functions are implemented in [`motors.ino`](../src/HLR_FE_Separated/motors.ino). Some are **blocking loops** and some do not have an explicit timeout when a required distance never becomes valid. This is an implementation limitation, not an independently verified safety feature. For example, `move_to_distance()` searches forward at a low PWM when its ToF reading is invalid; an unplugged sensor is not equivalent to a valid clear path.
 
 ## 4. Sensor processing
 
 ### 4.1 Replacing PWM ranging with four VL53L5CX matrices
 
-The older software used Pololu PWM distance outputs and converted pulse width into millimeters using `pulseIn()`. That logic is not the V4.1 ranging implementation. The new [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) uses **I²C matrix frames**, and all movement routines consume distances through the same `readDistanceMM(DistanceDir)` interface. This reduces the number of changes needed in the obstacle and parking code when the sensor hardware changes.
+The older software used Pololu PWM distance outputs and converted pulse width into millimeters using `pulseIn()`. That logic is not the V4.1 ranging implementation. The new [`tof.ino`](../src/HLR_FE_Separated/tof.ino) uses **I²C matrix frames**, and all movement routines consume distances through the same `readDistanceMM(DistanceDir)` interface. This reduces the number of changes needed in the obstacle and parking code when the sensor hardware changes.
 
 | ToF unit | LPn pin | Assigned 7-bit address | Navigation use |
 |---|---|---|---|
@@ -582,7 +574,7 @@ void final_exit_parking() {
 }
 ```
 
-The sequence is based on [`final_exit_parking()`](../src/HLR_FE_World_Final/Final.ino). It is a **programmed movement sequence**, not a path-planning solver. The distance comparison assumes that the central-zone ToF readings are valid and oriented toward the relevant clearance.
+The sequence is based on [`final_exit_parking()`](../src/HLR_FE_Separated/Final.ino). It is a **programmed movement sequence**, not a path-planning solver. The distance comparison assumes that the central-zone ToF readings are valid and oriented toward the relevant clearance.
 
 ### 6.2 Driving and navigation states
 
@@ -708,7 +700,7 @@ The parking routine operates differently for the two course directions. It combi
 | Final reverse arcs | +75° and +2° target offsets | -75° and -2° target offsets |
 | Finish | Center, stop, 20 s delay | Center, stop, 20 s delay |
 
-The underlying code includes several additional short encoder advances between these stages. For the complete order and movement parameters, see [`final_park()` in `Final.ino`](../src/HLR_FE_World_Final/Final.ino), and for the distance-control implementation see [`motors.ino`](../src/HLR_FE_World_Final/motors.ino). The table is a readable summary, not a replacement for the source.
+The underlying code includes several additional short encoder advances between these stages. For the complete order and movement parameters, see [`final_park()` in `Final.ino`](../src/HLR_FE_Separated/Final.ino), and for the distance-control implementation see [`motors.ino`](../src/HLR_FE_Separated/motors.ino). The table is a readable summary, not a replacement for the source.
 
 Older README figures describing 470/460 mm wall targets, PWM pulse sensors and the earlier three-arc sequence belong to the historical firmware and are **not the V4.1 parking implementation**.
 
@@ -805,6 +797,22 @@ Different sensor faults have different effects. The table below distinguishes an
 | Long blocked movement or failed range target | Some motion helpers contain no explicit timeout | A bad range or encoder input can prevent a routine from completing; verify these before full-speed runs |
 | Legacy camera messages in Open mode | Open still contains color-command handling | Camera `RED/GREEN` can enter avoidance even though normal Open corners come from ToF |
 | Fan/impeller legacy code | `impeller_speed` initialized to zero; physical fan removed | Not part of V4.1 traction, motor control or power budget |
+
+### Source-to-behavior cross-check
+
+A reproducible software description must identify whether a behavior comes from code, an intended algorithm or a physical demonstration. The following checks reflect the implementation described in this chapter and make it easier for a reviewer to inspect a specific claim.
+
+| Control claim | Inspect in the repository | What the inspection establishes |
+|---|---|---|
+| Separate Open and Final configurations | `src/HLR_FE_World_Final/HLR_FE_World_Final.ino`, `Open.ino`, `Final.ino` in the current public repository | Challenge selection and controller logic; not a tested autonomous run |
+| Open turns from paired front ToF readings | `Open.ino` and `tof.ino` | Freshness, confirmation and re-arm conditions for a wall event |
+| Obstacle approach, bypass and recovery | `Final.ino`, `functions.ino` | The controller transitions and command handling; field reliability must be measured |
+| Camera classifications received through serial | `src/camera.py` and controller UART parser | Actual supported messages of the checked source revision |
+| Driver speed and encoder distance | `motors.ino`, `gyro.ino` | The implemented PWM/steering/heading calculations, with hardware-specific calibration still required |
+
+**Version caution:** The archived code can be older than the current GitHub branch. If reproducing from an exported ZIP, confirm that the `src/HLR_FE_World_Final/` folder is present at the selected commit. If not, obtain the corresponding source from the [live GitHub repository](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/tree/main/src/HLR_FE_World_Final), rather than silently substituting the older `HLR_FE_Separated` sketch.
+
+The original `src/camera.py` does not contain all experimental sign-height behavior described in later camera prototypes. The source audit in Section 7 records that gap. A pure-function test of a candidate camera file is not equivalent to the camera running correctly on the robot.
 
 ## 9. Calibration, parameters and field verification
 

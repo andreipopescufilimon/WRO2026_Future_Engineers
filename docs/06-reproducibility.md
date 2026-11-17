@@ -23,13 +23,12 @@ Our [GitHub history](https://github.com/andreipopescufilimon/WRO2026_Future_Engi
 
 ### Reproduction routes
 
-This repository distinguishes the filmed historical controller, the earlier modular V4.1 snapshot and the **current World Final controller**. Do not mix firmware and wiring from different revisions.
+The repository preserves the program used in the filmed demonstration and a later modular V4.1 implementation. They are **two different software revisions** and should not be mixed when assembling a complete system.
 
 | Reproduction target | Fixed Git revision | Controller entry point | What it represents |
 | --- | --- | --- | --- |
 | **Filmed vehicle** | [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) | Source revision identified by the team as running during the [Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
-| **Historical modular V4.1 source** | [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) | [`src/HLR_FE_Separated/HLR_FE_Separated.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/045c57e7388c08f9281642a864de0ba3b099c0df/src/HLR_FE_Separated/HLR_FE_Separated.ino) | Later source revision with separate Open and Final files and four VL53L5CX interfaces |
-| **Current World Final source** | `main` branch, record exact SHA of flashed checkout | [`src/HLR_FE_World_Final/HLR_FE_World_Final.ino`](../src/HLR_FE_World_Final/HLR_FE_World_Final.ino) | Current eight-tab implementation, including Final-mode `Telemetry.ino`; compiled by the GitHub Actions workflow |
+| **Modular V4.1 source** | [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) | [`src/HLR_FE_Separated/HLR_FE_Separated.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/045c57e7388c08f9281642a864de0ba3b099c0df/src/HLR_FE_Separated/HLR_FE_Separated.ino) | Later source revision with separate Open and Final files and four VL53L5CX interfaces |
 
 **Practical build sequence:** select one revision, fabricate its matching mechanical/electrical configuration, assemble the vehicle, install its controller and camera programs, perform [calibration](#calibration-and-setup), and follow the [testing workflow](#testing-workflow). The chassis, sensor wiring and firmware are treated as one system, not interchangeable parts from different development stages.
 
@@ -42,9 +41,9 @@ Our documentation covers the physical vehicle, its custom PCB assemblies, the me
 | Mechanical and electrical assembly | The built vehicle and its PCB, drivetrain, steering and sensor placement are documented in photographs and an assembly recording | [Assembly video](https://youtu.be/HSzWATB6nWQ) · [Vehicle photographs](../v-photos/) |
 | Autonomous driving | Our published video documents the physical robot in both Open and Obstacle challenges; the team identifies the filming software as commit `de34faf` | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) · [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
 | Camera perception | An RT1062 frame captures red and green detections on the actual vision interface | [Captured camera view](docs-media/v41-openmv-RT1062-camera-view.png) |
-| Electronic and mechanical release | The source repository includes STEP models, PCB manufacturing files, the Arduino V4.1 sketch and the RT1062 script | [Mechanical CAD](../3D-models/) · [PCB files](../electrical-schematics/) · [Controller source](../src/HLR_FE_World_Final/) · [Camera source](../src/camera.py) |
+| Electronic and mechanical release | The source repository includes STEP models, PCB manufacturing files, the Arduino V4.1 sketch and the RT1062 script | [Mechanical CAD](../3D-models/) · [PCB files](../electrical-schematics/) · [Controller source](../src/HLR_FE_Separated/) · [Camera source](../src/camera.py) |
 
-**Firmware used during filming:** according to the team, the driving video was recorded with Git commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81). The associated Arduino program is [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino). The newer [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) firmware is documented separately because its software architecture differs from the filmed version.
+**Firmware used during filming:** according to the team, the driving video was recorded with Git commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81). The associated Arduino program is [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino). The newer [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) firmware is documented separately because its software architecture differs from the filmed version.
 
 ---
 
@@ -64,29 +63,28 @@ Paths are shown from the repository root, while the Markdown links resolve from 
 | [`electrical-schematics/Main PCB/production-files/`](../electrical-schematics/Main%20PCB/production-files/) | Main PCB production files |
 | [`electrical-schematics/IMU/production-files/`](../electrical-schematics/IMU/production-files/) | IMU PCB production files |
 | [`electrical-schematics/TOF sensors/production-files/`](../electrical-schematics/TOF%20sensors/production-files/) | ToF PCB production files |
-| [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) | V4.1 Arduino Nano ESP32 Open/Final firmware and supporting `.ino` files |
+| [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) | V4.1 Arduino Nano ESP32 Open/Final firmware and supporting `.ino` files |
 | [`src/camera.py`](../src/camera.py) | OpenMV RT1062 camera-side Python source |
-| [`src/README.md`](../src/README.md) | Source directory index |
+| [`src/HLR_FE_Separated/README.txt`](../src/HLR_FE_Separated/README.txt) | Firmware setup and mode-selection reference |
 | [`src/tests/`](../src/tests/) | Motor, steering, IMU, straight-driving and communication tests |
 | [`v-photos/`](../v-photos/) | Vehicle photographs from all sides |
 | [`t-photos/`](../t-photos/) | Team photograph |
 | [`video/`](../video/) | Driving and challenge recordings |
 | [`other/`](../other/) | Additional development resources |
 
-The current Arduino sketch is divided into eight `.ino` tabs, which the Arduino IDE compiles together. Keep them in the same `HLR_FE_World_Final` directory.
+The Arduino sketch is divided into multiple tabs, which the Arduino IDE compiles together. Keep them in the same `HLR_FE_Separated` directory.
 
 | File | Responsibility |
 | --- | --- |
-| [`HLR_FE_World_Final.ino`](../src/HLR_FE_World_Final/HLR_FE_World_Final.ino) | Main initialization, current mode selection, hardware pins, startup and dispatch |
-| [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) | Shared movement and floor-marker routines |
-| [`gyro.ino`](../src/HLR_FE_World_Final/gyro.ino) | BMI088 acquisition and heading calculations |
-| [`motors.ino`](../src/HLR_FE_World_Final/motors.ino) | Motor, encoder and steering control |
-| [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) | Four VL53L5CX devices and address sequencing |
-| [`Open.ino`](../src/HLR_FE_World_Final/Open.ino) | Open Challenge navigation and transitions |
-| [`Final.ino`](../src/HLR_FE_World_Final/Final.ino) | Obstacle Challenge navigation, colored pillars and parking |
-| [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino) | Read-only Final-mode Wi-Fi dashboard and recent gyro/motion telemetry |
+| [`HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino) | Main initialization, V4.1 mode selection, hardware pins, startup and dispatch |
+| [`functions.ino`](../src/HLR_FE_Separated/functions.ino) | Shared movement and floor-marker routines |
+| [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) | BMI088 acquisition and heading calculations |
+| [`motors.ino`](../src/HLR_FE_Separated/motors.ino) | Motor, encoder and steering control |
+| [`tof.ino`](../src/HLR_FE_Separated/tof.ino) | Four VL53L5CX devices and address sequencing |
+| [`Open.ino`](../src/HLR_FE_Separated/Open.ino) | Open Challenge navigation and transitions |
+| [`Final.ino`](../src/HLR_FE_Separated/Final.ino) | Obstacle Challenge navigation, colored pillars and parking |
 
-The independent subsystem examples in [`src/tests/`](../src/tests/) cover individual functions; the complete robot program is in `src/HLR_FE_World_Final/`.
+The independent subsystem examples in [`src/tests/`](../src/tests/) cover individual functions; the complete robot program is in `src/HLR_FE_Separated/`.
 
 ## Parts and manufacturing
 
@@ -96,7 +94,7 @@ The main V4.1 assemblies are listed below. Component variants and manufacturing 
 
 | Assembly | Component or source | Reproduction reference |
 | --- | --- | --- |
-| Main controller | Arduino Nano ESP32 | [Controller firmware](../src/HLR_FE_World_Final/) |
+| Main controller | Arduino Nano ESP32 | [Controller firmware](../src/HLR_FE_Separated/) |
 | Vision | OpenMV RT1062 | [Camera script](../src/camera.py) |
 | Main structure | Custom PCB chassis | [Main PCB manufacturing files](../electrical-schematics/Main%20PCB/production-files/) |
 | Drive | Pololu 50:1 HPCB geared motor, V4.1 configuration | [Mechanical design](02-mobility.md) and motor mounting CAD |
@@ -159,9 +157,168 @@ The electronics are organized into three manufacturing groups:
 
 The released manufacturing packages include Gerber, BOM and pick-and-place files for the main chassis, IMU and ToF boards. Fabricate each board using its matching package and populate it according to the schematic and board revision. The electronic files and [chapter 03](03-power-sensors.md) should be consulted together because board fabrication files do not, by themselves, describe every connection between separate modules.
 
+### Ordering custom PCBs and assembly with JLCPCB
+
+The following step-by-step procedure is part of our V4.1 reproduction guide. It uses the three manufacturing packages already provided in this repository. It explains how another team can submit the files to JLCPCB, choose fabrication or factory assembly, and inspect the delivered electronics. **The presence of production files and an ordering procedure is not evidence that every board, factory setting, or electrical check has been independently verified.**
+
+#### 1. Download the correct manufacturing files
+
+Three distinct boards are used, with **four identical ToF sensor PCBs** installed on the robot. Manufacture each board type separately. All the available exported packages are dated November 7, 2026.
+
+| Board | Installed quantity | Gerber ZIP | Bill of materials (BOM) | Pick-and-Place (CPL) |
+|---|---:|---|---|---|
+| **Main PCB / structural chassis** | 1 | [Gerber_MainPCB_2026-11-07.zip](../electrical-schematics/Main%20PCB/production-files/Gerber_MainPCB_2026-11-07.zip) | [BOM_MainPCB_2026-11-07.xlsx](../electrical-schematics/Main%20PCB/production-files/BOM_MainPCB_2026-11-07.xlsx) | [PickAndPlace_MainPCB_2026_11_07.xlsx](../electrical-schematics/Main%20PCB/production-files/PickAndPlace_MainPCB_2026_11_07.xlsx) |
+| **BMI088 IMU board** | 1 | [Gerber_IMU_2026-11-07.zip](../electrical-schematics/IMU/production-files/Gerber_IMU_2026-11-07.zip) | [BOM_IMU_2026-11-07.xlsx](../electrical-schematics/IMU/production-files/BOM_IMU_2026-11-07.xlsx) | [PickAndPlace_IMU_2026_11_07.xlsx](../electrical-schematics/IMU/production-files/PickAndPlace_IMU_2026_11_07.xlsx) |
+| **VL53L5CX ToF sensor board** | 4 | [Gerber_TOF-sensor_2026-11-07.zip](../electrical-schematics/TOF%20sensors/production-files/Gerber_TOF-sensor_2026-11-07.zip) | [BOM_Fast TOF-sensor_2026-11-07.xlsx](../electrical-schematics/TOF%20sensors/production-files/BOM_Fast%20TOF-sensor_2026-11-07.xlsx) | [PickAndPlace_TOF-sensor_2026_11_07.xlsx](../electrical-schematics/TOF%20sensors/production-files/PickAndPlace_TOF-sensor_2026_11_07.xlsx) |
+
+What the files mean:
+
+- **Gerber ZIP:** board outline, copper layers, mask, silkscreen and drill information used by the PCB factory.
+- **BOM:** component types, reference designators, packages and part numbers used for assembly.
+- **CPL (component placement list):** the position, rotation and side of each placed component.
+
+Use **all three files from the same board and revision** when ordering assembled PCBs. Do not pair the main-board Gerber with the IMU BOM or use old placement coordinates with a newer Gerber. A bare-board order needs only the Gerber, whereas PCBA needs all three.
+
+For source traceability, first clone the repo and save the current commit ID:
+
+```bash
+git clone https://github.com/andreipopescufilimon/WRO2026_Future_Engineers.git
+cd WRO2026_Future_Engineers
+git rev-parse HEAD
+```
+
+The published files are manufacturing exports. Any change to the PCB design requires new, matching Gerber, BOM and CPL exports. Ensure the exported board is electrically and mechanically compatible with the selected firmware and chassis revision.
+
+#### 2. Choose PCB fabrication or factory assembly
+
+##### Option A: Bare PCBs
+
+JLCPCB manufactures empty boards. Components must be purchased and soldered afterward, or assembled by another electronics service. **You do not upload BOM and CPL** for fabrication-only orders. The small BMI088 and VL53L5CX packages may be difficult to solder by hand without appropriate solder paste, microscope and reflow equipment.
+
+##### Option B: Assembled PCBs (PCBA)
+
+JLCPCB manufactures the board and mounts the components selected in its assembly system. Select **PCB Assembly** during the quotation process, before paying for the bare boards. Upload the matching BOM and CPL, match components, and review orientation in the assembly preview. Components that are unsupported, out of stock or not selected may remain unpopulated and need manual soldering.
+
+Factory assembly is preferable for the IMU and ToF sensors if the intended exact packages are offered by the assembly service. Do not substitute a similar-looking sensor package, voltage regulator, connector or motor driver without checking electrical compatibility.
+
+#### 3. Place the PCB order on JLCPCB
+
+Perform these steps **three times**, once for each board design:
+
+1. Go to **[jlcpcb.com](https://jlcpcb.com/)** and sign in. Select **Instant Quote** or the current PCB quotation page.
+2. Upload the correct **Gerber ZIP** from the table. Keep the original ZIP intact.
+3. Inspect the generated PCB preview: physical outline, drilled and mounting holes, openings, copper, masks, silkscreen, and front/back orientation.
+4. **Select the correct copper layer count.** The **Main PCB is four-layer**, as shown by top, inner 1, inner 2 and bottom copper in [Chapter 03](03-power-sensors.md). Do not accept a two-layer default for that board. Determine the IMU and ToF layer counts from their own Gerbers.
+5. Check **board thickness, dimensions, copper weight, finish, solder-mask color, panelization and any additional options** against the intended design. The repository does not give a complete verified production stack-up for each board. **Do not assume that JLCPCB's default 1.6 mm thickness or 1 oz copper is necessarily the correct HyperLine specification.**
+6. On the **main chassis PCB**, pay particular attention to the structural outline, mounting holes, and interface with 3D-printed parts. The board doubles as the robot's frame, so a mechanically wrong PCB can prevent assembly even if the electrical nets are correct.
+7. Select the desired manufacturing quantity. The robot needs **1 main + 1 IMU + 4 ToF boards**, but the minimum PCB order quantity may result in extras.
+8. Review the quote and JLCPCB preview before continuing. Correct any Gerber or parameter mismatch before production.
+9. For **bare boards**, add the reviewed item to the cart. For **PCBA**, continue to Step 4 before checkout.
+
+**Do not order a main chassis PCB as a two-layer board.** The inner copper routing is part of the electrical design.
+
+#### 4. Optional JLCPCB PCBA procedure
+
+JLCPCB's ordering instructions describe a Gerber upload, PCB Assembly selection, BOM/CPL upload, component matching and placement review. The interface text may change over time.
+
+1. In the PCB quote, enable **PCB Assembly**. Select the assembly side, number of assembled PCBs and available service options. Do this **before payment**.
+2. Upload the **matching BOM and Pick-and-Place XLSX files** from Section 1. If the website asks for another supported file format, convert the spreadsheet carefully, preserving its column headers, reference designators, values, positions and rotations. JLCPCB supplies standard BOM/CPL formats in its help center.
+3. Select **Process BOM & CPL**.
+4. Review every matched component. Check the **designator**, exact value/part number, **footprint**, available stock and assembly side. Check the exact LCSC/JLCPCB catalog part number when listed.
+5. Review all **unmatched, unavailable, optional and not-selected** components. Parts not selected in the final matching list will not be mounted automatically. Keep a separate list of components to solder by hand.
+6. Inspect the 2D/3D **component placement preview**, not just the green status indicators. Pay close attention to:
+   - **BMI088 orientation** and pin-1 marking.
+   - **VL53L5CX orientation**, clear optical aperture and sensor package.
+   - Polarized capacitors and LEDs.
+   - **IFX9201SG** motor driver and thermal/contact orientation.
+   - Connectors, 5 V regulator interface and cable direction.
+7. If an item appears **rotated or mirrored**, confirm the correct location and rotation against the design. Correct the placement data and re-upload it when necessary.
+8. Confirm the assembled side(s), then review final **fabrication costs, assembly fees, parts, shipping and estimated delivery**. These values are not fixed in the repository.
+9. Only place the order when the preview and confirmed component list agree with the design. Keep the approved quote and manufacturing exports as evidence.
+
+##### Mistakes worth checking before payment
+
+| Problem | What to check |
+|---|---|
+| PCB is wrong shape or mounting holes are missing | Review Gerber outline and drill files; compare with CAD |
+| Main PCB is quoted as two layers | Select four layers and confirm all copper layers exist |
+| A part is absent in PCBA | Confirm it was selected and is available in JLCPCB's component list |
+| Sensor is rotated or placed across an opening | Compare placement preview with footprint, pin 1 and optical clearance |
+| BOM and CPL do not match | Compare designators, board revision and component coordinates |
+| Some connectors or modules are not populated | Plan manual soldering and record the missing parts |
+
+Official JLCPCB references:
+
+- [How to place a PCBA order](https://jlcpcb.com/help/article/how-do-i-place-a-pcba-order)
+- [PCB Assembly FAQs](https://jlcpcb.com/help/article/pcb-assembly-faqs)
+- [Recommendations for BOM/CPL file preparation](https://jlcpcb.com/help/article/advice-for-bom-and-cpl-files-preparation)
+- [Component matching guidelines](https://jlcpcb.com/help/article/component-matching-guidelines-for-pcba-orders)
+- [Step-by-step PCB ordering guide](https://jlcpcb.com/help/article/instructions-for-ordering)
+
+#### 5. If the production exports need revision
+
+The three PCB manufacturing file sets can be downloaded from this repository. These are **production outputs**, not proof that the corresponding editable EasyEDA source projects have been committed here.
+
+If you change a footprint, connector, circuit trace, outline or mounting hole in EasyEDA, regenerate **all relevant production files**, including Gerbers and the matching BOM/CPL. Preview the new board and component positions again on JLCPCB.
+
+For a more complete reproduction package, the team should also publish:
+
+- Editable **EasyEDA PCB and schematic source exports**, explicitly linked to the production release.
+- An actual **PCB stack-up** for each board, including thickness and copper weight.
+- A **PCBA assembly map** indicating any components the factory does not place and any parts soldered manually.
+- Screenshots or notes from an **approved manufacturing preview**, if available.
+
+#### 6. Assemble and check the delivered boards
+
+**Before applying power:**
+
+1. Inspect the PCB under good lighting or magnification for solder bridges, missing components, damaged pads, polarity and incorrect orientation.
+2. Dry-fit the **structural main PCB** against the 3D-printed hardware and compare the mounting positions with the [assembly CAD](../3D-models/).
+3. With all power sources disconnected, use a multimeter to check for unintended shorts between supply rails and ground.
+4. Check connector polarity and verify that all external controller and sensor modules will see their allowed supply voltage.
+5. Where possible, start with a **current-limited bench supply**. Check the regulated supply output before connecting sensitive electronics. Do not directly connect the battery to an unverified power circuit.
+6. Power and test subsystems in stages: regulator, controller, IMU, each ToF module individually, floor color sensor, UART camera, motor driver and steering. Keep motors mechanically unloaded during initial driver tests.
+7. The **four VL53L5CX boards** have the same factory I²C address. Follow the documented sequential startup/readdressing procedure in [Chapter 03](03-power-sensors.md) and [firmware](../src/HLR_FE_Separated/) rather than expecting four identical boards to work immediately on one I²C bus.
+8. Only then perform calibration and track testing from [the calibration and testing workflow below](#calibration-and-setup).
+
+If any test fails, turn off power and diagnose the circuit before connecting additional modules.
+
+#### 7. Record what was actually manufactured and verified
+
+The repository contains manufacturing files; an ordering tutorial alone is **not proof that a particular batch was assembled successfully**. Keep separate records of actual orders, inspections and measurements.
+
+| Evidence field | Fill in after the real event |
+|---|---|
+| Board and revision | |
+| Git commit SHA for the production files | |
+| Exact Gerber, BOM and CPL filenames | |
+| JLCPCB order date, quantity and assembly selection | |
+| Actual layer count, board thickness and copper weight | |
+| Missing / manually populated components | |
+| Visual inspection result | |
+| Measured initial supply and regulated voltages | |
+| Initial I²C / UART / motor checks | |
+| Logs or photo evidence links | |
+| Test date, hardware revision and firmware SHA | |
+
+Use the existing [physical validation directory](validation/physical/) for real observations. Do not enter estimated values as though they were bench measurements.
+
 Before applying battery power, inspect solder joints, power polarity, connector orientation and continuity. Check that there is no unintended short between supply rails and ground. Confirm the expected regulated voltages before connecting sensitive modules. Disconnect power before modifying wiring.
 
 ---
+
+### Five-minute reviewer walkthrough
+
+The following reading order lets another team locate the essentials without looking for extra chapters:
+
+1. Inspect the [project overview](01-overview.md), [photos](../v-photos/) and dated historical [driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw).
+2. Open [mobility](02-mobility.md) and the [STEP models](../3D-models/) to identify the structural board, rear differential and parallel steering assembly.
+3. Open [power and sensors](03-power-sensors.md) and the [PCB manufacturing packages](../electrical-schematics/) for the power tree, physical sensor connections and exact fabrication inputs.
+4. Open [software](04-software.md) together with [src/](../src/) to compare the Open and Obstacle strategy to the actual program in the chosen Git revision.
+5. Read [systems engineering](05-systems.md) for the reasons behind the component and algorithm changes, including their limits.
+6. Use the JLCPCB instructions above, the build/upload steps below and the [physical validation status](validation/physical/SUMMARY.md) to distinguish what is reproducible from what still needs a field measurement.
+
+The repository's public Git history is the proper source for checking the three required commit deadlines. A downloaded ZIP does not contain commit timestamps. Refer to [version-specific commits](#version-specific-github-commits) and verify that each required snapshot predates the applicable competition deadline. Never recreate or backdate commits to imply compliance.
 
 ## Building and flashing
 
@@ -180,7 +337,7 @@ For the **published driving demonstration** (the earlier `HLR_FE` sketch), use:
 git checkout de34faf039a70443361197de540879f212e3de81
 ```
 
-For the **later modular V4.1 design** (`HLR_FE_World_Final` with `Open.ino` and `Final.ino`), use:
+For the **later modular V4.1 design** (`HLR_FE_Separated` with `Open.ino` and `Final.ino`), use:
 
 ```bash
 git checkout 045c57e7388c08f9281642a864de0ba3b099c0df
@@ -212,8 +369,8 @@ The Arduino Nano ESP32 runs the vehicle controller; the OpenMV RT1062 runs the s
 | Arduino Nano ESP32 board package | Nano digital/analog pin names, `Serial0`, `Wire`, GPIO and PWM | Install the **Arduino Nano ESP32** board platform through Arduino IDE Boards Manager |
 | `ESP32Encoder` | Encoder library included by the controller | Install through Arduino IDE Library Manager |
 | `ESP32Servo` | `Servo.attach()` and `Servo.write()` for front-wheel steering | Install through Arduino IDE Library Manager |
-| SparkFun VL53L5CX Arduino Library | `SparkFun_VL53L5CX` methods used by [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) | Install the SparkFun VL53L5CX Arduino Library |
-| BMI088 library | `BMI088.h` exposing `setAccScaleRange`, `setAccPoweMode`, `setGyroOutputDataRate` and `getGyroscopeZ` | Use a BMI088 implementation with the **same API as [`gyro.ino`](../src/HLR_FE_World_Final/gyro.ino)**; libraries with the same header name are not necessarily interchangeable |
+| SparkFun VL53L5CX Arduino Library | `SparkFun_VL53L5CX` methods used by [`tof.ino`](../src/HLR_FE_Separated/tof.ino) | Install the SparkFun VL53L5CX Arduino Library |
+| BMI088 library | `BMI088.h` exposing `setAccScaleRange`, `setAccPoweMode`, `setGyroOutputDataRate` and `getGyroscopeZ` | Use a BMI088 implementation with the **same API as [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino)**; libraries with the same header name are not necessarily interchangeable |
 | OpenMV IDE and RT1062 firmware | `sensor`, `machine.UART` and `machine.LED` in MicroPython | Run [`src/camera.py`](../src/camera.py) on the RT1062 |
 
 `Wire` is supplied by the Arduino board platform. The TCS34725 is accessed directly over its separate I²C bus, rather than through an additional Arduino color-sensor library.
@@ -239,7 +396,7 @@ The repository contains the assembled vehicle documentation and the separated V4
 | --- | --- | --- |
 | Filmed robot's source revision | de34faf039a70443361197de540879f212e3de81 identified by the team as the code running in the driving recording; original sketch in `src/HLR_FE/` | [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
 | Current V4.1 source checkpoint | Repository snapshot `045c57e7388c08f9281642a864de0ba3b099c0df` (10 November 2026), containing the newer separated sketch | [Later source snapshot](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
-| V4.1 controller source | `src/HLR_FE_World_Final/HLR_FE_World_Final.ino` with `Open.ino`, `Final.ino` and the hardware-control tabs | [Controller firmware](../src/HLR_FE_World_Final/) |
+| V4.1 controller source | `src/HLR_FE_Separated/HLR_FE_Separated.ino` with `Open.ino`, `Final.ino` and the hardware-control tabs | [Controller firmware](../src/HLR_FE_Separated/) |
 | RT1062 image-processing demonstration | Captured camera frame shows red and green object detections | [Camera view](docs-media/v41-openmv-RT1062-camera-view.png) |
 | Physical autonomous driving | We published our real-world driving demonstration for both Open and Obstacle modes | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
 
@@ -247,11 +404,11 @@ The separate V4.1 sketch tabs compile together as one Arduino program. The board
 
 ### 4. Flash the Arduino Nano ESP32
 
-The Arduino Nano ESP32 executes the vehicle control software. Its entry point is [`src/HLR_FE_World_Final/HLR_FE_World_Final.ino`](../src/HLR_FE_World_Final/HLR_FE_World_Final.ino).
+The Arduino Nano ESP32 executes the vehicle control software. Its entry point is [`src/HLR_FE_Separated/HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino).
 
 1. Install Arduino IDE and the **Arduino Nano ESP32** board support package through **Boards Manager**.
 2. Connect the controller using a **USB-C data cable**.
-3. Open `src/HLR_FE_World_Final/HLR_FE_World_Final.ino`. Confirm that `functions.ino`, `gyro.ino`, `motors.ino`, `tof.ino`, `Open.ino`, `Final.ino` and `Telemetry.ino` open as tabs in the same sketch.
+3. Open `src/HLR_FE_Separated/HLR_FE_Separated.ino`. Confirm that `functions.ino`, `gyro.ino`, `motors.ino`, `tof.ino`, `Open.ino` and `Final.ino` open as tabs in the same sketch.
 4. Install the dependencies needed by the selected revision. Use the supplied library copies where appropriate and check for compilation conflicts.
 5. Select **Tools → Board → Arduino Nano ESP32**, then choose the correct port in **Tools → Port**.
 6. Before power-up, select the challenge at the D11/D12 inputs: **D11 HIGH and D12 LOW = Final; D12 HIGH and D11 LOW = Open**. Both HIGH or both LOW activate a safe stop. These inputs accept **3.3 V logic**. Inspect the motor direction, steering limits, encoder parameters, IMU settings, camera communication and driving speeds against the assembled hardware. The unused fan control remains at zero.
@@ -286,12 +443,12 @@ The steps below connect the assembled robot to the values in the **modular V4.1*
 
 | Order | Subsystem | V4.1 source setting and procedure | Expected check |
 | ---: | --- | --- | --- |
-| 1 | **Steering neutral and stops** | [`HLR_FE_World_Final.ino`](../src/HLR_FE_World_Final/HLR_FE_World_Final.ino) sets `STEERING_CENTER = 85`, `STEERING_LEFT = 39`, `STEERING_RIGHT = 131`, and parking endpoints `40` / `138`. Center the linkage before fixing the servo horn; inspect both wheel clearances with the wheels raised. | The wheels are aligned at neutral; commanded travel does not force the links into the chassis or steering stops. Servo command values are not physical wheel angles. |
+| 1 | **Steering neutral and stops** | [`HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino) sets `STEERING_CENTER = 85`, `STEERING_LEFT = 39`, `STEERING_RIGHT = 131`, and parking endpoints `40` / `138`. Center the linkage before fixing the servo horn; inspect both wheel clearances with the wheels raised. | The wheels are aligned at neutral; commanded travel does not force the links into the chassis or steering stops. Servo command values are not physical wheel angles. |
 | 2 | **Motor direction and encoder** | Rear motor PWM on D7, direction on D8; encoder A on D5 (rising-edge interrupt), B on D4 (direction). The source defines `WHEEL_DIAM = 29.0` mm and `MM_PER_TICK = 1.831` mm for its distance helper. Drive a measured straight distance on the actual surface and compare to `read_cm()`. | Positive wheel travel has the expected encoder direction and measured displacement agrees with the selected distance conversion. |
-| 3 | **BMI088 heading** | [`gyro.ino`](../src/HLR_FE_World_Final/gyro.ino) estimates Z-axis bias over `DRIFT_TEST_TIME = 10` seconds at boot, with ±2000°/s gyro and ±6 g accelerometer settings. Keep the robot still during this interval, then rotate it manually both ways. | Heading increases/decreases consistently with the sign expected by the steering controller, without visible stationary jumps. |
-| 4 | **Four ToF matrices** | [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) releases one LPn pin at a time and assigns front A3=`0x30`, left A2=`0x31`, right A1=`0x32`, rear A0=`0x33`; each is 4×4, configured at 30 Hz. Test all four optical directions with a flat target and check that mount/wheels do not occlude the field of view. | All four sensors initialize with unique addresses and provide valid ranges for targets in their respective directions. |
+| 3 | **BMI088 heading** | [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) estimates Z-axis bias over `DRIFT_TEST_TIME = 10` seconds at boot, with ±2000°/s gyro and ±6 g accelerometer settings. Keep the robot still during this interval, then rotate it manually both ways. | Heading increases/decreases consistently with the sign expected by the steering controller, without visible stationary jumps. |
+| 4 | **Four ToF matrices** | [`tof.ino`](../src/HLR_FE_Separated/tof.ino) releases one LPn pin at a time and assigns front A3=`0x30`, left A2=`0x31`, right A1=`0x32`, rear A0=`0x33`; each is 4×4, configured at 30 Hz. Test all four optical directions with a flat target and check that mount/wheels do not occlude the field of view. | All four sensors initialize with unique addresses and provide valid ranges for targets in their respective directions. |
 | 5 | **Front corner zones** | The Open controller uses front ToF zones `(2,3)` and `(3,3)` (1-based row/column) for a corner below 600 mm, with rearming once both are at least 800 mm. Data older than 150 ms is rejected. Check which physical side corresponds to those zones after mounting. | The correct wall and zones trigger a single turn, without mirrored indexing or repeated corner events. |
-| 6 | **Floor colors** | The TCS34725 uses separate I²C pins A6/A7. [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) reads normalized RGB channels; the source selects 16× gain and a short exposure. Present white, blue and red/orange field markings at the installed floor clearance. | White re-arms detection and colored markers set or confirm the intended travel direction. |
+| 6 | **Floor colors** | The TCS34725 uses separate I²C pins A6/A7. [`functions.ino`](../src/HLR_FE_Separated/functions.ino) reads normalized RGB channels; the source selects 16× gain and a short exposure. Present white, blue and red/orange field markings at the installed floor clearance. | White re-arms detection and colored markers set or confirm the intended travel direction. |
 | 7 | **RT1062 image and UART** | [`camera.py`](../src/camera.py) configures QVGA 320×240, `vflip=True`, `hmirror=True`, gain/AWB disabled, fixed 16,000 µs exposure and `UART(1, 19200)`. Connect P4 TX to Nano RX D0, and share ground. Recheck red/green blob thresholds under the actual lighting. | Red and green objects appear in the configured region of interest; the Nano receives correctly formatted UART messages. |
 | 8 | **Round selection and start** | D12 HIGH and D11 LOW selects Open; D11 HIGH and D12 LOW selects Final. Both HIGH or both LOW leave the program stopped. Restart after changing mode. D10 is an active-LOW start input. | The requested challenge starts only after initialization and the start action; invalid mode combinations never drive the motor. |
 
@@ -327,7 +484,7 @@ After flashing both devices, disconnect programming cables as appropriate for th
 
 ### Connect to the local web interface
 
-The current World Final firmware includes a **read-only telemetry dashboard** in `Telemetry.ino`, enabled in Final mode at `http://192.168.4.1/` if the `HyperLine` Wi-Fi access point starts. It exposes status and recent history, but no remote motor-control endpoints. Other historical diagnostic screenshots may refer to earlier diagnostic software and should not be presented as proof of the current firmware operating on the field.
+The **Wi-Fi-enabled diagnostic firmware variant** provides a Wi-Fi access point and browser-based interface for live measurements and configuration. The supplied `HLR_FE_Separated` autonomous firmware does **not** contain this dashboard server. The dashboard steps below apply only after separately flashing and validating a Wi-Fi-capable diagnostic revision.
 
 1. Power the robot using the Wi-Fi-enabled V4.1 firmware.
 2. On a phone or computer, join the Wi-Fi network broadcast by the robot. The network name and credentials are configured in the controller firmware.
@@ -377,7 +534,7 @@ The test code is organized under [`src/tests/`](../src/tests/). Each test isolat
 | IMU | [`gyro_test`](../src/tests/gyro_test/) | Readings respond to manual rotation with the correct sign and do not show an obvious stationary fault |
 | Straight-line controller | [`move_straight_on_gyro`](../src/tests/move_straight_on_gyro/) | The correction acts against a heading deviation rather than increasing it |
 | Camera communication | [`arduino_openmv_serial_communication`](../src/tests/arduino_openmv_serial_communication/) | Nano receives valid, correctly formatted messages from the RT1062 |
-| ToF sensor checks | [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) and optional [diagnostic dashboard](#live-distance-sensor-checks) | Each installed sensor responds to a target moving through its field of view |
+| ToF sensor checks | [`tof.ino`](../src/HLR_FE_Separated/tof.ino) and optional [diagnostic dashboard](#live-distance-sensor-checks) | Each installed sensor responds to a target moving through its field of view |
 | Camera classification | [OpenMV frame buffer](#5-flash-the-openmv-rt1062) | Red and green objects in the configured ROI are identified consistently |
 
 Initial motor and steering checks are performed with the driven wheels raised. The table describes the visible and electronic responses of each subsystem.
@@ -404,9 +561,9 @@ Our project includes a recorded assembly, physical driving footage for both chal
 | Open Challenge operation | [Recorded driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), [video index](../video/video.md) | **Recorded:** physical robot driving autonomously in the Open Challenge |
 | Obstacle Challenge operation | [Recorded driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), [video index](../video/video.md) | **Recorded:** physical robot driving autonomously in the Obstacle Challenge |
 | RT1062 red and green perception | [Captured camera screenshot](docs-media/v41-openmv-RT1062-camera-view.png) | **Captured:** detection interface displaying red and green targets |
-| Controller firmware and source | [V4.1 sketch](../src/HLR_FE_World_Final/) | **Available:** published source modules for the controller and both challenge modes |
-| Four VL53L5CX modules | [Sensor implementation](../src/HLR_FE_World_Final/tof.ino), [sensor calibration section](03-power-sensors.md#51-distance-sensor-calibration-matrix) | **Implemented in source:** four sensor addresses and 4×4 ranging configuration |
-| BMI088 and steering/drive | [Gyro implementation](../src/HLR_FE_World_Final/gyro.ino), [motor implementation](../src/HLR_FE_World_Final/motors.ino) | **Implemented in source:** IMU acquisition, steering and motor-control routines |
+| Controller firmware and source | [V4.1 sketch](../src/HLR_FE_Separated/) | **Available:** published source modules for the controller and both challenge modes |
+| Four VL53L5CX modules | [Sensor implementation](../src/HLR_FE_Separated/tof.ino), [sensor calibration section](03-power-sensors.md#51-distance-sensor-calibration-matrix) | **Implemented in source:** four sensor addresses and 4×4 ranging configuration |
+| BMI088 and steering/drive | [Gyro implementation](../src/HLR_FE_Separated/gyro.ino), [motor implementation](../src/HLR_FE_Separated/motors.ino) | **Implemented in source:** IMU acquisition, steering and motor-control routines |
 | Battery and regulated-power reliability | [Power and sensor architecture](03-power-sensors.md) | **Documented:** 2S LiHV supply, regulator, power distribution and protection considerations |
 
 The videos and camera frame document the assembled robot and its operation. The historical controller and camera source correspond to the filmed revision identified above. The separated V4.1 source is provided as the newer modular implementation.
@@ -426,7 +583,7 @@ This table identifies the V4.1 configuration to reproduce and the existing recor
 | Main controller | Arduino Nano ESP32 |
 | Vision processor | OpenMV RT1062 |
 | Fixed candidate Git snapshot | [`4e5da95c8b87787be97cb1e5f976c625865338bb`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/4e5da95c8b87787be97cb1e5f976c625865338bb), repository checkpoint on 10 November 2026; record the actual flashed SHA if different |
-| Controller firmware | [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/), including `HLR_FE_World_Final.ino`, `Open.ino`, `Final.ino` and the shared hardware tabs |
+| Controller firmware | [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/), including `HLR_FE_Separated.ino`, `Open.ino`, `Final.ino` and the shared hardware tabs |
 | Camera firmware source | [`src/camera.py`](../src/camera.py); use the version from the same fixed Git snapshot as the controller and record the camera firmware/IDE version |
 | Bundled Arduino libraries | [BMI088 1.0.0](../src/libraries/BMI088/library.properties), [ESP32Encoder 5.0.0](../src/libraries/ESP32Encoder/library.properties), [ESP32Servo 3.0.3](../src/libraries/ESP32Servo/library.properties), [SparkFun VL53L5CX 1.0.3](../src/libraries/SparkFun_VL53L5CX_Arduino_Library/library.properties). [Adafruit TCS34725 1.4.4](../src/libraries/Adafruit_TCS34725/library.properties) is also bundled; the autonomous sketch accesses this sensor directly over I²C |
 | Board-core and installed build environment | Record the Arduino CLI version, installed board platforms and libraries with `arduino-cli version`, `arduino-cli core list` and `arduino-cli lib list`; retain the build output from the GitHub Actions workflow or local compilation |
@@ -444,7 +601,7 @@ This table identifies the V4.1 configuration to reproduce and the existing recor
 
 ### 4. Verifying one complete modular V4.1 revision
 
-The modular implementation must be checked as a **single hardware, controller and camera combination**. The earlier `de34faf` footage demonstrates the historical vehicle; it is not substituted for an execution record of `src/HLR_FE_World_Final/`. The `045c57e` revision above identifies an earlier modular source checkpoint. When reproducing the latest Open/Final code, capture the **full Git SHA of the actual release being flashed** so the controller, camera code, bundled libraries and manufacturing resources can be traced to the same repository state.
+The modular implementation must be checked as a **single hardware, controller and camera combination**. The earlier `de34faf` footage demonstrates the historical vehicle; it is not substituted for an execution record of `src/HLR_FE_Separated/`. The `045c57e` revision above identifies an earlier modular source checkpoint. When reproducing the latest Open/Final code, capture the **full Git SHA of the actual release being flashed** so the controller, camera code, bundled libraries and manufacturing resources can be traced to the same repository state.
 
 From a clean clone of the intended modular release, record its identity before installing or compiling:
 
@@ -462,19 +619,19 @@ For an **actual Nano ESP32 compilation** on Windows, Linux or macOS, install Ard
 arduino-cli version
 arduino-cli core list
 arduino-cli lib list
-arduino-cli compile --fqbn arduino:esp32:nano_nora --libraries src/libraries --warnings all --verbose src/HLR_FE_World_Final
+arduino-cli compile --fqbn arduino:esp32:nano_nora --libraries src/libraries --warnings all --verbose src/HLR_FE_Separated
 ```
 
 Retain the full compiler output and its actual success or failure status, alongside the exact source revision and library/platform versions. The GitHub Actions workflow described below collects these files automatically and provides a downloadable build-evidence artifact. Running the commands above is a build attempt, not a claim that compilation succeeded. If a local build fails, keep its error log and resolve the environment before marking the result as verified.
 
-**Build without a local development computer:** The [GitHub Actions World Final compilation workflow](../.github/workflows/verify-v41.yml) runs the same modular sketch in a GitHub-hosted runner. From GitHub, open **Actions → World Final modular firmware build → Run workflow**. The run page identifies the exact source SHA, and its downloadable `world-final-build-evidence-*` artifact contains the actual compiler log, installed core version and library inventory. Only a successful workflow proves that the sketch compiled in that environment. It does not prove controller upload or driving performance. A **successful build record** includes an actual exit code `0` and the matching compiler log (the workflow artifact uses `exit-code.txt` and `compile.log`). If the compiler reports a missing library, ambiguous `BMI088.h`, or another error, fix the environment and rerun the capture. The recorded result is more useful than a claim that a sketch *should* compile. The library copies in `src/libraries/` identify the exact supplied implementations; the build log is also needed to identify the versions actually selected by the compiler.
+**Build without a local development computer:** The [GitHub Actions V4.1 compilation workflow](../.github/workflows/verify-v41.yml) runs the same modular sketch in a GitHub-hosted runner. From GitHub, open **Actions → V4.1 modular firmware build → Run workflow**. The run page identifies the exact source SHA, and its downloadable `v41-build-evidence-*` artifact contains the actual compiler log, installed core version and library inventory. Only a successful workflow proves that the sketch compiled in that environment. It does not prove controller upload or driving performance. A **successful build record** includes an actual exit code `0` and the matching compiler log (the workflow artifact uses `exit-code.txt` and `compile.log`). If the compiler reports a missing library, ambiguous `BMI088.h`, or another error, fix the environment and rerun the capture. The recorded result is more useful than a claim that a sketch *should* compile. The library copies in `src/libraries/` identify the exact supplied implementations; the build log is also needed to identify the versions actually selected by the compiler.
 
 For the RT1062, open the matching `src/camera.py` with OpenMV IDE, record the camera firmware version shown by the connected camera, save the script to the camera and retain one captured frame and one UART message log. The controller and camera must agree on **19,200 baud**; the image demonstration and any future height-classification results must identify the **separate, later camera script revision** that actually implements those features. The current bundled camera source does not classify height.
 
 | Evidence item | Source or output location | Minimum information for reproduction |
 | --- | --- | --- |
 | Reproduced repository release | `git rev-parse HEAD` and source manifest | Full Git commit SHA, local changes if any, matching controller and RT1062 scripts |
-| Arduino compilation | [GitHub Actions World Final build workflow](../.github/workflows/verify-v41.yml) or local `arduino-cli compile` | Actual compile command, installed dependency versions, exit code and full compiler log |
+| Arduino compilation | [GitHub Actions V4.1 build workflow](../.github/workflows/verify-v41.yml) or local `arduino-cli compile` | Actual compile command, installed dependency versions, exit code and full compiler log |
 | Compilation summary | [`build_verification.csv`](validation/physical/build_verification.csv) | Test date, hardware revision, flashed source SHA, board/core versions, result and retained log path |
 | Source integrity | [`scripts/repro_preflight.py`](../scripts/repro_preflight.py) | File-presence and configuration checks plus SHA-256 manifest |
 | RT1062 setup | [`camera.py`](../src/camera.py) and OpenMV IDE | Camera firmware version, script revision, image capture and received UART data |
@@ -543,25 +700,6 @@ This final audit adds a verification trail to the design, assembly and software 
 
 ---
 
-
-### Current World Final build verification and release checklist
-
-This section describes the **current repository state**. The former `src/HLR_FE_World_Final/` sketch is preserved only in historical Git commits; it is not the active GitHub Actions target. The working folder must be named exactly `HLR_FE_World_Final`, matching its main `.ino` file.
-
-From the repository root, using the installed Arduino CLI and the matching Nano ESP32 core and bundled libraries:
-
-```bash
-arduino-cli core update-index
-arduino-cli core install 'arduino:esp32@2.0.18-arduino.5'
-arduino-cli compile --fqbn arduino:esp32:nano_nora --libraries src/libraries --warnings all --verbose src/HLR_FE_World_Final
-```
-
-Alternatively open `src/HLR_FE_World_Final/HLR_FE_World_Final.ino` in Arduino IDE, select **Arduino Nano ESP32**, install the versions documented in this journal and use **Sketch → Verify/Compile**. All eight `.ino` files must remain together in the same directory. The standalone OpenMV Python script is not part of the Arduino binary.
-
-The workflow at [`.github/workflows/verify-v41.yml`](../.github/workflows/verify-v41.yml) now includes the current source directory in its push trigger, hashes the same source, executes the bundled camera-source contract test, and captures the actual Arduino compiler output in the downloadable `world-final-build-evidence-*` artifact. Its name retains `verify-v41.yml` for compatibility, but its visible run name is **World Final modular firmware build**. A historical failed run that attempted to access the removed folder does not establish a compilation error in the new sketch.
-
-A reproducible, verified release should identify the **full Git SHA**, Arduino IDE or CLI version, board core, selected libraries, compile exit status, upload evidence, camera firmware/IDE revision, and corresponding physical challenge tests. The team reports that the current sketch compiles on its development computer, but a dated successful CI/local compiler log and tested-on-robot release tag have not yet been provided here. Do not mark field validation as passed solely from software compilation.
-
 ## Versions and development history
 
 | Version | Role | Main engineering differences |
@@ -579,13 +717,13 @@ The GitHub history preserves earlier mechanical and software configurations, the
 | **Filmed robot software** | [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | Team-identified source revision used for the real Open and Obstacle Challenge recording; Arduino entry point `src/HLR_FE/HLR_FE.ino` |
 | **V4.1 development checkpoint** | [View historical commit](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/fee1a8440b3251d7454f14fb1ae3a48e173f498c) | Electronics manufacturing-file update from the V4.1 development period |
 
-The filmed robot used the earlier `src/HLR_FE/` sketch. The current World Final source separates the Open and Obstacle Challenge routines in `src/HLR_FE_World_Final/`, reflecting the changes in sensor handling and program structure.
+The filmed robot used the earlier `src/HLR_FE/` sketch. The later V4.1 source separates the Open and Obstacle Challenge routines in `src/HLR_FE_Separated/`, reflecting the changes in sensor handling and program structure.
 
 ### Filming firmware and modular revision
 
 The team identifies [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the code revision running in the [real Open and Obstacle Challenge footage](https://www.youtube.com/watch?v=bg92ulHXomw). That snapshot contains `src/HLR_FE/HLR_FE.ino`. Its source, camera program and mechanical/electrical documentation are accessible as a fixed historical Git state.
 
-The historical modular source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_Separated/`, which moved Open and Final behavior into their respective files and uses the four-matrix ToF interface. It is the basis of the modular configuration and calibration references in this chapter. This distinction keeps the historical demonstration and newer implementation individually traceable.
+The later source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_Separated/`, which moves Open and Final behavior into their respective files and uses the four-matrix ToF interface. It is the basis of the modular configuration and calibration references in this chapter. This distinction keeps the historical demonstration and newer implementation individually traceable.
 
 | Release resource | Reference |
 | --- | --- |

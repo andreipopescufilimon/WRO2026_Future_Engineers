@@ -662,6 +662,19 @@ The combined test is useful as a **failure reproduction** rather than a generic 
 [Measured electrical summary](validation/physical/SUMMARY.md#electrical-load-and-5-v-stability) · [Raw electrical captures](validation/physical/power_runs.csv) · [Reproducibility checks](06-reproducibility.md#v41-functional-verification-results).
 
 
+### From schematic to a reproducible electrical board
+
+The three custom board packages are published as matching **Gerber, BOM and Pick-and-Place** exports: the four-layer main chassis PCB, the BMI088 IMU and the four identical VL53L5CX ToF modules. Their exact filenames, JLCPCB ordering procedure, orientation checks and first-power safety steps are in [Chapter 06](06-reproducibility.md#ordering-custom-pcbs-and-assembly-with-jlcpcb).
+
+A fabrication preview proves that the proposed copper and drill files can be interpreted; it does **not** prove component availability, a completed assembly order or verified power-rail performance. The assembled board must be checked for reversed connectors, solder bridges, polarity and correct voltage before the camera, controller, and other sensitive modules are attached.
+
+| Verification target | Published baseline | Physical confirmation still needed |
+|---|---|---|
+| Main PCB | Four copper layers and a structural outline shown in the PCB images | Stack-up and manufactured thickness; continuity and regulator measurements |
+| BMI088 | Board export, documented I²C integration and firmware initialization | Sensor mounting orientation and logged bias/repeatability |
+| Four ToF boards | Matching production files; sequential address initialization | Actual board-specific power, optical alignment, address checks and range samples |
+| 5 V supply | Component budget and D24V50F5 architecture | Voltage drop, startup peak and actual load-current traces |
+
 ## 6. Iterations and engineering decisions
 
 | Subsystem | Earlier implementation (V4) | V4.1 decision | Engineering trade-off |

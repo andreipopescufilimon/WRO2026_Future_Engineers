@@ -2,11 +2,12 @@
 
 **HyperLine Robotics | WRO 2026 Future Engineers**
 
-Repository of HyperLine Robotics Team competing in the World Robot Olympiad (WRO) 2026, Future Engineers category. This repository holds everything behind our fully autonomous robot: the full firmware, electronics, CAD models, the full documentation, and the guide that brings the robot from parts to life.
-
 This engineering journal presents how we designed, built and tested our autonomous vehicle for the World Robot Olympiad 2026 Future Engineers category. The following chapters explain our mechanical design, electronics, software, engineering decisions and the steps needed to reproduce the robot. We apply our technical decisions into our CAD models, circuit designs, code, and test results so another team can inspect our work rather than rely on descriptions alone.
 
 ---
+
+
+> **Evidence integrity, 17 November 2026:** This archive includes a complete design record and test procedures, but **no verified V4.1 physical performance dataset or retained compiler log**. The team confirms that its Arduino controller sketch **compiles successfully on its laptop**; this is a team-reported result, not a failed compile or independently captured log. The primary `src/camera.py` is area-based; two earlier [camera-source candidates](../src/camera_candidates/) have been recovered. The v11 candidate passes 23/23 pure-function tests but is **not hardware verified or deployed in the primary source**. See the [evidence audit](validation/EVIDENCE_AUDIT.md), [implementation gaps](validation/IMPLEMENTATION_GAPS.md), and [six-chapter evidence map](README.md). Simulated tests are clearly separated and must not be submitted as physical results.
 
 ## Documentation guide
 
@@ -20,6 +21,20 @@ This engineering journal presents how we designed, built and tested our autonomo
 | reproducibility | [06 - reproducibility](06-reproducibility.md) | CAD, manufacturing files, wiring, assembly guide, firmware setup, calibration |
 
 ---
+
+### Practical evidence map for a technical review
+
+The published files allow a reviewer to follow a decision from the robot to its implementation:
+
+| Question | Engineering record | Direct artifact |
+|---|---|---|
+| Why use one driven axle and front steering? | [Drivetrain and turning geometry](02-mobility.md#3-the-driven-axle-and-differential) | [STEP assemblies](../3D-models/) |
+| How is electrical power distributed? | [Power calculations and risk](03-power-sensors.md#3-power-architecture-and-calculations) | [Fabrication outputs](../electrical-schematics/), [board images](docs-media/v41-schematic-design-export.png) |
+| How do camera, ToF, IMU and control interact? | [Perception and state flow](04-software.md#2-system-architecture-and-execution-flow) | [Controller implementation](../src/), [camera code](../src/camera.py) |
+| Which V4 changes were kept or rejected? | [Systems trade-offs](05-systems.md#3-engineering-decisions-and-rejected-alternatives) | Revision history and linked photos |
+| Can another team manufacture and configure the car? | [Fabrication and build](06-reproducibility.md#parts-and-manufacturing) | Gerber/BOM/CPL, assembly media, programming and calibration instructions |
+
+For physical outcomes, the [test evidence summary](validation/physical/SUMMARY.md) records which artifacts are measured and which are still unverified. An attached source file or CAD render establishes design intent; it does not establish performance by itself.
 
 ## The vehicle at a glance
 
@@ -123,7 +138,7 @@ WRO2026_Future_Engineers/
 | Mechanical CAD | [3D-models](../3D-models/) | Examine or manufacture the steering, wheel and mounting components |
 | Mechanical drawings | [docs/technical-drawings](technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
-| Robot firmware | [src/HLR_FE_World_Final](../src/HLR_FE_World_Final/) | Study the controller and navigation implementation |
+| Robot firmware | [src/HLR_FE_Separated](../src/HLR_FE_Separated/) | Study the controller and navigation implementation |
 | Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
 | Component tests | [src/tests](../src/tests/) | Verify individual subsystems |
 | Vehicle photographs | [v-photos](../v-photos/) | Inspect the physical build |

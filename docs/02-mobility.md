@@ -483,6 +483,14 @@ $$
 [Full `validation/odometry.csv` dataset](validation/odometry.csv). Real calibration uses the [odometry measurement template](validation/measurement_templates/odometry.csv) with encoder counts, ruler distance, repeat trials, wheel surface and battery voltage. The declared 48 quadrature edges must not be used as an actual counted-tick assumption because the interrupt routine counts A-channel rising edges.
 <!-- END CODE-DERIVED DATA VIEW -->
 
+### Evidence from the drivetrain tuning cycle
+
+During a team-reported short-distance bench check on **8 November 2026**, a **200 mm command resulted in approximately 185 mm of actual travel**. That observation corresponds to about **7.5% undershoot** relative to the command. The ratio alone does not identify whether the cause was the encoder tick convention, wheel compression, slip, gearing or the distance conversion constant.
+
+This is a **single team-reported historical observation**, not a repeated accuracy result for the current assembled V4.1 or proof of a final calibration. We preserve it because it explains the development decision: calibrate the effective wheel circumference and interrupt edge definition on hardware rather than selecting a conversion value solely from the motor datasheet. The exact measurement, firmware revision and follow-up distance trials are required to establish the corrected parameter. See the [software encoder logic](04-software.md#33-wheel-encoder-and-controlled-travel) and the [physical records](validation/physical/).
+
+The same distinction applies to theoretical torque multiplication: the 30:1 to 50:1 change increases ideal reduction by a factor of **50/30**, but the robot's measured acceleration and turn reliability depend on load, efficiency, battery condition and friction. We do not label calculated gains as actual field improvements.
+
 ## 10. Mechanical risks and mitigations
 
 | Failure mode | Effect on driving | Mitigation or diagnostic |
