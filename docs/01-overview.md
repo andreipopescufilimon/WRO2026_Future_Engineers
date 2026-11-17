@@ -7,7 +7,7 @@ This engineering journal presents how we designed, built and tested our autonomo
 ---
 
 
-> **Evidence integrity, 17 November 2026:** This archive includes a complete design record and test procedures, but **no verified V4.1 physical performance dataset or confirmed compiler success log**. The primary `src/camera.py` is area-based; two earlier [camera-source candidates](../src/camera_candidates/) have been recovered. The v11 candidate passes 23/23 pure-function tests but is **not hardware verified or deployed in the primary source**. See the [evidence audit](validation/EVIDENCE_AUDIT.md), [implementation gaps](validation/IMPLEMENTATION_GAPS.md), and [judging evidence map](07-judging-evidence.md). Simulated tests are clearly separated and must not be submitted as physical results.
+> **Evidence integrity, 17 November 2026:** This archive includes a complete design record and test procedures, but **no verified V4.1 physical performance dataset or retained compiler log**. The team confirms that its Arduino controller sketch **compiles successfully on its laptop**; this is a team-reported result, not a failed compile or independently captured log. The primary `src/camera.py` is area-based; two earlier [camera-source candidates](../src/camera_candidates/) have been recovered. The v11 candidate passes 23/23 pure-function tests but is **not hardware verified or deployed in the primary source**. See the [evidence audit](validation/EVIDENCE_AUDIT.md), [implementation gaps](validation/IMPLEMENTATION_GAPS.md), and [judging evidence map](07-judging-evidence.md). Simulated tests are clearly separated and must not be submitted as physical results.
 
 ## Documentation guide
 
@@ -124,7 +124,7 @@ WRO2026_Future_Engineers/
 | Mechanical CAD | [3D-models](../3D-models/) | Examine or manufacture the steering, wheel and mounting components |
 | Mechanical drawings | [docs/technical-drawings](technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
-| Robot firmware | [src/HLR_FE_Separated](../src/HLR_FE_Separated/) | Study the controller and navigation implementation |
+| Robot firmware | [src/HLR_FE_World_Final](../src/HLR_FE_World_Final/) | Study the controller and navigation implementation |
 | Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
 | Component tests | [src/tests](../src/tests/) | Verify individual subsystems |
 | Vehicle photographs | [v-photos](../v-photos/) | Inspect the physical build |
