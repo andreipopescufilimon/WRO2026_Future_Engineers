@@ -1,6 +1,6 @@
 # Compilation status reported by HyperLine Robotics
 
-**Status as of 17 November 2026:** The team reports that the current `src/HLR_FE_World_Final/` **compiles successfully on its development laptop**. This is a firsthand, team-reported outcome. It supersedes any implication that the source was known to fail compilation.
+**Status as of 17 November 2026:** Reporting that the current `src/HLR_FE_World_Final/` **compiles successfully on its development laptop**. This is a firsthand, team-reported outcome. It supersedes any implication that the source was known to fail compilation.
 
 ## What the uploaded archive establishes
 
