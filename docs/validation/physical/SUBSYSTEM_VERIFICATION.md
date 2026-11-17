@@ -1,6 +1,6 @@
 # V4.1 subsystem verification guide
 
-This checklist is tied to the **current modular V4.1 controller** under [`src/HLR_FE_Separated/`](../../../src/HLR_FE_Separated/). It records practical tests of the assembled vehicle, rather than results inferred from the source code. The source-level values are listed separately in [`source_configuration.csv`](source_configuration.csv).
+This checklist is tied to the **current modular V4.1 controller** under [`src/HLR_FE_World_Final/`](../../../src/HLR_FE_World_Final/). It records practical tests of the assembled vehicle, rather than results inferred from the source code. The source-level values are listed separately in [`source_configuration.csv`](source_configuration.csv).
 
 ## Recording rules
 

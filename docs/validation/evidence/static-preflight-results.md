@@ -1,10 +1,12 @@
+> Source listing refreshed from public GitHub on 17 November 2026. Earlier executed preflight rows belong to their original source snapshot and do not certify the new firmware build.
+
 # V4.1 source and documentation preflight
 
 This report records **static source and file checks only**. It does not prove Arduino compilation, camera execution, physical sensor precision or autonomous driving.
 
 | Check | Result | Scope |
 |---|---|---|
-| Seven V4.1 firmware tabs present | PASS | HLR_FE_Separated.ino, Open.ino, Final.ino, functions.ino, motors.ino, gyro.ino, tof.ino |
+| Eight World Final firmware tabs listed | PASS | HLR_FE_World_Final.ino, Open.ino, Final.ino, Telemetry.ino, functions.ino, motors.ino, gyro.ino, tof.ino |
 | D11/D12 mode-selection definitions present | PASS | Static declarations, not physical switch verification |
 | Four ToF I2C address definitions present | PASS | Seven-bit addresses, static source check |
 | Four-by-four, 30 Hz ToF configuration present | PASS | Device operation and achieved frame rate not tested |
