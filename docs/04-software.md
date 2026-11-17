@@ -719,199 +719,64 @@ move_straight_until_distance('L', 30, 175, false, true);
 
 The calls use the VL53L5CX-backed distance routines, rather than the old PWM range sensor interface.
 
-## 7. OpenMV RT1062 camera and new sign-height logic
 
-The new attached Python code runs on the **OpenMV RT1062**, with the Nano receiving its output through newline-delimited UART. In V4.1, the camera is primarily responsible for **red/green obstacle interpretation**, while floor-marker and ToF-based wall decisions are handled by the Arduino. The camera no longer emits the older README's `BLACK`, `BLUE`, `ORANGE` or numeric `1`/`2` course-direction messages.
+## 7. Camera source audit: what the uploaded OpenMV RT1062 program actually implements
 
-### 7.1 Capture configuration and region of interest
+**Source of truth:** [`src/camera.py`](../src/camera.py). This chapter was checked against the program present in this repository snapshot. Unlike the earlier draft of this journal, we do not attribute features from an unprovided camera revision to this file. The accompanying [source-to-claim audit](validation/EVIDENCE_AUDIT.md) and [implementation gaps](validation/IMPLEMENTATION_GAPS.md) disclose the difference.
 
-| Setting | Value in attached camera script |
-|---|---|
-| Camera processor | OpenMV RT1062 |
-| Image format | RGB565 |
-| Image size | QVGA, 320 × 240 pixels |
-| Vertical flip and horizontal mirror | Both enabled |
-| Sensor warm-up | 3000 ms |
-| Auto white balance | Disabled, gains `(60.2, 61.2, 67.7)` |
-| Auto exposure | Disabled, `exposure_us = 40000` |
-| Auto gain | Disabled, `gain_db = 27` |
-| UART | `UART(1, 19200)` |
-| Blob search ROI | `(0, 45% of image height, full width, 30% height)` |
-| Minimum candidate area / pixels | 500 |
-| Minimum candidate width / height | 6 px / 6 px |
-| Minimum blob density | 0.1 |
+### 7.1 Current camera settings and runtime
 
-Fixed exposure and gains keep segmentation behavior more consistent than continuously changing auto parameters. They are **camera calibration settings**, not proof of performance under every venue's illumination. The active LAB threshold tuples are:
-
-```python
-red_threshold = [(0, 61, 16, 52, -2, 50)]
-green_threshold = [(0, 65, -45, -9, -2, 35)]
-```
-
-The ROI restricts the primary detection search to the region in which nearby traffic signs are expected. The camera filters candidate blobs by area, width, height and density; it also rejects a lower-ROI blob with an extreme height/width ratio above 3.2 to reduce thin reflection artifacts.
-
-**Actual OpenMV image setup and detection region:**
-
-```python
-sensor.reset()
-sensor.set_pixformat(sensor.RGB565)
-sensor.set_framesize(sensor.QVGA)
-
-sensor.set_vflip(True)
-sensor.set_hmirror(True)
-
-sensor.skip_frames(time=3000)
-
-rgb_gain_db = sensor.get_rgb_gain_db()
-print(rgb_gain_db)
-
-sensor.set_auto_whitebal(False, rgb_gain_db=(60.2, 61.2, 67.7))
-sensor.set_auto_exposure(False, exposure_us=40000)
-sensor.set_auto_gain(False, gain_db=27)
-
-img_h = sensor.height()
-img_w = sensor.width()
-cubes_roi = (0, int(img_h * 0.45), img_w, int(img_h * 0.30))
-```
-
-The excerpt reproduces the active settings from the attached RT1062 script.
-
-### 7.2 Choosing the object and following it
-
-The camera finds red and green blobs separately. It normally chooses the larger valid candidate as the primary target, using a **15% area difference** as the preference margin. If red and green blobs have similar areas, it chooses the lower one in the image, which is often closer in the camera perspective.
-
-The horizontal error is normalized relative to the image center:
-
-$$
- e_x=\frac{x_{\mathrm{cube}}-W/2}{W/2}.
-$$
-
-The camera computes a PD steering value using `kp_cube = 0.80`, `kd_cube = 3.20`, with its frame-to-frame error difference clamped to $\pm0.35$. This value is transmitted as `S{:+.3f}` followed by a newline, for example `S-0.120\n`. The Arduino parses the numeric portion into the normalized steering request for `FOLLOW_CUBE`.
-
-Unlike the historical README camera implementation, the new script **does not decide proximity by blob area**. It detects a close obstacle using the **bottom Y coordinate** of the detected ROI blob.
-
-**Cube-follow PD calculation from the camera loop:**
-
-```python
-error = (cube.cx() - target_x) / float(target_x)
-
-derivative = error - pid_last_error
-derivative = clamp(derivative, -max_cube_derivative, max_cube_derivative)
-
-pid_output = kp_cube * error + kd_cube * derivative
-pid_last_error = error
-```
-
-The resulting normalized command is sent over UART while the sign is still outside the close threshold.
-
-### 7.3 Close detection based on cube-bottom position
-
-The source sets:
-
-```python
-CLOSE_BOTTOM_Y = 148
-CLOSE_CONFIRM_FRAMES = 1
-```
-
-The condition is `cube.y() + cube.h() >= 148` at QVGA resolution. Before this threshold, the camera sends `S...` follow messages. Once it reaches the line, the camera sends an effective `RED` or `GREEN` avoidance command. A single frame is currently sufficient (`CLOSE_CONFIRM_FRAMES = 1`).
-
-This is a **perspective-based image rule**, not a calibrated camera-to-target distance in millimeters. It avoids the problem in which a tall obstacle has a large visible area while still being relatively far from the robot.
-
-**Exact bottom-coordinate detection function from the RT1062 code:**
-
-```python
-def get_cube_distance_data(cube):
-    cube_bottom = cube.y() + cube.h()
-    distance_to_bottom = img_h - cube_bottom
-
-    # Only close condition.
-    # No area, no width, no score.
-    raw_close = cube_bottom >= CLOSE_BOTTOM_Y
-
-    return cube_bottom, distance_to_bottom, raw_close
-```
-
-A threshold reached by the lower edge triggers the passing command; a larger blob area by itself does not.
-
-### 7.4 Height-sensitive Surprise Rule: 50, 100 and 150 mm signs
-
-The attached script also includes `SURPRISE_RULE = True`. The signs are described as **50 mm wide**, with nominal heights of **50, 100 and 150 mm**. The program uses the measured pixel height relative to the lower-ROI blob width to estimate the class, rather than using apparent area alone. This matters because a small nearby object can look larger in the frame than a tall distant object.
-
-| Estimated sign height | Aspect-ratio decision in source | Passing-color behavior |
+| Item | Actual bundled configuration | Engineering consequence |
 |---|---|---|
-| 50 mm | Full-height ratio roughly 0.40 to 1.30 | Invert visible red/green |
-| 100 mm | Full-height ratio 1.43 to 2.02 | Keep visible color |
-| 150 mm | Full-height ratio 2.12 to 4.50 | Invert visible red/green |
-| Ambiguous or unmeasurable | Gap between classes, clipped image or insufficient coverage | Default to visible color under `UNKNOWN_CUBE_ACTION = "VISIBLE"` |
+| Camera | OpenMV RT1062 using `sensor` API | This is the camera targeted by the included source; confirm the actual installed camera before flashing |
+| Frame | RGB565 QVGA, 320×240 | Image-coordinate thresholds depend on this resolution |
+| Orientation | `vflip(True)`, `hmirror(True)` | Ensures the expected camera coordinate convention |
+| Exposure | Auto disabled, **16,000 microseconds** | Fixed exposure supports repeatable segmentation but needs venue calibration |
+| Auto gain / AWB | Both disabled | White-balance / threshold behavior still depends on illumination |
+| Colour thresholds | Multiple LAB red/green tuples, plus line/wall thresholds | See the literal tuples in `src/camera.py`; the thresholds are not universal calibration evidence |
+| Obstacle ROI | Bottom 60% of image, starting at 40% height | Large signs can enter ROI at different distances |
+| Follow gain | `kp_cube=0.4`, `kd_cube=2.4` | Frame-to-frame PD control on normalized horizontal image error |
+| Near-object rule | `follow_threshold = 5000` blob-area units | **Area based**, not physical range or bottom-Y gating |
+| UART | `UART(1, 19200, timeout_char=200)` | 19,200 baud newline-delimited output |
 
-The threshold intervals deliberately leave small gaps; an ambiguous image is not forced into a class. The **actual lower ROI width** is retained, but the algorithm looks for colored pixels along a **narrow full-height central strip**, about 36% of that width. It begins from a piece of the same color near the detected object's base and joins vertically adjacent fragments. This reduces the risk of mistaking a nearby colored arm or background region for the traffic sign's full height.
+This configuration is an **implementation description**, not a measured detection-latency, accuracy or camera-frame-rate result.
 
-```python
-# Attached camera code: meaning of the classification decision
-if height == 50 or height == 150:
-    passing_color = "G" if visible_color == "R" else "R"
-elif height == 100:
-    passing_color = visible_color
-else:
-    passing_color = visible_color  # UNKNOWN_CUBE_ACTION = "VISIBLE"
-```
+### 7.2 Existing detection and control loop
 
-This is a compact description of `get_passing_color()`; the published source also supports the alternative `UNKNOWN` response if the fallback setting is changed. **The UART still carries RED/GREEN decisions**, so the Arduino avoidance routine does not need separate commands for all three physical heights.
+The loop captures an image, segments red and green blobs in the cube ROI, and chooses the largest valid candidate by reported area. It also detects blue and orange line markers and black walls in separate ROIs. The selected obstacle's normalized image error is
 
-**Exact height-to-passing-color mapping from the attached script:**
+\[
+e_x=\frac{x_{\mathrm{blob}}-W/2}{W/2},\qquad
+u=0.4e_x+2.4(e_x-e_{x,\mathrm{previous}}).
+\]
 
-```python
-def get_passing_color(color_char, track):
-    if not SURPRISE_RULE:
-        return color_char
+If the detected blob area is less than **5000**, the camera transmits `S+0.123` or `S-0.123` followed by `\n` (the value is computed per frame). At or above 5000 it sends `RED\n` or `GREEN\n`, based on the detected colour. It also broadcasts a numeric direction message (`0`, `1`, or `2` plus newline) every frame after attempting blue/orange marker detection. This behavior follows the bundled source, and it is **not** the bottom-coordinate close rule described in the earlier draft.
 
-    height = get_cube_height(track)
-    if height == 50 or height == 150:
-        return "G" if color_char == "R" else "R"
-    if height == 100:
-        return color_char
-
-    return "?" if UNKNOWN_CUBE_ACTION == "UNKNOWN" else color_char
-```
-
-The camera sends the chosen action using the existing `RED` and `GREEN` UART messages.
-
-### 7.5 Keeping a sign's initial identity during approach
-
-A close sign may fill most of the frame or lose its top edge. Measuring the visible outline again in that condition can make a 150 mm sign look like a 100 or 50 mm one. To prevent that misidentification, the new code tracks individual same-color detections using their image center, bottom and width, with a track held for up to **six missed frames**.
-
-The script takes action on the **first reliable height candidate** and uses a second consistent measurement to confirm the lock (`HEIGHT_CONFIRM_FRAMES = 2`). A locked height remains stable during approach; before the close trigger, a change is accepted only after **two clean, complete, consistent contradictory measurements**. Once a tracked object's bottom reaches `CLOSE_BOTTOM_Y`, the established height is frozen for that close decision.
-
-There are additional guards for cropped tops, image edges, very large near-field widths (greater than 52% of frame width), insufficient strip coverage and unstable height ratios. A top-cropped image is not treated as proof of a shorter sign. These rules reduce ambiguity, but they do not guarantee perfect classification when a sign is first seen only at very close range.
-
-**Height-lock behavior inside `update_cube_height()` in the attached script:**
-
-```python
-# Once the sign approaches the close line, freeze the final height.
-cube_bottom = cube.y() + cube.h()
-
-if track["height"] is not None and cube_bottom >= CLOSE_BOTTOM_Y:
-    track["reason"] = "LOCKED CLOSE"
-    track["full_rect"] = None
-    return
-```
-
-This excerpt is from inside the tracking function. It shows why a previously locked sign does not get reclassified once the camera has reached its close-decision threshold.
-
-### 7.6 UART protocol between camera and robot
-
-| Camera transmission | Meaning | Arduino response in Final mode |
+| Output message | Current meaning | Where it goes |
 |---|---|---|
-| `S+0.120\n` or `S-0.120\n` | Target visible, follow it | Update `follow_cube_angle`, enter `FOLLOW_CUBE` |
-| `RED\n` | Effective passing color is red | Set avoidance direction left, enter `AVOID_CUBE` |
-| `GREEN\n` | Effective passing color is green | Set avoidance direction right, enter `AVOID_CUBE` |
-| `UNKNOWN\n` | Only if the camera fallback option is changed | Not a recognized avoidance command in the current Final parser |
-| No message for more than 350 ms while following | Detection absent or camera message interrupted | Return from `FOLLOW_CUBE` to `PID` |
+| `S{:+.3f}\n` | Vision target follow request | Nano ESP32 serial command handler |
+| `RED\n` / `GREEN\n` | Area threshold passed for a visible sign | Nano ESP32 avoidance command handler |
+| `0\n` / `1\n` / `2\n` | Camera's detected line direction state | Broadcast each camera iteration; relevant handler must be tested against both round modes |
 
-The camera sends one short message per selected-frame decision. The Arduino reads characters from `Serial0` until `\n`, uppercases the command and passes it to `final_execute_command()`. The numeric steering override is applied in the Final handler, and `RED/GREEN` map to an avoidance side.
+The source has no image-to-millimeter conversion. `follow_threshold` is not a measured distance.
 
-<p align="center"><img src="docs-media/v41-openmv-RT1062-camera-view.png" width="450" alt="Real OpenMV RT1062 camera diagnostic frame with detected red and green targets"></p>
-<p align="center"><sub>Figure 4.3. Camera diagnostic reference from the actual RT1062 interface. The script included with this chapter adds height classification and debug overlays; the existing screenshot is a visual example, not a measured classification accuracy report.</sub></p>
+### 7.3 Surprise Rule readiness and unresolved software mismatch
+
+The **2026 sign-height variant** requires distinguishing 50, 100 and 150 mm tall signs. The previously drafted algorithm described ratio thresholds, height tracking, top clipping and an inverted red/green action for 50 and 150 mm signs. **Those routines are not in the primary `src/camera.py`**. A [recovered v11 alternative](../src/camera_candidates/rt1062_surprise_rule_v11.py) implements them and passes [23/23 pure-function tests](validation/v11_camera_candidate_unit_tests.csv), but it has not been verified as flashed firmware. Specifically `SURPRISE_RULE`, `classify_cube_height()`, `get_cube_height()`, `get_passing_color()`, and `CLOSE_BOTTOM_Y` are absent. Therefore, this specific uploaded camera revision **cannot be claimed to implement or physically validate height-dependent passing**.
+
+The deterministic ratio tables in [`docs/validation/v41_camera_height_logic_cases.csv`](validation/v41_camera_height_logic_cases.csv) are **unintegrated conceptual examples**, not results of running the uploaded camera code. The historical unit-test CSV is archived as superseded evidence. Before presenting Surprise Rule tests as implemented results, a different complete and tested camera revision must be added with its source hash, compatible UART protocol, calibration frames and physical trials. This is a functional gap, not a documentation formatting gap.
+
+### 7.4 How to capture real vision evidence
+
+1. Record OpenMV firmware version, `camera.py` source SHA-256, image orientation, exposure, gain and LAB threshold values.
+2. Film 50, 100 and 150 mm reference signs, in both colours, at multiple measured distances and in at least two lighting conditions. Label whether each sign is fully inside the frame or top-clipped.
+3. Record the exact UART line received by the Nano, any missed detections, elapsed processing time and the decision actually executed.
+4. Enter each actual result into [`camera_trials.csv`](validation/physical/camera_trials.csv) and [`sign_height_trials.csv`](validation/physical/sign_height_trials.csv). Report correct, wrong-colour and missed outcomes separately.
+5. Repeat using the **same committed release that produced the recorded driving demonstration**. A screenshot of one successful frame is not an accuracy study.
+
+![Real camera diagnostic view](docs-media/v41-openmv-RT1062-camera-view.png)
+
+*Camera diagnostic frame from the repository; evidence of one displayed observation, not a sign-height validation dataset.*
 
 ## 8. Failure cases, recovery and software limits
 
@@ -926,8 +791,8 @@ Different sensor faults have different effects. The table below distinguishes an
 | Repeated observation of the same Open wall | 600 mm trigger / 800 mm clear-rearm hysteresis | Avoids repeatedly counting one wall while it remains close |
 | Direction not yet determined | TCS first-marker polling; Open stops if a valid front-close condition is seen | Prevents using an arbitrary turning sign without a selected course |
 | Cube momentarily disappears | `FOLLOW_CUBE_DEAD_TIME = 350` ms | Falls back to heading control; too many missed camera messages can interrupt following |
-| Very close / top-cropped cube | Height track is retained where available | Prevents one cropped frame from overwriting a known class; unknown cases still use default visible-color action |
-| Color or lighting changes | Fixed exposure/gains, LAB thresholds, ROI and blob filters | Must be checked against the competition environment; no universal lighting guarantee |
+| Very close / top-cropped cube | No height-tracking or top-clip correction in the bundled camera script | Sign size may be ambiguous; the planned Surprise Rule must not be claimed as implemented |
+| Color or lighting changes | Fixed 16,000 µs exposure, disabled automatic gain and AWB, LAB thresholds, ROI and blob filters | Must be checked against the competition environment; no universal lighting guarantee |
 | Gyro update stalled longer than 50 ms | Reject stale interval during integration | Avoids integrating one old rate over a long blocking period, but cannot reconstruct missed rotation |
 | Long blocked movement or failed range target | Some motion helpers contain no explicit timeout | A bad range or encoder input can prevent a routine from completing; verify these before full-speed runs |
 | Legacy camera messages in Open mode | Open still contains color-command handling | Camera `RED/GREEN` can enter avoidance even though normal Open corners come from ToF |
@@ -953,7 +818,7 @@ The software depends on the mechanical setup described in [Chapter 02](02-mobili
 | Final parking gains | `kp=0.087`, `kd=0.130` | Precision parking control |
 | Camera format | QVGA RGB565, both flips on | ROI geometry and color processing |
 | Camera UART | 19,200 baud, `UART(1)` | Matches Nano `Serial0` |
-| Camera close threshold | Image bottom Y at least 148 | Obstacle proximity event |
-| Camera height thresholds | 50 / 100 / 150 mm classes with ambiguity gaps | Surprise-rule passing-color mapping |
+| Camera close threshold | Blob area `>= 5000` in `src/camera.py` | Vision proximity event; **not** a calibrated distance |
+| Camera sign-height rule | **Not implemented** in the bundled `src/camera.py` | The proposed 50/100/150 mm mapping is documented but must be integrated and verified before claiming it |
 
 A practical integrated check begins with motor and steering direction while wheels are lifted, followed by gyro startup and known-angle turns, each ToF address and its intended field of view, floor-marker detection, camera UART reception, short encoder movements and finally complete Open/Obstacle runs on a matching field. The individual test sketches and build instructions are linked in [Chapter 06](06-reproducibility.md). Real measurements and outcome records, where available, are separate from the source configurations above.
