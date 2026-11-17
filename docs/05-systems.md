@@ -23,9 +23,9 @@ The assembled electronics and vehicle can be inspected in the [robot photographs
 
 | System objective | Why it is difficult | V4.1 engineering response | Relevant evidence |
 |---|---|---|---|
-| Navigate three laps in either direction | Wall positions, approach geometry and accumulated heading error change the corner conditions | Front multi-zone ranging, direction recognition, gyro-referenced steering and turn counting | [Open-mode firmware](../src/HLR_FE_Separated/Open.ino), [ToF code](../src/HLR_FE_Separated/tof.ino) |
-| Respect red and green obstacles | Image recognition, vehicle clearance and recovery must agree | RT1062 color segmentation, UART commands, steering states and distance-aware movement | [Camera source](../src/camera.py), [Final-mode firmware](../src/HLR_FE_Separated/Final.ino) |
-| Start, stop and park predictably | The motor must provide low-speed control, and short movements accumulate odometry and yaw error | 50:1 geared rear drive, encoder, mechanical differential, low-speed states and ToF feedback | [Mobility](02-mobility.md), [motor routines](../src/HLR_FE_Separated/motors.ino) |
+| Navigate three laps in either direction | Wall positions, approach geometry and accumulated heading error change the corner conditions | Front multi-zone ranging, direction recognition, gyro-referenced steering and turn counting | [Open-mode firmware](../src/HLR_FE_World_Final/Open.ino), [ToF code](../src/HLR_FE_World_Final/tof.ino) |
+| Respect red and green obstacles | Image recognition, vehicle clearance and recovery must agree | RT1062 color segmentation, UART commands, steering states and distance-aware movement | [Camera source](../src/camera.py), [Final-mode firmware](../src/HLR_FE_World_Final/Final.ino) |
+| Start, stop and park predictably | The motor must provide low-speed control, and short movements accumulate odometry and yaw error | 50:1 geared rear drive, encoder, mechanical differential, low-speed states and ToF feedback | [Mobility](02-mobility.md), [motor routines](../src/HLR_FE_World_Final/motors.ino) |
 | Operate under constrained electrical power | Motor and steering transients share a small 2S battery with sensing electronics | Direct motor supply, regulated logic branch, distributed grounds and dedicated driver | [Power distribution](03-power-sensors.md#3-power-architecture-and-calculations) |
 | Fit a compact competition vehicle | Steering, tires, camera and range sensors need clear motion and viewing paths | Structural PCB, custom sensor boards, localized mounts and parallel front steering | [CAD](../3D-models/), [sensor placement](docs-media/v41-sensor-placement-reference.png) |
 
@@ -153,7 +153,7 @@ The key design decision is *not* simply to install a higher-resolution sensor. I
 | Either valid zone below 800 mm during normal approach | Reduce normal PWM to 40% | Creates more response margin as the wall approaches |
 | Both selected zones at least 800 mm | Rearm the event | Prevents a continuing wall from being counted repeatedly |
 
-This table is derived from [`tof.ino`](../src/HLR_FE_Separated/tof.ino). It documents the *implemented control behavior*; physical false-trigger rates and range accuracy depend on the installed optical orientation, reflectivity and actual frame delivery.
+This table is derived from [`tof.ino`](../src/HLR_FE_World_Final/tof.ino). It documents the *implemented control behavior*; physical false-trigger rates and range accuracy depend on the installed optical orientation, reflectivity and actual frame delivery.
 
 ### D06. Gyroscope-referenced turning instead of fixed turn timing
 
@@ -177,7 +177,7 @@ An observed camera-development problem was a greenish image and unstable color a
 
 The two challenges have different information priorities. Open-mode cornering relies on front ToF events after direction detection; Obstacle mode additionally uses colored pillars, floor markers, approach/avoid/recovery states and parking. Sharing every decision branch would make tuning one challenge more likely to disturb the other.
 
-The current V4.1 source therefore separates [`Open.ino`](../src/HLR_FE_Separated/Open.ino) and [`Final.ino`](../src/HLR_FE_Separated/Final.ino), while retaining shared low-level motor, IMU, ToF and floor-color functions. At startup, **D11 HIGH** selects Final and **D12 HIGH** selects Open. When both selections are equal, the startup code remains in a non-driving indication loop rather than choosing a mode arbitrarily.
+The current V4.1 source therefore separates [`Open.ino`](../src/HLR_FE_World_Final/Open.ino) and [`Final.ino`](../src/HLR_FE_World_Final/Final.ino), while retaining shared low-level motor, IMU, ToF and floor-color functions. At startup, **D11 HIGH** selects Final and **D12 HIGH** selects Open. When both selections are equal, the startup code remains in a non-driving indication loop rather than choosing a mode arbitrarily.
 
 The compromise is that common functions and shared parameters still affect both challenges. Separating source files is an architectural improvement in maintainability, not by itself proof of a higher lap-completion rate.
 
@@ -208,7 +208,7 @@ $$
 d_{\mathrm{estimated}}=N_{\mathrm{ticks}}\,k_{\mathrm{mm/tick}}.
 $$
 
-Changing the numerical coefficient without confirming the actual tick source can conceal the problem. Chapter 02 explains the drivetrain and geometry; the [motor firmware](../src/HLR_FE_Separated/motors.ino) shows how ticks are used for short moves.
+Changing the numerical coefficient without confirming the actual tick source can conceal the problem. Chapter 02 explains the drivetrain and geometry; the [motor firmware](../src/HLR_FE_World_Final/motors.ino) shows how ticks are used for short moves.
 
 ### 4.1 An iteration can improve one subsystem and worsen another
 
@@ -295,7 +295,7 @@ We separate **observed physical behavior**, **published implementation** and **e
 | [Assembly video](https://youtu.be/HSzWATB6nWQ) and [robot photos](../v-photos/) | Hardware was physically assembled, including drivetrain and electronics | Does not measure current, acceleration or reliability |
 | [Main PCB and sensor manufacturing files](../electrical-schematics/) | Design and reproducibility of fabricated boards | Physical test data depends on the assembled revision |
 | [V4.1 motor and steering CAD](../3D-models/) | Geometry, mounting concept and mechanical relationships | Ideal geometry needs physical calibration for tire contact and steering angles |
-| [Current V4.1 firmware](../src/HLR_FE_Separated/) | D11/D12 mode selection, Open/Final modules, ToF addresses, guards and movement routines | Demonstrates implementation, not the exact controller binary used in the earlier video |
+| [Current V4.1 firmware](../src/HLR_FE_World_Final/) | D11/D12 mode selection, Open/Final modules, ToF addresses, guards and movement routines | Demonstrates implementation, not the exact controller binary used in the earlier video |
 | [OpenMV RT1062 frame](docs-media/v41-openmv-RT1062-camera-view.png) | One real camera frame with color-detection output | Does not establish detection accuracy across repeated lighting conditions |
 | **200 mm commanded, about 185 mm observed** in a team-reported calibration check | A real-world odometry discrepancy that informed tuning | One development observation, not a full repeated calibration curve |
 | **30:1 to 50:1 calculation** | Theoretical gear-ratio trade-off | Not a measured speed or torque result |
@@ -324,7 +324,7 @@ The engineering process spans multiple revisions. V4 was the national competitio
 |---|---|---|
 | **V4 national configuration** | [Historical V4 checkpoint](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/7e1b0b5b707511563fd0250af08e68c7288d2966) | Earlier mechanical and electrical implementation used as the V4 comparison |
 | **Firmware associated with filmed driving** | [Commit `de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | Team-identified revision used for the recorded physical driving; main sketch [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) |
-| **Later modular V4.1 implementation** | [Commit `045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), [source directory](../src/HLR_FE_Separated/) | Separate Open and Final modes, multi-zone ToF processing and current controller architecture |
+| **Later modular V4.1 implementation** | [Commit `045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), [source directory](../src/HLR_FE_World_Final/) | Separate Open and Final modes, multi-zone ToF processing and current controller architecture |
 
 The filming snapshot and later modular sketch are different implementations. We use the filmed revision to identify the source behind the real-world video, and the later directory to document the present architecture. This keeps the evidence traceable without asserting that a later software change had already been filmed.
 
