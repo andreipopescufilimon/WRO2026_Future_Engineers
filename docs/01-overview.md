@@ -6,6 +6,9 @@ This engineering journal presents how we designed, built and tested our autonomo
 
 ---
 
+
+> **Evidence integrity, 17 November 2026:** This archive includes a complete design record and test procedures, but **no verified V4.1 physical performance dataset or confirmed compiler success log**. The primary `src/camera.py` is area-based; two earlier [camera-source candidates](../src/camera_candidates/) have been recovered. The v11 candidate passes 23/23 pure-function tests but is **not hardware verified or deployed in the primary source**. See the [evidence audit](validation/EVIDENCE_AUDIT.md), [implementation gaps](validation/IMPLEMENTATION_GAPS.md), and [judging evidence map](07-judging-evidence.md). Simulated tests are clearly separated and must not be submitted as physical results.
+
 ## Documentation guide
 
 | WRO documentation area | Chapter | What to find there |
@@ -37,7 +40,7 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 
 | System | V4: national version | V4.1: current version | Engineering motivation / trade-off |
 |---|---|---|---|
-| Distance sensing | Pololu PWM-signal distance sensor | Custom TOF sensors capable of reading distances up to 4m at a speed of 60Hz | Faster, farther and more reliable distance reading, as well as being able to read a 8 by 8 matrix of distances that can act as a LIDAR |
+| Distance sensing | Pololu PWM-signal distance sensor | Four VL53L5CX multi-zone ToF sensors, configured in the included firmware for 4×4 zones at 30 Hz (nominal) | Multi-zone range data supports spatial wall detection; 8×8 is a sensor capability, not the 4×4 mode used by this firmware. Actual range, accuracy and delivered frame rate require measurement |
 | Drive motor | Pololu 30:1 HPCB motor | Upgraded to **Pololu 50:1 HPCB** motor, as it gives almost twice as much torque | Higher torque motor, it improves acceleration and low-speed maneuvers |
 | Wheel rims | Light 3D printed rims | Changed to heavier custom made 45# Steel rims | Revised wheel rims changes mass distribution on the silicone tire, resulting into higher wheel grip, this makes turning and braking more efficient |
 | General layout | PCB-based chassis, front steering, rear differential | Same overall vehicle geometry, with revised components | Preserves the same robot layout as it showed to be very reliable, only upgrading some subsystems to remove found issues during testing |
@@ -121,7 +124,7 @@ WRO2026_Future_Engineers/
 | Mechanical CAD | [3D-models](../3D-models/) | Examine or manufacture the steering, wheel and mounting components |
 | Mechanical drawings | [docs/technical-drawings](technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
-| Robot firmware | [src/HLR_FE](../src/HLR_FE/) | Study the controller and navigation implementation |
+| Robot firmware | [src/HLR_FE_Separated](../src/HLR_FE_Separated/) | Study the controller and navigation implementation |
 | Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
 | Component tests | [src/tests](../src/tests/) | Verify individual subsystems |
 | Vehicle photographs | [v-photos](../v-photos/) | Inspect the physical build |
