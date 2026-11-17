@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
-"""Audit WRO V4.1 release file presence and traceability. Does not claim real-world success."""
+"""Show only evidence-backed release readiness, without inventing test outcomes."""
 from pathlib import Path
-import csv
+import csv,re
 ROOT=Path(__file__).resolve().parents[1]
-def records(name):
- p=ROOT/'docs/validation/physical'/name
- if not p.is_file():return []
- with p.open(encoding='utf-8-sig',newline='') as f:return list(csv.DictReader(f))
-checks=records('functional_checks.csv');build=records('build_verification.csv');runs=records('challenge_runs.csv')
-camera=(ROOT/'src/camera.py').read_text(encoding='utf-8')
-code=all(x in camera for x in ('SURPRISE_RULE','HEIGHT_CONFIRM_FRAMES','get_cube_height','get_passing_color','CLOSE_BOTTOM_Y'))
-valid_checks=[r for r in checks if r.get('date_utc') and len(r.get('firmware_commit',''))==40 and r.get('observed') and r.get('status','').upper()=='PASS']
-valid_build=[r for r in build if r.get('date_utc') and len(r.get('firmware_commit',''))==40 and r.get('compile_outcome','').upper() in ('PASS','SUCCESS','0') and r.get('log_path')]
-valid_runs=[r for r in runs if r.get('date_utc') and len(r.get('firmware_commit',''))==40 and r.get('outcome','').upper() in ('COMPLETED','PARTIAL','FAILED') and r.get('video_url')]
-print('Source camera implementation present:',code)
-print('GitHub workflow present:',(ROOT/'.github/workflows/verify-v41.yml').is_file())
-print('Dated completed subsystem checks:',len(valid_checks),'of',len(checks))
-print('Documented real successful builds:',len(valid_build))
-print('Documented physical firmware-linked runs:',len(valid_runs))
-print('Recorded PASS fields are evidence labels only when observation, date and revision are present.')
+DIR=ROOT/'docs/validation/physical'
+def rows(name):
+ p=DIR/name
+ with p.open(newline='',encoding='utf-8-sig') as f:return list(csv.DictReader(f))
+sha=lambda s:bool(re.fullmatch('[0-9a-fA-F]{40}',s or ''))
+cam=(ROOT/'src/camera.py').read_text(encoding='utf-8')
+needed=['SURPRISE_RULE','def get_cube_height(','def get_passing_color(','CLOSE_BOTTOM_Y']
+print('Bundled camera uses area-based approach:', 'follow_threshold = 5000' in cam)
+print('Height-sensitive Surprise Rule exists in bundled camera:',all(x in cam for x in needed))
+print('Nano ESP32 compilation workflow exists:',(ROOT/'.github/workflows/verify-v41.yml').is_file())
+functional=rows('functional_checks.csv')
+passed=[r for r in functional if r.get('date_utc') and sha(r.get('firmware_commit')) and r.get('observed') and r.get('evidence_url') and r.get('status','').upper()=='PASS']
+print(f'Dated and evidenced physical subsystem passes: {len(passed)}/{len(functional)}')
+builds=[r for r in rows('build_verification.csv') if r.get('date_utc') and sha(r.get('firmware_commit')) and r.get('compile_outcome','').upper() in ('0','PASS','SUCCESS') and r.get('log_path') and (ROOT/r['log_path']).is_file()]
+print('Dated successful compiler outputs retained in archive:',len(builds))
+runs=[r for r in rows('challenge_runs.csv') if r.get('date_utc') and sha(r.get('firmware_commit')) and r.get('video_url','').startswith(('https://','http://')) and r.get('outcome','') not in ('','NOT_RECORDED')]
+print('V4.1 field runs tied to flashed source and video:',len(runs))
+print('Historical video and simulated data are separate from physical release validation.')

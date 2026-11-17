@@ -1,44 +1,77 @@
 #!/usr/bin/env python3
-"""Record actual manual subsystem observations; this script does not perform tests."""
-import argparse, csv, subprocess
+"""Capture an *actual* manual robot check and write BOTH physical ledgers consistently.
+
+This tool does not connect to the robot, and cannot turn a planned test into evidence.
+"""
+from __future__ import annotations
+import argparse
+import csv
+import re
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-FILE=Path(__file__).resolve().parents[1]/'docs/validation/physical/functional_checks.csv'
+ROOT=Path(__file__).resolve().parents[1]
+DIR=ROOT/'docs/validation/physical'
+FUNCTIONAL=DIR/'functional_checks.csv'
+SUBSYSTEM=DIR/'subsystem_test_record.csv'
+
+def read_csv(path):
+    with path.open(newline='',encoding='utf-8-sig') as f:
+        reader=csv.DictReader(f)
+        return list(reader.fieldnames),list(reader)
+
+def save_csv(path,columns,rows):
+    tmp=path.with_suffix(path.suffix+'.tmp')
+    with tmp.open('w',newline='',encoding='utf-8') as f:
+        w=csv.DictWriter(f,fieldnames=columns,lineterminator='\n')
+        w.writeheader();w.writerows(rows)
+    tmp.replace(path)
 
 def git_head():
-    try: return subprocess.check_output(['git','rev-parse','HEAD'],cwd=FILE.parents[3],text=True,stderr=subprocess.DEVNULL).strip()
-    except (OSError,subprocess.CalledProcessError): return ''
+    try:
+        return subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,encoding='utf-8',stderr=subprocess.DEVNULL).strip()
+    except (subprocess.CalledProcessError,OSError):return ''
 
-p=argparse.ArgumentParser(description='Record real V4.1 subsystem checks after observing your robot.')
-p.add_argument('--list',action='store_true')
-p.add_argument('--test',type=str)
+p=argparse.ArgumentParser(description='Record real observed robot test outcomes; never fabricate evidence')
+p.add_argument('--list',action='store_true',help='Display all planned checks and current status')
+p.add_argument('--test',help='Test ID, e.g. V41-TOF-FRONT')
 a=p.parse_args()
-if not FILE.exists(): raise SystemExit(f'Missing {FILE}')
-with FILE.open(newline='',encoding='utf-8-sig') as f:
-    r=csv.DictReader(f); cols=r.fieldnames; rows=list(r)
+fc,fr=read_csv(FUNCTIONAL)
+sc,sr=read_csv(SUBSYSTEM)
 if a.list:
-    for row in rows: print(f"{row['test_id']:20s} {row['subsystem']:29s} {row['status']}")
+    for row in fr:print(f"{row['test_id']:22} {row['status']:23} {row['subsystem']}")
     raise SystemExit(0)
-if not a.test: p.error('specify --list or --test <test ID>')
-match=[x for x in rows if x['test_id']==a.test]
-if not match: raise SystemExit('Unknown test ID. Use --list')
-row=match[0]
-print('Test:',row['test_id'],row['subsystem'])
-print('Expected:',row['expected'])
-print('Run this on the actual physical robot before answering.')
-observed=input('Observed result, including real readings or behavior: ').strip()
-if not observed: raise SystemExit('No observation supplied. Nothing saved.')
-status=input('Outcome [PASS/FAIL/INCONCLUSIVE]: ').strip().upper()
-if status not in ('PASS','FAIL','INCONCLUSIVE'): raise SystemExit('Invalid outcome. Nothing saved.')
-rev=input('Actual flashed Git commit (enter if same as current git HEAD): ').strip() or git_head()
-if not rev: raise SystemExit('Missing firmware commit. Nothing saved.')
-hw=input('Hardware revision: ').strip() or 'V4.1'
-evidence=input('Photo, video, serial log file or GitHub URL (optional): ').strip()
-additional=input('Test conditions, tool, surface or notes: ').strip()
-if input('Confirm these are YOUR REAL robot observations? Type YES: ').strip()!='YES':
-    raise SystemExit('Cancelled. Nothing saved.')
-row.update(date_utc=datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z'),firmware_commit=rev,observed=observed,status=status,evidence_url=evidence,notes=f'Hardware {hw}. {additional}'.strip())
-with FILE.open('w',newline='',encoding='utf-8') as f:
-    w=csv.DictWriter(f,fieldnames=cols,lineterminator='\n');w.writeheader();w.writerows(rows)
-print('Saved actual observation:',row['test_id'])
+if not a.test:p.error('Use --list or --test <test ID>')
+match=[x for x in fr if x['test_id']==a.test]
+other=[x for x in sr if x['test_id']==a.test]
+if len(match)!=1 or len(other)!=1:raise SystemExit('Test ID must exist exactly once in both physical ledgers')
+r=match[0];r2=other[0]
+print('Test:',r['test_id'])
+print('Expected:',r['expected'])
+print('Perform the check on the physical robot and record original measurements.')
+observed=input('ACTUAL observations, with numbers where available: ').strip()
+if len(observed)<8:raise SystemExit('Observed result missing or too short; no data saved')
+result=input('Actual outcome [PASS/FAIL/INCONCLUSIVE]: ').strip().upper()
+if result not in ('PASS','FAIL','INCONCLUSIVE'):raise SystemExit('Invalid outcome; no data saved')
+revision=input('Full 40-character SHA of firmware ACTUALLY FLASHED: ').strip()
+if not revision:
+    candidate=git_head()
+    if candidate and input(f'Use current Git HEAD {candidate}? Type YES only if this is flashed: ').strip()=='YES':revision=candidate
+if not re.fullmatch(r'[0-9a-fA-F]{40}',revision):raise SystemExit('Full SHA required for traceability; no data saved')
+hw=input('Hardware revision shown on assembled robot [V4.1]: ').strip() or 'V4.1'
+evidence=input('Path or URL to ORIGINAL photo, video, instrument/serial log: ').strip()
+if not evidence:raise SystemExit('An evidence path or URL is needed; no data saved')
+if not evidence.startswith(('https://','http://')) and not (ROOT/evidence).is_file():
+    raise SystemExit('Local primary evidence path does not exist; no data saved')
+notes=input('Instrument, test conditions, surface, lighting or failures: ').strip()
+if input('Confirm you personally observed this test and all entries are accurate. Type CONFIRM: ').strip()!='CONFIRM':
+    raise SystemExit('Canceled without changing files')
+when=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+r.update(date_utc=when,firmware_commit=revision,observed=observed,status=result,evidence_url=evidence,
+         notes=f'Physical hardware: {hw}. Conditions: {notes}. Evidence recorded from actual test, not generated.')
+r2.update(hardware_revision=hw,test_date_utc=when,actual_firmware_commit=revision,observed_behavior=observed,
+          result=result,evidence_to_capture=evidence)
+save_csv(FUNCTIONAL,fc,fr)
+save_csv(SUBSYSTEM,sc,sr)
+print('Recorded actual check in both ledgers. Run scripts/summarize_validation.py and tools/documentation_audit.py to refresh reports.')

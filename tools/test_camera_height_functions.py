@@ -11,17 +11,20 @@ import csv
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CAMERA = ROOT / 'src/camera.py'
+CAMERA_DEFAULT = 'src/camera.py'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', default='docs/validation/v41_camera_function_unit_tests.csv')
+parser.add_argument('--source', default=CAMERA_DEFAULT, help='Camera source to test; v11 candidate is not deployed firmware')
 args = parser.parse_args()
+CAMERA = ROOT / args.source
+if not CAMERA.is_file():raise SystemExit("Camera source file does not exist")
 
 tree = ast.parse(CAMERA.read_text(encoding='utf-8'), filename=str(CAMERA))
 names = {'classify_cube_height', 'get_cube_height', 'get_passing_color'}
 funcs = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in names]
 if {f.name for f in funcs} != names:
-    raise SystemExit('Camera source missing height classification functions')
+    raise SystemExit('Current bundled camera has no height-classification functions. This is an optional regression test for a future implementation, not a passing V4.1 test. Use test_camera_source_contract.py for the supplied source.')
 config_names = {'SURPRISE_RULE', 'UNKNOWN_CUBE_ACTION', 'HEIGHT_50_MAX_RATIO',
                 'HEIGHT_100_MIN_RATIO', 'HEIGHT_100_MAX_RATIO', 'HEIGHT_150_MIN_RATIO'}
 config = {}
@@ -39,7 +42,7 @@ cases = []
 def add(case_id, kind, data, expected, actual):
     cases.append([case_id, kind, data, expected, actual,
                   'PASS' if str(expected) == str(actual) else 'FAIL',
-                  'EXECUTED_ORIGINAL_PURE_FUNCTIONS'])
+                  'EXECUTED_CANDIDATE_PURE_FUNCTIONS_NOT_HARDWARE'])
 
 for i, (ratio, clipped, expected) in enumerate([
     (0.39, False, None), (0.40, False, 50), (1.0, False, 50),
@@ -71,6 +74,6 @@ with output.open('w', newline='', encoding='utf-8') as f:
     writer.writerows(cases)
 
 passed = sum(r[5] == 'PASS' for r in cases)
-print(f'{passed}/{len(cases)} actual pure-function tests passed; output={output}')
+print(f'{passed}/{len(cases)} pure-function tests passed against {args.source}; NOT a hardware, RT1062 or challenge test; output={output}')
 if passed != len(cases):
     sys.exit(1)
