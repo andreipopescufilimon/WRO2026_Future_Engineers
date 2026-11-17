@@ -1,16 +1,20 @@
-# HyperLine Robotics V4.1 validation data
+# HyperLine Robotics V4.1 validation and evidence index
 
-This folder separates documented firmware configuration, deterministic algorithm checks, example scenarios and physical recordings.
+The data here is intentionally divided into **source configuration/calculations**, **unintegrated conceptual tests**, **simulated examples**, **historical files**, and **real physical records**. A dataset name containing `verified` does **not** prove a motor was tested. Read the `evidence_class` and timestamp fields before drawing conclusions.
 
-- `v41_source_configuration_verified.csv`: source-derived hardware and software settings, including the matching camera script supplied with this patch.
-- `v41_software_source_consistency.csv`: checks that documented implementation symbols and pins exist in source.
-- `v41_deterministic_logic_checks.csv`, `v41_tof_corner_logic_cases.csv`, `v41_camera_height_logic_cases.csv`: computed boundary cases. These are repeatable logic examples, not sensor recordings.
-- `v41_bundled_library_versions.csv`: versions read from repository metadata.
-- `v41_release_manifest.csv`, `v41_release_verification_matrix.csv`: source release and status of each verification stage.
-- `physical/`: original measurement plans, team test entries and published demonstrations. Actual dates, measured values, verified flashed SHA and real video are added only from tests performed on the robot.
-- `simulated/`: explicitly simulated example readings.
-- `measurement_templates/`: field measurement layouts.
+- [Evidence audit](EVIDENCE_AUDIT.md) is regenerated from the current sources and primary ledgers by `python tools/documentation_audit.py`.
+- [Implementation gaps](IMPLEMENTATION_GAPS.md) explicitly documents the older area-based camera source.
+- `v41_source_configuration_verified.csv` contains source-derived pins/configurations only; unsupported camera-height settings have been removed.
+- `v41_software_source_consistency.csv` records **failed source matches** for height features not actually published.
+- `camera_tests.csv` contains calculated UART command scenarios using the actual area-based camera source. These are **not camera frames or physical observations**.
+- `camera_source_contract.csv` contains reproducible pure source tests, **not obstacle accuracy evidence**.
+- `v41_camera_height_logic_cases.csv` contains **unintegrated design examples**, not runtime camera tests.
+- `historical/` preserves previous example tables and superseded generated claims for transparency.
+- `simulated/` contains explicitly simulated test input; these results are never counted in physical summaries.
+- `measurement_templates/` and `physical/` contain acceptance criteria and empty data slots for real measurements.
+- `physical/SUMMARY.md` is generated only from physically observed rows by `python scripts/summarize_validation.py`.
+- `DATASET_INDEX.csv` lists the actual CSV inventory.
 
-**Build without PowerShell:** upload `.github/workflows/verify-v41.yml` and run the `V4.1 modular firmware build` workflow in GitHub Actions. Its downloadable artifact contains the actual compiled-source SHA, dependency versions, compile log and a generated build CSV. If the build fails, the captured failure is preserved rather than substituted with a success.
+**Evidence needed before full reproducibility:** a dated successful Arduino compiler record, the exact SHA of the flashed firmware, V4.1 physical subsystem logs, camera test frames, and representative full challenge trials. The ZIP contains none of those complete current-revision observations.
 
-The older driving video is linked to the historical source commit, not to the modular V4.1 controller.
+**Build validation:** the included `.github/workflows/verify-v41.yml` compiles the modular Nano ESP32 controller and captures logs when run on GitHub. It now checks the **actual** bundled camera source contract; the 50/100/150 mm height rule is reported as missing rather than accidentally counted as passing.

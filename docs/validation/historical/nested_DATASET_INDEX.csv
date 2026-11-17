@@ -1,0 +1,32 @@
+csv_path,category,data_rows,header_columns,includes_measured_physical_readings,notes
+docs/validation/camera_tests.csv,calculated_or_source_defined,8,18,NO,"Model or source-derived data, not field measurements"
+docs/validation/full_runs.csv,calculated_or_source_defined,2,32,NO,"Model or source-derived data, not field measurements"
+docs/validation/gyro_test.csv,calculated_or_source_defined,9,21,NO,"Model or source-derived data, not field measurements"
+docs/validation/measurement_templates/camera_tests.csv,measurement_template,0,12,NO,
+docs/validation/measurement_templates/full_runs.csv,measurement_template,0,18,NO,
+docs/validation/measurement_templates/gyro_test.csv,measurement_template,0,10,NO,
+docs/validation/measurement_templates/odometry.csv,measurement_template,0,12,NO,
+docs/validation/measurement_templates/parking.csv,measurement_template,0,17,NO,
+docs/validation/measurement_templates/power_budget.csv,measurement_template,0,13,NO,
+docs/validation/measurement_templates/steering_calibration.csv,measurement_template,0,10,NO,
+docs/validation/measurement_templates/tof_corners.csv,measurement_template,0,13,NO,
+docs/validation/odometry.csv,calculated_or_source_defined,13,24,NO,"Model or source-derived data, not field measurements"
+docs/validation/parking.csv,calculated_or_source_defined,4,31,NO,"Model or source-derived data, not field measurements"
+docs/validation/physical/camera_trials.csv,physical_observation_log,0,11,NO,Raw measurements must be entered after an actual test
+docs/validation/physical/challenge_runs.csv,physical_observation_log,0,13,NO,Raw measurements must be entered after an actual test
+docs/validation/physical/functional_checks.csv,physical_observation_log,12,9,UNCONFIRMED: user-marked tests have no dates or observations,User statuses preserved; dates and observed results blank
+docs/validation/physical/imu_samples.csv,physical_observation_log,0,10,NO,Raw measurements must be entered after an actual test
+docs/validation/physical/power_runs.csv,physical_observation_log,0,13,NO,Raw measurements must be entered after an actual test
+docs/validation/physical/published_demonstrations.csv,published_demonstration_index,3,8,NO,
+docs/validation/physical/revision_comparisons.csv,physical_observation_log,0,11,NO,Raw measurements must be entered after an actual test
+docs/validation/physical/source_configuration.csv,source_configuration,16,7,NO,
+docs/validation/physical/subsystem_test_record.csv,test_recording_form,12,9,NO,
+docs/validation/physical/tof_samples.csv,physical_observation_log,0,11,NO,Raw measurements must be entered after an actual test
+docs/validation/power_budget.csv,calculated_or_source_defined,11,22,NO,"Model or source-derived data, not field measurements"
+docs/validation/power_component_ratings.csv,calculated_or_source_defined,10,8,NO,"Model or source-derived data, not field measurements"
+docs/validation/power_model_assumptions.csv,calculated_or_source_defined,6,6,NO,"Model or source-derived data, not field measurements"
+docs/validation/power_model_scenarios.csv,calculated_or_source_defined,7,8,NO,"Model or source-derived data, not field measurements"
+docs/validation/power_reference_calculations.csv,calculated_or_source_defined,11,5,NO,"Model or source-derived data, not field measurements"
+docs/validation/power_test_matrix.csv,calculated_or_source_defined,7,11,NO,"Model or source-derived data, not field measurements"
+docs/validation/steering_calibration.csv,calculated_or_source_defined,10,22,NO,"Model or source-derived data, not field measurements"
+docs/validation/tof_corners.csv,calculated_or_source_defined,13,30,NO,"Model or source-derived data, not field measurements"
