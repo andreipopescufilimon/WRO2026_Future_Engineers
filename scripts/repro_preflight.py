@@ -10,9 +10,9 @@ root=Path(__file__).resolve().parents[1]
 checks=[]
 def check(name,ok,details): checks.append((name,bool(ok),details))
 
-source=root/'src/HLR_FE_Separated'
-tabs=['HLR_FE_Separated.ino','Open.ino','Final.ino','functions.ino','motors.ino','gyro.ino','tof.ino']
-check('Seven V4.1 firmware tabs present',all((source/f).is_file() for f in tabs),', '.join(tabs))
+source=root/'src/HLR_FE_World_Final'
+tabs=['HLR_FE_World_Final.ino','Open.ino','Final.ino','functions.ino','motors.ino','gyro.ino','tof.ino','Telemetry.ino']
+check('Eight World Final firmware tabs present',all((source/f).is_file() for f in tabs),', '.join(tabs))
 fw='\n'.join((source/f).read_text(errors='replace') for f in tabs if (source/f).exists())
 checks.append(('D11/D12 mode-selection definitions present', '#define MODE_FINAL_PIN D11' in fw and '#define MODE_OPEN_PIN D12' in fw, 'Static declarations, not physical switch verification'))
 checks.append(('Four ToF I2C address definitions present',all('0x'+x in fw for x in ['30','31','32','33']),'Seven-bit addresses, static source check'))
@@ -38,7 +38,7 @@ for rel in mds:
             missing.append(f'{rel}: {target}')
 checks.append(('All packaged media and validation links resolve',not missing,'; '.join(missing[:18]) if missing else 'Local docs-media and docs/validation references resolved'))
 files={}
-for base in ('src/HLR_FE_Separated','src/camera.py','src/camera_candidates','docs/03-power-sensors.md','docs/06-reproducibility.md'):
+for base in ('src/HLR_FE_World_Final','src/camera.py','src/camera_candidates','docs/03-power-sensors.md','docs/06-reproducibility.md'):
     pp=root/base
     for p in ([pp] if pp.is_file() else pp.rglob('*')):
         if p.is_file(): files[str(p.relative_to(root)).replace('\\','/')]=hashlib.sha256(p.read_bytes()).hexdigest()
