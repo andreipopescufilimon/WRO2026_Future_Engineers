@@ -18,15 +18,6 @@ This is the navigation page for the Future Engineers engineering evidence. The s
 **Scope warning:** the current ZIP has no `.git` directory, and cannot prove submission-time commit history or hardware test dates. The earlier published physical footage is not proof that the latest modular controller or camera source were flashed for that recording.
 
 **PCB fabrication:** [JLCPCB ordering and PCBA tutorial in Chapter 06](06-reproducibility.md#ordering-custom-pcbs-and-assembly-with-jlcpcb).
-
-## Where to start for each WRO scoring area
-
-| Criterion | Primary chapter | Direct supporting material |
-|---|---|---|
-| 1. Mobility | [02](02-mobility.md) | [3D models](../3D-models/), [technical drawings](technical-drawings/) |
-| 2. Power and sensors | [03](03-power-sensors.md) | [PCB manufacturing files](../electrical-schematics/), [physical test record status](validation/physical/SUMMARY.md) |
-| 3. Software and obstacle strategy | [04](04-software.md) | [Controller and camera code](../src/), [source consistency audit](validation/EVIDENCE_AUDIT.md) |
-| 4. Engineering decisions | [05](05-systems.md) | Revision comparisons, measured-versus-modeled evidence and failure analysis |
-| 5. Reproducibility | [06](06-reproducibility.md) | [JLCPCB ordering](06-reproducibility.md#ordering-custom-pcbs-and-assembly-with-jlcpcb), firmware installation and calibration |
+cpcb), firmware installation and calibration |
 
 The distinction between source-derived constants, estimates, synthetic datasets and physical measurements is intentional. The latter require a dated record with a source revision and identifiable raw evidence. No additional documentation chapters are needed.
