@@ -38,7 +38,7 @@ for rel in mds:
             missing.append(f'{rel}: {target}')
 checks.append(('All packaged media and validation links resolve',not missing,'; '.join(missing[:18]) if missing else 'Local docs-media and docs/validation references resolved'))
 files={}
-for base in ('src/HLR_FE_Separated','src/camera.py','docs/03-power-sensors.md','docs/06-reproducibility.md'):
+for base in ('src/HLR_FE_Separated','src/camera.py','src/camera_candidates','docs/03-power-sensors.md','docs/06-reproducibility.md'):
     pp=root/base
     for p in ([pp] if pp.is_file() else pp.rglob('*')):
         if p.is_file(): files[str(p.relative_to(root)).replace('\\','/')]=hashlib.sha256(p.read_bytes()).hexdigest()
