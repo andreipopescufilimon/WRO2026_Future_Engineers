@@ -1,24 +1,38 @@
-# 3D-models - 3D Models
+# Mechanical CAD and fabrication files | HyperLine V4.1
 
-This folder contains 3D design files for the robot's components. These files include parts used in the vehicle's steering and drivebase. Formats include STL and/or STEP files.
+This directory contains the **current published STEP reference parts** and a separate archive of **earlier V3/V4.0 STL models**. A published STEP file establishes the geometry of that part, not that it has been printed, fitted or tolerance-tested. The competition vehicle uses a PCB-based structural chassis, front parallel steering and a rear mechanical differential. For complete vehicle assembly consult [Mobility](../docs/02-mobility.md) and [Reproducibility](../docs/06-reproducibility.md).
 
-### Models
+## Current published STEP inventory
 
-- `front-wheel.stl`: Front wheel with integrated bearing support, designed for smooth steering and reduced wobbling during high-speed movement.
-- `back-wheel.stl`: Rear drive wheel optimized for traction and compatibility with the custom differential system.
-- `left-steering-hub.stl`: Left steering hub connecting the front wheel to the steering linkage while allowing low-friction rotation.
-- `right-steering-hub.stl`: Right steering hub designed symmetrically to the left hub for stable and precise steering control.
-- `motor-drive-gear.stl`: Gear mounted on the drive motor shaft, transferring power to the differential input gear.
-- `motor-and-wheel-hub(main-drive-hub).stl`: Main rear drivetrain support holding the motor, differential, wheel axles, and bearings in a compact assembly.
-- `impeller-base.stl`: Structural support used to mount the impeller motor and maintain stable airflow underneath the robot.
-- `impeller-fan.stl`: Lightweight impeller fan designed to generate aerodynamic downforce for increased traction.
-- `steering-bar.stl`: Steering linkage connecting both front steering hubs to the servo arm for synchronized wheel movement.
-- `battery-support.stl`: Mounting structure securing the Li-Po battery while keeping the center of gravity low and centered.
-- `steering-and-camera-mount-hub.stl`: Combined structural mount holding both the steering servo and OpenMV camera in fixed alignment.
+| File | Part / assembly scope | Reproduction note |
+|---|---|---|
+| [`battery-mount.step`](battery-mount.step) | Battery retention bracket | Confirm installed battery dimensions, connector access and clearances |
+| [`drive-system-mount.step`](drive-system-mount.step) | Rear drive-system support | Verify bearing fits, gear mesh and fastener spacing in the assembled robot |
+| [`front-TOF-mount.step`](front-TOF-mount.step) | Front ToF sensor mount | Confirm zone orientation and unobstructed optical path |
+| [`steering and camera mounting.step`](steering%20and%20camera%20mounting.step) | Front steering and camera support | Verify servo travel and camera position after assembly |
+| [`steering bar.step`](steering%20bar.step) | Parallel steering linkage | Check joint clearance and side-to-side symmetry |
+| [`steering-hub-left.step`](steering-hub-left.step) | Left steering hub | Mate with the right hub and front axle in CAD |
+| [`steering-right.step`](steering-right.step) | Right steering hub | Verify mirrored handedness and clearances |
+| [`wheel with silicone.step`](wheel%20with%20silicone.step) | Wheel geometry with tyre representation | Remeasure effective rolling diameter on the installed material |
 
-### Archive
-- `old-3D-models/`: Contains earlier versions of the robot's 3D models for reference.
+STEP files are neutral solid-geometry exchanges. They are not printer profiles or machine-ready toolpaths. Export STL/3MF from a CAD program only after checking units, orientation, fit and manufacturing allowances.
 
-## Usage
-- Download the `.stl` or `.step`(if available) files to fabricate the components using a 3D printer or CNC machine.
-- Ensure the parts are assembled according to the robot's full assembled design.
+## Historical parts, not the current bill of materials
+
+- [`old-3D-models/V3`](old-3D-models/V3/) preserves the V3 version including impeller components.
+- [`old-3D-models/V4.0`](old-3D-models/V4.0/) preserves older rims, steering hubs and drivetrain parts.
+- The **impeller/fan parts are historical**. The V4.1 documentation says that the downforce fan is not installed. Do not fabricate and install those old parts merely because they are present in the archive.
+- Some supporting manufacturing drawings are available in [`docs/technical-drawings`](../docs/technical-drawings/). Their filenames and designs may correspond to earlier revisions; compare the shape to the current STEP part before fabrication.
+
+## Rebuilding the mechanical subsystem
+
+1. Open the eight current STEP files using a millimeter-based CAD project and inspect mating faces and clearances.
+2. Inspect the PCB chassis and electrical board outline under [`electrical-schematics/`](../electrical-schematics/). The PCB chassis is not replaced by a generic printed plate.
+3. Fit and test the front steering linkage with the drive motor switched off. Do not assume that servo **commands** 39/85/131 degrees equal measured wheel **angles**.
+4. Check rear differential freedom, wheel runout, actual tyre contact diameter, wiring strain relief and sensor occlusion.
+5. Record the actual printed/machined process, material, layer height (if printed), fasteners, tolerances and observed test measurements in the [physical evidence record](../docs/validation/physical/).
+6. Repeat dimensional checks after any wheel, steering or gear revision.
+
+### Evidence boundaries
+
+The geometry supplied here is reproducible as a collection of parts. A strong independent reproduction is supported by the **assembled-revision description**, final BOM/fasteners, assembly order, compilation instructions, calibration and field results. The team reports successful local Arduino compilation; extra captured evidence would make that easier to review, but a compiler log is not an explicit 6/6 rubric requirement. See [reproducibility guide](../docs/06-reproducibility.md) for the current status.
