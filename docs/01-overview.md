@@ -2,12 +2,11 @@
 
 **HyperLine Robotics | WRO 2026 Future Engineers**
 
+Repository of HyperLine Robotics Team competing in the World Robot Olympiad (WRO) 2026, Future Engineers category. This repository holds everything behind our fully autonomous robot: the full firmware, electronics, CAD models, the full documentation, and the guide that brings the robot from parts to life.
+
 This engineering journal presents how we designed, built and tested our autonomous vehicle for the World Robot Olympiad 2026 Future Engineers category. The following chapters explain our mechanical design, electronics, software, engineering decisions and the steps needed to reproduce the robot. We apply our technical decisions into our CAD models, circuit designs, code, and test results so another team can inspect our work rather than rely on descriptions alone.
 
 ---
-
-
-> **Evidence integrity, 17 November 2026:** This archive includes a complete design record and test procedures, but **no verified V4.1 physical performance dataset or retained compiler log**. The team confirms that its Arduino controller sketch **compiles successfully on its laptop**; this is a team-reported result, not a failed compile or independently captured log. The primary `src/camera.py` is area-based; two earlier [camera-source candidates](../src/camera_candidates/) have been recovered. The v11 candidate passes 23/23 pure-function tests but is **not hardware verified or deployed in the primary source**. See the [evidence audit](validation/EVIDENCE_AUDIT.md), [implementation gaps](validation/IMPLEMENTATION_GAPS.md), and [judging evidence map](07-judging-evidence.md). Simulated tests are clearly separated and must not be submitted as physical results.
 
 ## Documentation guide
 
