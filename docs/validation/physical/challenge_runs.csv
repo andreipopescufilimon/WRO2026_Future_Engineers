@@ -1,1 +1,15 @@
 run_id,date_utc,firmware_commit,challenge,direction,field_layout,battery_start_v,outcome,completed_laps,parking_outcome,elapsed_s,video_url,notes
+REF-OPEN,,de34faf039a70443361197de540879f212e3de81,open,,,,NOT_RECORDED,,,,https://www.youtube.com/watch?v=bg92ulHXomw,Historical video reference from repository video/video.md; not a measured run on the current World Final firmware.
+REF-OBSTACLE,,de34faf039a70443361197de540879f212e3de81,obstacle,,,,NOT_RECORDED,,,,https://www.youtube.com/watch?v=bg92ulHXomw,Historical video reference from repository video/video.md; not a measured run on the current World Final firmware.
+PLAN-OPEN-CW-01,,,open,clockwise,,,TEST_PLAN,,not_applicable,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OPEN-CW-02,,,open,clockwise,,,TEST_PLAN,,not_applicable,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OPEN-CW-03,,,open,clockwise,,,TEST_PLAN,,not_applicable,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OPEN-CCW-01,,,open,counterclockwise,,,TEST_PLAN,,not_applicable,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OPEN-CCW-02,,,open,counterclockwise,,,TEST_PLAN,,not_applicable,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OPEN-CCW-03,,,open,counterclockwise,,,TEST_PLAN,,not_applicable,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OBSTACLE-CW-01,,,obstacle,clockwise,,,TEST_PLAN,,,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OBSTACLE-CW-02,,,obstacle,clockwise,,,TEST_PLAN,,,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OBSTACLE-CW-03,,,obstacle,clockwise,,,TEST_PLAN,,,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OBSTACLE-CCW-01,,,obstacle,counterclockwise,,,TEST_PLAN,,,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OBSTACLE-CCW-02,,,obstacle,counterclockwise,,,TEST_PLAN,,,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
+PLAN-OBSTACLE-CCW-03,,,obstacle,counterclockwise,,,TEST_PLAN,,,,,TEST_PLAN: intended source 728dc45495136473042b53fa7e8e6e1ccd665093; confirm flashed revision and enter observed results after run.
