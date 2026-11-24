@@ -1,0 +1,13 @@
+test_id,hardware_revision,firmware_source,expected_behavior,observed_behavior,test_date_utc,actual_firmware_commit,result,evidence_to_capture
+V41-MOTOR-FWD,V4.1,src/HLR_FE_Separated/,D7 PWM and D8 direction command drive the rear wheels forward,,,,AWAITING_OBSERVATION,Video/photo with wheel rotation direction and no power reset
+V41-MOTOR-REV,V4.1,src/HLR_FE_Separated/,Reverse command causes rear wheels to rotate backward without controller restart,,,,AWAITING_OBSERVATION,Video/photo with wheel rotation direction and no power reset
+V41-SERVO-CENTER,V4.1,src/HLR_FE_Separated/,Center command 85 returns wheels to their calibrated neutral position,,,,AWAITING_OBSERVATION,Photo/video showing commanded center/left/right and linkage clearance
+V41-SERVO-LEFT,V4.1,src/HLR_FE_Separated/,Command 39 produces left steering without binding at mechanical limits,,,,AWAITING_OBSERVATION,Photo/video showing commanded center/left/right and linkage clearance
+V41-SERVO-RIGHT,V4.1,src/HLR_FE_Separated/,Command 131 produces right steering without binding at mechanical limits,,,,AWAITING_OBSERVATION,Photo/video showing commanded center/left/right and linkage clearance
+V41-TOF-FRONT,V4.1,src/HLR_FE_Separated/,Front sensor found at I2C 0x30; readings change when a flat target is moved,,,,AWAITING_OBSERVATION,Serial startup log showing actual I2C address plus distance response
+V41-TOF-LEFT,V4.1,src/HLR_FE_Separated/,Left sensor found at I2C 0x31; readings change with target distance,,,,AWAITING_OBSERVATION,Serial startup log showing actual I2C address plus distance response
+V41-TOF-RIGHT,V4.1,src/HLR_FE_Separated/,Right sensor found at I2C 0x32; readings change with target distance,,,,AWAITING_OBSERVATION,Serial startup log showing actual I2C address plus distance response
+V41-TOF-BACK,V4.1,src/HLR_FE_Separated/,Rear sensor found at I2C 0x33; readings change with target distance,,,,AWAITING_OBSERVATION,Serial startup log showing actual I2C address plus distance response
+V41-BMI088-YAW,V4.1,src/HLR_FE_Separated/,After 10 s stationary bias calibration a manual rotation changes gyro heading in the expected sign,,,,AWAITING_OBSERVATION,Start/end heading values and physical rotation direction
+V41-OPENMV-UART,V4.1,src/HLR_FE_Separated/,RT1062 UART1 at 19200 baud sends parseable RED/GREEN or steering commands to Nano UART,,,,AWAITING_OBSERVATION,Serial capture from Nano showing actual RT1062 messages at 19200 baud
+V41-ENCODER-200,V4.1,src/HLR_FE_Separated/,Command a 200 mm move; measure actual travel with ruler; record pulses or reported distance and signed error,,,,AWAITING_OBSERVATION,"Ruler-measured distance, commanded distance, and encoder ticks"

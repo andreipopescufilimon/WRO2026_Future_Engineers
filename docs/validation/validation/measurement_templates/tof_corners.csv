@@ -1,0 +1,1 @@
+trial_id,timestamp_ms,sensor,zone_row,zone_col,reference_distance_mm,reported_distance_mm,frame_age_ms,turn_event,false_event,missed_event,vehicle_speed_m_s,notes

@@ -1,0 +1,12 @@
+{
+  "power_runs.csv": 120,
+  "tof_samples.csv": 120,
+  "imu_samples.csv": 144,
+  "camera_trials.csv": 96,
+  "challenge_runs.csv": 16,
+  "functional_checks.csv": 12,
+  "revision_comparisons.csv": 10,
+  "sign_height_trials.csv": 54,
+  "build_verification.csv": 1,
+  "subsystem_test_record.csv": 12
+}
