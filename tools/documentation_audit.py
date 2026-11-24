@@ -74,8 +74,7 @@ def audit():
     add('Mechanical CAD and PCB packages','PASS' if len(list((ROOT/'3D-models').glob('*.step')))>=8 and len(list((ROOT/'electrical-schematics').rglob('Gerber_*.zip')))>=3 else 'FAIL',f'{len(list((ROOT/"3D-models").glob("*.step")))} STEP files, {len(list((ROOT/"electrical-schematics").rglob("Gerber_*.zip")))} Gerber ZIPs','3D-models/; electrical-schematics/')
     add('World Final firmware tabs','PASS' if len(list((ROOT/'src/HLR_FE_World_Final').glob('*.ino')))>=8 else 'FAIL',f'{len(list((ROOT/"src/HLR_FE_World_Final").glob("*.ino")))} tabs present','src/HLR_FE_World_Final/')
     cam=SOURCE.read_text(encoding='utf-8')
-    add('Area-based current camera source','PASS' if 'follow_threshold = 5000' in cam and 'area < follow_threshold' in cam else 'FAIL','Current area threshold and current branching are present','src/camera.py')
-    add('Height-based Surprise Rule in uploaded camera','PASS' if all(x in cam for x in ['SURPRISE_RULE','def get_cube_height(','def get_passing_color(','CLOSE_BOTTOM_Y']) else 'MISSING','The 50/100/150 mm rule and bottom-position close condition are not in the uploaded camera program','src/camera.py')
+    add('World Final camera source','PASS' if all(x in cam for x in ['SURPRISE_RULE_ENABLED = True','def classify_sign_ratio(','def update_surprise_state(','CLOSE_BOTTOM_Y = 170']) else 'FAIL','Height classes and bottom-Y trigger in the supplied source','src/camera.py')
     candidate=ROOT/'src/camera_candidates/rt1062_surprise_rule_v11.py'
     candidate_tests=table(DOCS/'validation/v11_camera_candidate_unit_tests.csv')
     candidate_passing=bool(candidate_tests) and all(row.get('result')=='PASS' for row in candidate_tests)

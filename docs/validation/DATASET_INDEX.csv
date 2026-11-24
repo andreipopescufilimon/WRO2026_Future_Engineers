@@ -1,7 +1,7 @@
 csv_path,category,data_rows,qualification
 camera_candidate_manifest.csv,OPTIONAL_CANDIDATE_SOURCE_LOGIC_NOT_PHYSICAL,2,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 camera_source_contract.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,9,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-camera_tests.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,12,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
+camera_tests.csv,HISTORICAL_AREA_BASED_SOURCE_CALCULATIONS,12,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 full_runs.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,2,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 gyro_test.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,9,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 historical/camera_area_trigger_legacy_examples.csv,HISTORICAL_NOT_CURRENT,8,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
@@ -59,4 +59,4 @@ v41_source_configuration_verified.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,43,"Revi
 v41_tof_corner_logic_cases.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,12,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 physical/tof_diagnostic_frame_633.csv,RECORDED_DIAGNOSTIC_CAPTURE,64,Transcribed from original V4.1 screenshot
 physical/sensor_placement.csv,MEASUREMENT_WORKSHEET,5,Optical center position and orientation
-v41_camera_height_function_regression.csv,SOURCE_FUNCTION_TEST,23,Development algorithm regression cases
+v41_camera_height_function_regression.csv,SOURCE_FUNCTION_TEST,23,Earlier v11 development algorithm regression cases

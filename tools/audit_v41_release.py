@@ -9,8 +9,7 @@ def rows(name):
  with p.open(newline='',encoding='utf-8-sig') as f:return list(csv.DictReader(f))
 sha=lambda s:bool(re.fullmatch('[0-9a-fA-F]{40}',s or ''))
 cam=(ROOT/'src/camera.py').read_text(encoding='utf-8')
-needed=['SURPRISE_RULE','def get_cube_height(','def get_passing_color(','CLOSE_BOTTOM_Y']
-print('Bundled camera uses area-based approach:', 'follow_threshold = 5000' in cam)
+needed=['SURPRISE_RULE_ENABLED = True','def classify_sign_ratio(','def update_surprise_state(','CLOSE_BOTTOM_Y = 170']
 print('Height-sensitive Surprise Rule exists in bundled camera:',all(x in cam for x in needed))
 print('Nano ESP32 compilation workflow exists:',(ROOT/'.github/workflows/verify-v41.yml').is_file())
 functional=rows('functional_checks.csv')

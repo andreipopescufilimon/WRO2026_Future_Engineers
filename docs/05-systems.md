@@ -246,7 +246,7 @@ The 700 mm trigger only works if the sensor is correctly mounted, its zones refe
 
 ### 5.2 Obstacle Challenge: perception is only the first step
 
-A red or green pillar must be correctly classified, but successful avoidance also requires choosing the correct passing side, steering around the object, recovering the lane or heading, and continuing the round. The RT1062 sends compact commands; the Nano executes the avoidance and recovery routines, combining camera information with its own heading and distance state. The Obstacle Challenge additionally uses the floor-color sensor and final parking maneuver.
+A red or green pillar must be correctly classified, but successful avoidance also requires choosing the correct passing side, steering around the object, recovering the lane or heading, and continuing the round. The RT1062 uses full-frame height classification and a lower tracking region; 50 and 150 mm signs invert the effective passing colour while 100 mm signs retain it. Side-clipped targets invalidate the height decision to avoid sending a passing command from distorted geometry. The Nano executes the avoidance and recovery routines, combining camera information with its own heading and distance state. The Obstacle Challenge additionally uses the floor-color sensor and final parking maneuver.
 
 The main system risk is **a mismatch between a valid camera detection and the vehicle's physical position**. A color label arriving after the robot has moved closer can be too late even if the classification is correct. Low-speed approach, sensible regions of interest, state transitions and repeatable steering behavior are therefore more important than claiming a high camera frame rate in isolation.
 

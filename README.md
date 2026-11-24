@@ -100,7 +100,7 @@ The **Open Challenge** requires the robot to navigate the course autonomously fo
 | Competition task | Our approach | Detailed explanation |
 |---|---|---|
 | Follow the course and complete laps | Inertial feedback from the IMU and distance sensing with controlled steering | [Software](/docs/04-software.md) |
-| Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](/docs/04-software.md), [camera code](/src/camera.py) |
+| Recognise red and green obstacles | OpenMV colour and 50/100/150 mm sign classification over UART | [Software](/docs/04-software.md), [camera code](/src/camera.py) |
 | Pass obstacles and recover | Separate approach, avoidance and recovery behaviours | [Software](/docs/04-software.md) |
 | Park accurately | Slow manoeuvres with distance feedback | [Software](/docs/04-software.md) |
 | Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](/docs/05-systems.md), [Reproducibility](/docs/06-reproducibility.md) |
@@ -153,7 +153,7 @@ WRO2026_Future_Engineers/
 | Mechanical drawings | [docs/technical-drawings](/docs/technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](/electrical-schematics/) | Inspect schematics and reproduce boards |
 | Robot firmware | [src/HLR_FE_World_Final](/src/HLR_FE_World_Final/) | Study the controller and navigation implementation |
-| Camera firmware | [src/camera.py](/src/camera.py) | Inspect colour-detection logic |
+| Camera firmware | [src/camera.py](/src/camera.py) | Inspect colour detection, height classification and UART logic |
 | Component tests | [src/tests](/src/tests/) | Verify individual subsystems |
 | Vehicle photographs | [v-photos](/v-photos/) | Inspect the physical build |
 | Team photograph | [t-photos](/t-photos/) | Identify the team |
@@ -217,7 +217,9 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 
 | Demonstration | Link |
 |---|---|
-| Driving demonstration | [Watch the recorded performance](https://www.youtube.com/watch?v=bg92ulHXomw) |
+| Open Round | [Open Round video](video/video.md#open-round-open-challenge) |
+| Final Round | [Final Round video](video/video.md#final-round-obstacle-challenge) |
+| Earlier combined recording | [Open and Obstacle driving](https://www.youtube.com/watch?v=bg92ulHXomw) |
 | Assembly demonstration | [Watch the assembly](https://youtu.be/HSzWATB6nWQ) |
 
 ---
@@ -229,4 +231,4 @@ Beyond developing our autonomous vehicle, we wanted to contribute something usef
 **Try the tool:** https://wro-fe-randomizer.hyperlinerobotics.com/
 
 
-[Media and evidence index](docs/media-index.md) · V4.1 assembly, captured print settings, telemetry and ToF diagnostics.
+[Media and evidence index](docs/media-index.md) · [Recorded observations](docs/validation/physical/SUMMARY.md) · [World Final source and dependency manifest](docs/validation/v41_release_manifest.csv).

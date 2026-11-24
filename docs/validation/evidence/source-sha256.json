@@ -11,11 +11,11 @@
     "src/HLR_FE_World_Final/Open.ino": "7ccd1341b10f46b6abe77abab5656a51332795bf25ca6b69d5244f90ca65d98b",
     "src/HLR_FE_World_Final/Final.ino": "e62ab99be648d8e5a159b3eb624d1288d1e90e39b1cdb7b2e57649a5d43eef9b",
     "src/HLR_FE_World_Final/tof.ino": "e842112d556f4dba65c9291dc7fc1bc4156ad892f6c0fabf2a2a7180730d4b40",
-    "src/camera.py": "72598c701cd8b184a686060465d356451bef1a838d551e4b0cdc9191bb3d5a8a",
+    "src/camera.py": "50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa",
     "src/camera_candidates/rt1062_surprise_rule_v11.py": "b7a23c4b1aa2d1cbecc935717ea0af7f04705e43371013e62c7effce945bb754",
     "src/camera_candidates/rt1062_nov15_height_track_experimental.py": "7ed64b9728910821eff2d5283c09cbd20b3f7d406ca26b67c8c807ceb173bd26",
-    "src/camera_candidates/README.md": "42d1d89135c22e47f1f105dbc6e8d9bef57227a1edf5fdeb7de1c96d7fc64938",
-    "docs/03-power-sensors.md": "4c0e165e85bb750c1ad9b5b683caa15b007f5cc05129761d896ad5ea94d865af",
-    "docs/06-reproducibility.md": "f6b89fff67f9ea8b49fc94ca0bfc06e7969966dc4b3ebf0f136aced8331702a0"
+    "src/camera_candidates/README.md": "9b10aeabff9654a57eef8655810b7e9efa7cf2863d4694345ab8b031631670d8",
+    "docs/03-power-sensors.md": "14d8a08b71fb042abc6431183a916e293ac711d69d21a397c73eb6a09294aebc",
+    "docs/06-reproducibility.md": "8ac45982d9eb99aa7e7d18fa1341b39ad3d627689cbd4e42fd6a16d35a6dea57"
   }
 }

@@ -83,7 +83,7 @@ The **Open Challenge** requires the robot to navigate the course autonomously fo
 | Competition task | Our approach | Detailed explanation |
 |---|---|---|
 | Follow the course and complete laps | Inertial feedback from the IMU and distance sensing with controlled steering | [Software](04-software.md) |
-| Recognise red and green obstacles | OpenMV camera colour detection and UART communication | [Software](04-software.md), [camera code](../src/camera.py) |
+| Recognise red and green obstacles | OpenMV colour and 50/100/150 mm sign classification over UART | [Software](04-software.md), [camera code](../src/camera.py) |
 | Pass obstacles and recover | Separate approach, avoidance and recovery behaviours | [Software](04-software.md) |
 | Park accurately | Slow manoeuvres with distance feedback | [Software](04-software.md) |
 | Make runs repeatable | Rigid mounts, calibration, controlled tests and logged revisions | [Systems](05-systems.md), [reproducibility](06-reproducibility.md) |
@@ -136,7 +136,7 @@ WRO2026_Future_Engineers/
 | Mechanical drawings | [docs/technical-drawings](technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
 | Robot firmware | [src/HLR_FE_World_Final](../src/HLR_FE_World_Final/) | Study the controller and navigation implementation |
-| Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
+| Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour detection and height-dependent passing logic |
 | Component tests | [src/tests](../src/tests/) | Verify individual subsystems |
 | Vehicle photographs | [v-photos](../v-photos/) | Inspect the physical build |
 | Team photograph | [t-photos](../t-photos/) | Identify the team |

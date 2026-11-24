@@ -30,17 +30,17 @@ tof,Right 7-bit I2C address,0x32,src/HLR_FE_World_Final/tof.ino,V4.1 World Final
 tof,Rear 7-bit I2C address,0x33,src/HLR_FE_World_Final/tof.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 open,Corner zone A,row 2 column 3,src/HLR_FE_World_Final/tof.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 open,Corner zone B,row 3 column 3,src/HLR_FE_World_Final/tof.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
-camera,Exposure microseconds,16000,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,Exposure microseconds,40000,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 camera,UART baud,19200,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 camera,Camera image size,320x240,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 open,Required turns,12,src/HLR_FE_World_Final/Open.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 final,Parking activation turn,12,src/HLR_FE_World_Final/Final.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
-camera,Blob area close threshold,5000,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
-camera,PD proportional gain,0.4,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
-camera,PD derivative gain,2.4,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,FOLLOW bottom-Y close threshold px,170,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,PD proportional gain,0.60,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,PD derivative gain,1.20,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 camera,Auto gain,False,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 camera,Auto white balance,False,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
-camera,Direction messages,0/1/2 per frame,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,UART messages,RED / GREEN / S signed value,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 open,Rearm after corner,600 ms and 25 cm,src/HLR_FE_World_Final/Open.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 open,Confirmation frames,3,src/HLR_FE_World_Final/Open.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 open,Maximum paired-zone difference mm,220,src/HLR_FE_World_Final/Open.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
@@ -49,3 +49,9 @@ open,Heading gains Kp/Kd,0.028 / 0.080,src/HLR_FE_World_Final/Open.ino,V4.1 Worl
 final,Heading gains Kp/Kd,0.038 / 0.070,src/HLR_FE_World_Final/Final.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 final,Cruise PWM,50,src/HLR_FE_World_Final/Final.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
 encoder,Final distance mm/count,0.858f,src/HLR_FE_World_Final/HLR_FE_World_Final.ino,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,Fixed gain dB,24,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,RGB gains dB,60.2 / 61.8 / 68.2,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,Height ratio boundaries,1.20 / 2.00,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,Horizontal edge margin px,6,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,Follow derivative clamp,0.35,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE
+camera,Surprise Rule enabled,True,src/camera.py,V4.1 World Final source snapshot,FIRMWARE_SOURCE

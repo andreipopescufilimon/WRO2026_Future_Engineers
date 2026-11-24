@@ -33,7 +33,7 @@ The World Final Arduino sketch is split into tabs that compile together as one p
 | [`motors.ino`](../src/HLR_FE_World_Final/motors.ino) | IFX9201SG PWM/direction output, MG90S steering, encoder, movement and positioning routines |
 | [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) | TCS34725 I²C acquisition/classification, shared cube-avoidance movement and communication helpers |
 | [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino) | Read-only dashboard, yaw history and parking/color CSV diagnostics |
-| [`camera.py`](../src/camera.py) | OpenMV RT1062 red/green detection, object following, area-based proximity detection and UART messages |
+| [`camera.py`](../src/camera.py) | OpenMV RT1062 red/green detection, object following, bottom-Y proximity detection, height classification and UART messages |
 
 The eight `.ino` files remain inside one `src/HLR_FE_World_Final/` directory. Arduino IDE compiles these tabs together. The OpenMV Python code is flashed separately to the camera; it is **not** executed on the Arduino.
 
@@ -491,59 +491,82 @@ Source: [Final.ino](../src/HLR_FE_World_Final/Final.ino). The stage and side-ran
 
 ## 7. Computer vision and traffic sign recognition
 
-The camera program is [`src/camera.py`](../src/camera.py). It processes color regions locally and sends compact steering and traffic-sign commands to the vehicle controller.
+The [World Final OpenMV RT1062 program](../src/camera.py) performs red/green segmentation, image-based steering and height-dependent passing decisions for the Surprise Rule. It transmits compact requests to the Nano ESP32; the vehicle controller remains responsible for motion and avoidance.
 
 ### 7.1 Current camera settings and runtime
 
-| Item | Configuration | Engineering consequence |
-|---|---|---|
-| Camera | OpenMV RT1062 using `sensor` API | Independent image-processing controller |
-| Frame | RGB565 QVGA, 320×240 | Image-coordinate thresholds depend on this resolution |
-| Orientation | `vflip(True)`, `hmirror(True)` | Ensures the expected camera coordinate convention |
-| Exposure | Auto disabled, **16,000 microseconds** | Fixed exposure supports repeatable segmentation but needs venue calibration |
-| Auto gain / AWB | Both disabled | White-balance / threshold behavior still depends on illumination |
-| Colour thresholds | Multiple LAB red/green tuples, plus line/wall thresholds | See the literal tuples in `src/camera.py` |
-| Obstacle ROI | Bottom 60% of image, starting at 40% height | Large signs can enter ROI at different distances |
-| Follow gain | `kp_cube=0.4`, `kd_cube=2.4` | Frame-to-frame PD control on normalized horizontal image error |
-| Near-object rule | `follow_threshold = 5000` blob-area units | **Area based**, not physical range or bottom-Y gating |
-| UART | `UART(1, 19200, timeout_char=200)` | 19,200 baud newline-delimited output |
+| Parameter | World Final configuration |
+|---|---|
+| Camera / frame | OpenMV RT1062, RGB565, QVGA 320 × 240 |
+| Orientation | Vertical flip and horizontal mirror enabled |
+| Startup settling | 3000 ms |
+| Exposure / gain | Automatic exposure and gain disabled; 40,000 µs and 24 dB |
+| White balance | Automatic disabled; RGB gains (60.2, 61.8, 68.2) dB |
+| Red LAB threshold | (31, 71, 19, 47, 3, 71) |
+| Green LAB threshold | (18, 70, -70, -10, -5, 60) |
+| FOLLOW ROI | (0, 130, 320, 72), lower image region |
+| SIGN ROI | Entire frame (0, 0, 320, 240) |
+| Follow blob filters | At least 300 area units and pixels at detection; width/height ≥ 6 px, density ≥ 0.10, height/width ≤ 4 |
+| Sign blob filters | At least 45 area units and pixels at detection; width ≥ 7 px, height ≥ 8 px, density ≥ 0.10, ratio 0.60–4.00 |
+| Close trigger | FOLLOW bounding-box bottom ≥ 170 px; one confirming frame |
+| Follow gains | Kp = 0.60, Kd = 1.20; error difference limited to ±0.35 |
+| UART | `UART(1, 19200)`, newline-delimited messages |
 
+Fixed camera settings avoid changes in exposure and colour gain during a run. The LAB thresholds depend on lighting; the close threshold and aspect-ratio rules depend on the installed camera angle and image geometry.
 
-### 7.2 Existing detection and control loop
+### 7.2 Dual-region detection and control loop
 
-The loop captures an image, segments red and green blobs in the cube ROI, and chooses the largest valid candidate by reported area. It also detects blue and orange line markers and black walls in separate ROIs. The selected obstacle's normalized image error is
+The lower FOLLOW region supplies the steering target and proximity event. The largest valid red and green blobs are compared: an area advantage greater than 15% wins; otherwise the lower centroid wins. The separate full-frame SIGN detector measures the pillar's shape. When a FOLLOW blob exists, the SIGN candidate must have the same visible colour and a horizontal centroid within 55 px. Without a FOLLOW blob, the previous tracked target is preferred; otherwise the largest valid SIGN candidate is selected.
+
+For image width W and target centroid x, the camera computes
 
 \[
-e_x=\frac{x_{\mathrm{blob}}-W/2}{W/2},\qquad
-u=0.4e_x+2.4(e_x-e_{x,\mathrm{previous}}).
+e_x=\frac{x-W/2}{W/2},\qquad
+u=0.60e_x+1.20\operatorname{clamp}(e_x-e_{x,\mathrm{previous}},-0.35,0.35).
 \]
 
-If the detected blob area is less than **5000**, the camera transmits `S+0.123` or `S-0.123` followed by `\n` (the value is computed per frame). At or above 5000 it sends `RED\n` or `GREEN\n`, based on the detected colour. It also broadcasts a numeric direction message (`0`, `1`, or `2` plus newline) every frame after attempting blue/orange marker detection. 
+The derivative is a frame-to-frame difference, not a time-normalized derivative. The camera sends a signed steering request until the bottom of the FOLLOW box reaches y = 170. This is an image proximity cue, not a metric range measurement. At CLOSE, the camera sends a passing command only if the height decision is available and both views have visible horizontal sides. Otherwise it continues sending steering requests. If the FOLLOW target disappears, the previous error is multiplied by 0.75, the close counter resets and no new command is sent in that iteration.
 
-| Output message | Current meaning | Where it goes |
-|---|---|---|
-| `S{:+.3f}\n` | Vision target follow request | Nano ESP32 serial command handler |
-| `RED\n` / `GREEN\n` | Area threshold passed for a visible sign | Nano ESP32 avoidance command handler |
-| `0\n` / `1\n` / `2\n` | Camera's detected line direction state | Broadcast each camera iteration |
+| UART output | Meaning |
+|---|---|
+| `S{:+.3f}\n` | Signed image-based steering request |
+| `RED\n` | Effective red passing command |
+| `GREEN\n` | Effective green passing command |
 
-The `follow_threshold` is expressed in blob-area units.
+Floor-marker direction is handled by the Nano's TCS34725, not numeric direction messages from this camera program.
 
 ### 7.3 Height-dependent traffic-sign strategy
 
-The height-dependent strategy is developed in the [separate RT1062 algorithm](../src/camera_candidates/rt1062_surprise_rule_v11.py). It uses the same UART passing interface as the vehicle controller, allowing perception changes without rewriting motion control. The strategy classifies a 50 mm-wide sign from its visible shape, using a narrow center color strip, aspect-ratio bands and a tracked height decision. A close trigger based on the lower image edge initiates the passing command. Reliable height estimates can be retained across clipped frames; ambiguous detections are handled by the configured fallback. In this development implementation, 50 mm and 150 mm signs invert the visible-color command, while 100 mm signs retain it. The source under `src/camera.py` is the area-based camera program described in Sections 7.1 and 7.2.
+The Surprise Rule is enabled in the World Final source (`SURPRISE_RULE_ENABLED = True`). The full-frame bounding-box ratio r = height / width gives the height class when the sign is sufficiently visible. No separate distance estimate is required for the ordinary ratio classification.
 
-| Visible color | 50 mm algorithm | 100 mm algorithm | 150 mm algorithm |
-|---|---|---|---|
-| Red | `GREEN` | `RED` | `GREEN` |
-| Green | `RED` | `GREEN` | `RED` |
+| Ratio r | Predicted height | Effective command for red | Effective command for green |
+|---|---:|---|---|
+| 0.60 ≤ r < 1.20 | 50 mm | `GREEN` | `RED` |
+| 1.20 ≤ r < 2.00 | 100 mm | `RED` | `GREEN` |
+| 2.00 ≤ r ≤ 4.00 | 150 mm | `GREEN` | `RED` |
 
-This table describes the development algorithm's command mapping. The [function-level regression results](validation/v41_camera_height_function_regression.csv) cover numerical ratio boundaries, clipping and command mapping. Camera image trials use the [height-trial worksheet](validation/physical/sign_height_trials.csv), which records reference height, predicted height, image shape and actual command. The firmware running on the camera determines which algorithm is active.
+The effective colour is inverted for 50 and 150 mm signs, and preserved for 100 mm signs. The ordinary passing controller can therefore use the same RED/GREEN protocol for every height. The measured bounding-box ratio is perspective-dependent; diagonal views can increase apparent width and move a sign into another class.
+
+The tracked classification handles incomplete observations as follows:
+
+| Observation | Implemented response |
+|---|---|
+| Either SIGN or FOLLOW box within 6 px of a horizontal edge | Invalidate the previous height and effective colour; suppress passing commands |
+| Top clipped (y ≤ 2), RAW FAR, sides visible, no saved full measurement and bottom visible | Infer 150 mm and invert visible colour, using the installed camera geometry assumption |
+| Top clipped while RAW FAR, with a previously saved full measurement | Retain that measurement |
+| First observation at RAW CLOSE with top or bottom clipped | Wait for a usable classification |
+| RAW CLOSE with an existing height and visible sides | Lock the height decision |
+| New colour, centroid shift > 65 px or bottom moves upward > 45 px | Reset tracked classification, close counter and previous PD error |
+| No matching SIGN or FOLLOW for three frames | Clear tracked classification |
+| Height unknown or sides not visible at CLOSE | Continue `S...` requests; no colour fallback with the configured height requirement |
+
+The top-clipping shortcut assumes a 100 mm sign remains visible at the top before RAW CLOSE for the installed camera geometry. It is not a general 3D height reconstruction. The source-level checks in [camera_source_contract.csv](validation/camera_source_contract.csv) exercise the final program's classification and clipping branches. Physical observations are recorded separately in [sign_height_trials.csv](validation/physical/sign_height_trials.csv).
 
 ### 7.4 Camera diagnostic view
 
 ![OpenMV camera diagnostic frame](docs-media/v41-screenshot-openmv-color-detection.png)
 
-The OpenMV IDE frame buffer shows the detected color regions. We use the camera view to inspect segmentation, target selection and the placement of the obstacle ROI, while the Nano receives the steering or avoidance command over UART.
+This earlier V4.1 capture illustrates red/green segmentation. The World Final program additionally displays the FOLLOW and SIGN regions, observed ratio, predicted height, classification source, visible/effective colour, bottom-Y proximity and transmitted UART command. The overlays are drawn after blob detection to keep their colours out of the segmentation input.
 
 ## 8. Failure cases, recovery and software limits
 
@@ -558,11 +581,12 @@ Different sensor faults have different effects. The table below distinguishes an
 | Repeated observation of the same Open wall | Three fresh agreeing pairs below 700 mm; rearm after 600 ms and 25 cm | Avoids repeatedly counting one wall while it remains close |
 | Direction not yet determined | TCS first-marker polling; Open stops if a valid front-close condition is seen | Prevents using an arbitrary turning sign without a selected course |
 | Cube momentarily disappears | `FOLLOW_CUBE_DEAD_TIME = 350` ms | Falls back to heading control; too many missed camera messages can interrupt following |
-| Very close / top-cropped cube | Area-based color-blob selection | Keep the target within the obstacle ROI when setting the camera angle |
-| Color or lighting changes | Fixed 16,000 µs exposure, disabled automatic gain and AWB, LAB thresholds, ROI and blob filters | Must be checked against the competition environment; no universal lighting guarantee |
+| Very close / top-cropped cube | Tracked height lock or geometry-based 150 mm inference; wait when ambiguous | Correct camera angle is essential for the top-clipping assumption |
+| Side-clipped sign | Clear height and suppress passing command | Continue steering until both image views have visible sides |
+| Color or lighting changes | Fixed 40,000 µs exposure, disabled automatic gain and AWB, LAB thresholds, ROI and blob filters | Must be checked against the competition environment; no universal lighting guarantee |
 | Gyro update stalled longer than 50 ms | Reject stale interval during integration | Avoids integrating one old rate over a long blocking period, but cannot reconstruct missed rotation |
 | Long blocked movement or failed range target | Some motion helpers contain no explicit timeout | A bad range or encoder input can prevent a routine from completing; verify these before full-speed runs |
-| Legacy camera messages in Open mode | Open still contains color-command handling | Camera `RED/GREEN` can enter avoidance even though normal Open corners come from ToF |
+| Camera messages in Open mode | Open still contains color-command handling | Camera `RED/GREEN` can enter avoidance even though normal Open corners come from ToF |
 | Fan/impeller legacy code | `impeller_speed` initialized to zero; physical fan removed | Not part of V4.1 traction, motor control or power budget |
 
 ## 9. Calibration, parameters and field verification
@@ -585,7 +609,7 @@ The software depends on the mechanical setup in [Chapter 02](02-mobility.md), el
 | Parking drive / final arcs | PWM 35 / 32 | Distinct maneuver speeds |
 | Camera format | QVGA RGB565, both flips on | ROI geometry and color processing |
 | Camera UART | 19,200 baud, `UART(1)` | Matches Nano `Serial0` |
-| Camera close threshold | Blob area `>= 5000` in `src/camera.py` | Vision proximity event |
+| Camera close threshold | FOLLOW bounding-box bottom ≥ 170 px | Vision proximity event |
 
 
 A practical integrated check begins with motor and steering direction while wheels are lifted, followed by gyro startup and known-angle turns, each ToF address and its intended field of view, floor-marker detection, camera UART reception, short encoder movements and finally complete Open/Obstacle runs on a matching field. The individual test sketches and build instructions are linked in [Chapter 06](06-reproducibility.md). 

@@ -523,7 +523,7 @@ Color thresholds must be checked using actual samples on the competition mat und
 
 ### 4.5 OpenMV RT1062 vision processor
 
-The OpenMV RT1062 runs the obstacle perception task independently of the drive controller. The vision interface is a newline-delimited UART protocol at **19,200 baud**. The drive controller recognizes red and green obstacle messages and `S...` normalized steering overrides. The camera script should be published at the same revision as the competition firmware, with sensor orientation, color thresholds and exposure settings recorded in [Chapter 04](04-software.md).
+The OpenMV RT1062 runs the obstacle perception task independently of the drive controller. The vision interface is a newline-delimited UART protocol at **19,200 baud**. The drive controller recognizes red and green obstacle messages and `S...` normalized steering overrides. The [World Final camera script](../src/camera.py) uses separate full-image height classification and lower-image steering regions, with fixed exposure, gain and white balance. It translates 50/100/150 mm sign classes into effective passing colours. Sensor orientation, thresholds and camera settings are recorded in [Chapter 04](04-software.md).
 
 This division is deliberate: image operations have variable processing time, while steering and motor control should respond quickly to gyro and distance data. A camera message is a request to the control state machine, not a direct, unfiltered command to the motor driver.
 
@@ -571,7 +571,7 @@ Keep the robot stationary during the ten-second boot calibration. Rotate the cha
 
 ### 5.3 Camera and color verification
 
-For camera calibration, record images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, blob area, candidate count and the UART command sent. Repeat under different lighting conditions and with the camera facing a nearby wall at startup. This last condition is important because it tests whether automatic camera settings are stable when the initial field of view is unusual.
+For camera calibration, record images of red and green pillars at representative close, middle and far distances. For each image, capture the detected color, centroid, bounding-box width and height, predicted height, clipping state, effective colour and the UART command sent. Repeat under different lighting conditions and with the camera facing a nearby wall at startup. This checks the startup behavior of the fixed camera settings when the initial field of view is unusual. Record the reference height and actual classification in [sign_height_trials.csv](validation/physical/sign_height_trials.csv).
 
 #### Camera diagnostic frame
 
