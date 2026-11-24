@@ -14,7 +14,7 @@ Each round recording should show at least 30 seconds of autonomous driving. The 
 
 ## Earlier combined recording
 
-[Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw). The controller used for this earlier recording is identified by the team as commit [`de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81).
+[Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw). Video from the national stage.
 
 ## Assembly
 
