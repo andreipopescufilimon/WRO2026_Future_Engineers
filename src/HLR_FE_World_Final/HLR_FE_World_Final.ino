@@ -1,8 +1,6 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Controller entry point
-// Pin assignments, shared calibration, mode selection, initialization and main loop. Arduino builds every tab in this directory as one sketch.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// Application entry point | hardware configuration and mission dispatch
 // ============================================================================
 
 void final_exit_prestart_sample();
@@ -248,6 +246,9 @@ bool tcsMarkerArmed = true;
 // Minimum brightness. Increase if false detections happen.
 #define TCS_MIN_CLEAR 10
 
+// Latch the competition mode, initialize actuators and sensors, and wait for
+// the physical start signal. Final mode samples the parking surroundings
+// before launch.
 void setup() {
   pinMode(MODE_FINAL_PIN, INPUT_PULLDOWN);
   pinMode(MODE_OPEN_PIN, INPUT_PULLDOWN);
@@ -307,6 +308,8 @@ void setup() {
   else custom_delay(500);
 }
 
+// Dispatch the selected mission controller, then service optional read-only
+// telemetry. Mode selection remains fixed until reboot.
 void loop() {
   if (activeMode == MODE_OPEN) open_execute();
   else if (activeMode == MODE_FINAL) final_execute();

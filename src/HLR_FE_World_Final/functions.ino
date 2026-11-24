@@ -1,12 +1,12 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Shared utilities
-// Floor-color sampling/classification, shared maneuver helpers and camera communication utilities.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// Shared utilities | TCS34725 register access, camera input and timing
 // ============================================================================
 
 TwoWire TCSWire(1);
 
+// Write one color-sensor register using the TCS command prefix on its
+// dedicated I2C bus.
 void tcs_write8(uint8_t reg, uint8_t value) {
   TCSWire.beginTransmission(TCS34725_ADDR);
   TCSWire.write(TCS_CMD | reg);
@@ -14,6 +14,8 @@ void tcs_write8(uint8_t reg, uint8_t value) {
   TCSWire.endTransmission();
 }
 
+// Read one register using a repeated-start transaction; return zero when no
+// byte is available.
 uint8_t tcs_read8(uint8_t reg) {
   TCSWire.beginTransmission(TCS34725_ADDR);
   TCSWire.write(TCS_CMD | reg);
@@ -28,6 +30,7 @@ uint8_t tcs_read8(uint8_t reg) {
   return 0;
 }
 
+// Configure the separate color-sensor bus and enable rapid RGBC integration.
 void tcs_setup_fast() {
   // Use a separate I2C bus for the color sensor
   TCSWire.begin(A6, A7);
@@ -53,6 +56,8 @@ void tcs_setup_fast() {
   tcsReady = true;
 }
 
+// Read a complete eight-byte RGBC sample only when ready; combine low and high
+// bytes into the four channel values.
 bool tcs_read_raw_fast() {
   if (!tcsReady) return false;
   // Restore the working 1.8 ms color polling limit in FINAL only.
@@ -93,6 +98,8 @@ bool tcs_read_raw_fast() {
   return true;
 }
 
+// Classify floor color using the clear-channel brightness gate and normalized
+// RGB ratios.
 TCSColor tcs_detect_color_fast() {
   if (tcsC < TCS_MIN_CLEAR) {
     return TCS_NONE;
@@ -143,6 +150,7 @@ TCSColor tcs_detect_color_fast() {
   return TCS_UNKNOWN;
 }
 
+// Convert the color enumeration to a human-readable diagnostic label.
 const char* tcs_color_name(TCSColor color) {
   switch (color) {
     case TCS_WHITE: return "WHITE";
@@ -157,6 +165,8 @@ const char* tcs_color_name(TCSColor color) {
 
 #define AVOIDANCE_ANGLE 50  // how far to pivot around the cube
 
+// Service the camera UART using the mode-specific message handling already
+// defined by the sketch.
 void flush_messages() {
   if (activeMode == MODE_OPEN) { if (turn_direction == 0) open_color_poll(); }
   else if (activeMode == MODE_FINAL) final_color_poll();
@@ -174,6 +184,7 @@ void flush_messages() {
 // -----------------------------------------------------------
 //                Cube Following / Avoidance Functions
 // -----------------------------------------------------------
+// Apply the legacy cube-passing maneuver for the requested side.
 void pass_cube(char cube_direction) {
   double angle_addition = (cube_direction == 'R') ? 0 : 0;
 
@@ -193,6 +204,7 @@ void pass_cube(char cube_direction) {
 // -----------------------------------------------------------
 //                           Functions
 // -----------------------------------------------------------
+// Wait for the requested interval using the existing cooperative delay loop.
 void custom_delay(long long delay_time) {
   long long start_time = millis();
   while (millis() - start_time < delay_time) {
@@ -200,10 +212,12 @@ void custom_delay(long long delay_time) {
   }
 }
 
+// Linearly map a floating-point value between two numeric ranges.
 double map_double(double x, double in_min, double in_max, double out_min, double out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+// Flash the selected status LED for the requested duration.
 void blink_led(int led_pin, int time) {
   digitalWrite(led_pin, HIGH);
   custom_delay(time);
@@ -218,6 +232,7 @@ void blink_led(int led_pin, int time) {
 }
 
 
+// Print the color-sensor diagnostics for inspection and threshold tuning.
 void print_tcs_debug() {
   Serial.print("TCS C="); Serial.print(tcsC);
   Serial.print(" R="); Serial.print(tcsR);

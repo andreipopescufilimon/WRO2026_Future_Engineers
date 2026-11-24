@@ -1,8 +1,6 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Inertial estimation
-// BMI088 initialization, stationary bias calibration, yaw integration and acceleration diagnostics.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// BMI088 | inertial sensing, yaw integration and stationary bias correction
 // ============================================================================
 
 #define DRIFT_TEST_TIME 10
@@ -15,6 +13,8 @@ double gyroRateDps = 0.0;
 float imuAccelX = 0.0f, imuAccelY = 0.0f, imuAccelZ = 0.0f;
 float imuPitchDeg = 0.0f, imuRollDeg = 0.0f, imuAccelMagnitude = 0.0f;
 static uint32_t imuLastAccelMs = 0;
+// Sample acceleration at a limited cadence and derive diagnostic pitch, roll
+// and acceleration magnitude.
 void imu_read_acceleration() {
   // Accelerometer gives pitch/roll relative to gravity, not absolute yaw.
   if (!gyroAvailable || millis() - imuLastAccelMs < 120UL) return;
@@ -46,6 +46,8 @@ static uint32_t gyroStillSinceUs = 0;
 static int32_t gyroLastEncoderTicks = 0;
 static uint32_t gyroLongGapCount = 0;
 
+// Record commanded motor magnitude and maintain the stationary timing
+// reference used by bias correction.
 void gyro_note_motor_speed(int commandedPwm) {
   const int power = abs(commandedPwm);
   if (power > 0) {
@@ -58,6 +60,8 @@ void gyro_note_motor_speed(int commandedPwm) {
   gyroMotorPwm = power;
 }
 
+// Configure the BMI088, collect stationary yaw-rate samples and reject
+// unreliable startup calibration.
 void gyro_setup() {
   Wire.begin();
   imu.initialize();
@@ -111,6 +115,8 @@ void gyro_setup() {
   Serial.println(drifts_z, 6);
 }
 
+// Integrate bias-corrected Z-axis angular rate over measured elapsed time;
+// update the stationary bias only when the existing motion checks permit it.
 void read_gyro_data() {
   if (!gyroAvailable) return;
   const double raw = (double)imu.getGyroscopeZ();
@@ -168,6 +174,8 @@ void read_gyro_data() {
   }
 }
 
+// Set the yaw reference from a known external heading; do not use a commanded
+// turn target as a substitute for measurement.
 void recalibrate_gyro_angle(double expected_angle) {
   // Only call this when the heading is known from an EXTERNAL reference.
   // Do not force the accumulated angle to the commanded target after a turn.

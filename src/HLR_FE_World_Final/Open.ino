@@ -1,8 +1,6 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Open Challenge
-// Floor-marker direction lock, validated front-wall events, speed ramping, heading turns and the twelve-corner finish.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// Open challenge | wall-triggered navigation and speed control
 // ============================================================================
 
 // Original Open round: one validated FRONT wall event per 90-degree corner.
@@ -28,6 +26,8 @@ static int openVerifiedFrontMM = -1;
 static uint32_t openVerifiedFrontMs = 0;
 static uint32_t openSpeedLastMs = 0;
 
+// Calculate a distance-dependent PWM target. Interpolate between approach and
+// cruise speed, using the slow target when range is unavailable.
 static int open_speed_target(int maximumPWM, int frontMM) {
   const int maxSpeed = constrain(maximumPWM, 0, 255);
   const int slowSpeed = min(maxSpeed, OPEN_APPROACH_PWM);
@@ -39,6 +39,9 @@ static int open_speed_target(int maximumPWM, int frontMM) {
                           (frontMM - OPEN_BRAKE_FULL_MM) / span);
 }
 
+// Rate-limit changes in PWM using elapsed milliseconds. Braking and
+// acceleration have independent rates; cap the time step after a delayed
+// iteration.
 static int open_ramp_speed(int targetPWM) {
   const uint32_t now = millis();
   if (!openSpeedLastMs) openSpeedLastMs = now;
@@ -57,6 +60,8 @@ static uint32_t openLastFrontFrameMs = 0;
 static uint32_t openCornerFinishedMs = 0;
 static bool openWaitingForStraight = false;
 
+// Initialize the Open-round control gains, corner counter, speed ramp and
+// fresh-frame tracking.
 void open_configure() {
   max_turns = 12;
   robot_speed = 250;
@@ -75,6 +80,8 @@ void open_configure() {
   turn_count = 0;
 }
 
+// Latch the travel direction from the first accepted floor marker; subsequent
+// samples cannot change that direction.
 void open_color_poll() {
   if (turn_direction != 0) return;
   if (!tcs_read_raw_fast()) return;
@@ -89,6 +96,9 @@ void open_color_poll() {
   }
 }
 
+// Run one Open mission iteration: refresh yaw and front ranging, validate new
+// frames, re-arm corners after straight travel, then update steering and
+// propulsion.
 void open_execute() {
   if (!gyroAvailable) { move(0); steer(0); return; }
   if (turn_direction == 0) open_color_poll();
@@ -208,6 +218,8 @@ void open_execute() {
   }
 }
 
+// Handle incoming camera command text in Open mode according to the existing
+// command parser.
 void open_execute_command(String cmd) {
   cmd.trim();
   cmd.toUpperCase();

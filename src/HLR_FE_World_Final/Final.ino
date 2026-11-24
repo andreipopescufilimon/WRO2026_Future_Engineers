@@ -1,8 +1,6 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Obstacle Challenge
-// Camera-aware cube phases, gyro/encoder lane recovery, floor-marker corners, parking exit and rolling three-zone parking.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// Final challenge | camera navigation, lane recovery and rolling parking
 // ============================================================================
 
 // Helper APIs are defined in tof.ino.
@@ -79,6 +77,8 @@ static uint8_t finalLaneOdomSettledCount = 0;
 static uint32_t finalLaneOdomLastUpdateMs = 0;
 static uint32_t finalLaneOdomLastLogMs = 0;
 
+// Establish the encoder and heading reference for measuring lateral travel
+// during a cube maneuver.
 void final_cube_odom_begin() {
   if (finalCubeOdomActive) return;
   finalCubeOdomActive = true;
@@ -86,6 +86,8 @@ void final_cube_odom_begin() {
   noInterrupts(); finalCubeOdomLastTicks = encoder_ticks; interrupts();
 }
 
+// Update the estimated lateral displacement from incremental encoder travel
+// and measured yaw; reject unexpected encoder jumps.
 void final_cube_odom_tick() {
   if (!finalCubeOdomActive || !gyroAvailable) return;
   int32_t ticks;
@@ -139,6 +141,8 @@ static uint32_t finalLaneLastGoodPairMs = 0;
 static uint32_t finalLaneProcessedLeftFrame = 0;
 static uint32_t finalLaneProcessedRightFrame = 0;
 
+// Clear lane-recovery state and its cached measurements so a completed or
+// interrupted maneuver cannot affect the next one.
 void final_lane_center_reset() {
   finalLaneCenterActive = false;
   finalLaneIgnoreCubeCommands = false;
@@ -166,6 +170,8 @@ void final_lane_center_reset() {
   finalLaneOdomLastLogMs = 0;
 }
 
+// Initialize lane recovery, selecting post-cube dead reckoning or normal side-
+// range centering according to the caller.
 void final_lane_center_arm(bool afterCube = false) {
   const float recordedLateralMM = afterCube && finalCubeOdomActive ? finalCubeLateralMM : 0.0f;
   final_lane_center_reset();
@@ -191,6 +197,8 @@ void final_lane_center_arm(bool afterCube = false) {
 #endif
 }
 
+// Advance lane recovery while respecting corner and camera priority. Bound
+// correction by elapsed time, travel and measurement quality.
 void final_lane_center_tick() {
   if (!finalLaneCenterActive) return;
   if (currentState != PID || turn_count >= max_turns - 1) {
@@ -382,6 +390,7 @@ void final_lane_center_tick() {
   }
 }
 
+// Enter a new cube maneuver phase and update the associated phase bookkeeping.
 void final_cube_phase(uint8_t phase) {
   finalCubePhase = (FinalCubePhase)phase;
   finalCubePhaseMs = millis();
@@ -403,6 +412,8 @@ void final_cube_phase(uint8_t phase) {
   }
 }
 
+// Initialize the cube bypass for the detected color and establish the
+// corresponding heading targets.
 void final_begin_avoid(char color) {
   read_gyro_data();
   final_cube_odom_begin();
@@ -426,6 +437,8 @@ void final_begin_avoid(char color) {
   }
 }
 
+// Apply a heading-based steering demand and drive command during the cube
+// maneuver.
 void final_cube_drive_heading(int pwm, double target) {
   read_gyro_data();
   const double error = target - gz;
@@ -434,6 +447,8 @@ void final_cube_drive_heading(int pwm, double target) {
   move(pwm);
 }
 
+// Advance the active cube bypass or recovery phase using measured heading,
+// travel and camera state.
 void final_cube_control_tick() {
   if (finalCubePhase == FC_IDLE) {
     // No stale avoid state may accidentally command the motors.
@@ -526,6 +541,8 @@ void final_cube_control_tick() {
 // Confirm a NEW cube while the previous one is being passed. Repeated close
 // messages for the same sign are ignored until a following signal or a different
 // sign establishes a new target. Close reports can be early in the second pass.
+// Evaluate whether a close-camera command represents a new cube rather than a
+// repeated observation.
 bool final_cube_new_close(char color) {
   if (finalCubePhase == FC_IDLE) return true;
   if (finalCubePhase == FC_TURN_OUT) return false;
@@ -547,6 +564,7 @@ bool final_cube_new_close(char color) {
 
 // Parking targets use the fixed lap heading grid, not the arrival offset.
 
+// Reset Final-round parameters and navigation state before the physical start.
 void final_configure() {
   max_turns = 13;
   robot_speed = 50;
@@ -580,6 +598,8 @@ struct FinalExitSideCache {
 static FinalExitSideCache finalExitLeft = { LEFT_DIR, 0, 0, -1.0f, 0, 0 };
 static FinalExitSideCache finalExitRight = { RIGHT_DIR, 0, 0, -1.0f, 0, 0 };
 
+// Collect parking-exit sensor observations while the robot is still waiting
+// for the start button.
 void final_exit_prestart_sample() {
   auto update = [&](FinalExitSideCache &s) {
     if (!tof_sensor_online(s.direction)) return;
@@ -612,6 +632,8 @@ void final_exit_prestart_sample() {
   update(finalExitRight);
 }
 
+// Execute the initial parking-space exit before entering normal Final
+// navigation.
 void final_exit_parking() {
   const uint32_t EXIT_MAX_STALE_MS = 350UL;
   const uint32_t EXIT_SHORT_RETRY_MS = 220UL; // only when pre-Start cache is inconclusive
@@ -689,6 +711,8 @@ void final_exit_parking() {
   tcsLatchedColor = TCS_NONE;
 }
 
+// Main Final control iteration. Process floor markers, yaw and camera frames
+// before dispatching the current navigation state.
 void final_execute() {
   if (!gyroAvailable) {
     move(0);
@@ -826,6 +850,8 @@ void final_execute() {
           currentState = PID;
           pid_last_error = current_angle_gyro - gz;
           last_cube_time = millis();
+// Initialize lane recovery, selecting post-cube dead reckoning or normal side-
+// range centering according to the caller.
           final_lane_center_arm(true);  // Center, but keep new cube detection active.
           break;
         }
@@ -855,12 +881,16 @@ void final_execute() {
   }
 }
 
+// Refresh the floor-color measurement and pass available samples to the marker
+// logic.
 void final_color_poll() {
   tcs_update_fast();
   if (!tcsExecutingMarker && !finalExecutingTurn && !finalAlignmentFault)
     tcs_process_marker();
 }
 
+// Check whether the classified floor marker matches the established travel
+// direction.
 bool tcs_is_expected_marker_detected() {
   if (turn_direction == 0)
     return tcsCurrentColor == TCS_BLUE || tcsCurrentColor == TCS_RED;
@@ -869,6 +899,7 @@ bool tcs_is_expected_marker_detected() {
   return false;
 }
 
+// Update the fast floor-color classification from newly available sensor data.
 void tcs_update_fast() {
   if (!tcs_read_raw_fast()) return;
   TCSColor color = tcs_detect_color_fast();
@@ -889,6 +920,8 @@ void tcs_update_fast() {
   }
 }
 
+// Process the current marker observation and coordinate corner detection with
+// the active cube state.
 void tcs_process_marker() {
   if (!tcsMarkerArmed) {
     tcsLatchedColor = TCS_NONE;
@@ -925,6 +958,8 @@ void tcs_process_marker() {
 
 // Process camera frames during the otherwise blocking AFTER_CUBE corner advance.
 // A cube-follow S command interrupts the encoder move immediately.
+// Check camera observations during the corner-advance maneuver so obstacle
+// handling can take priority.
 bool final_camera_interrupt_corner_advance() {
   while (Serial0.available() > 0) {
     const char c = (char)Serial0.read();
@@ -1072,6 +1107,8 @@ uint8_t final_after_cube_corner_advance(double heading,
   return FINAL_ADVANCE_COMPLETE;
 }
 
+// Apply the next floor-marker corner to the absolute heading sequence and
+// coordinate the associated advance and recovery.
 void final_perform_line_turn() {
   if (finalExecutingTurn || turn_count >= max_turns || finalAlignmentFault) return;
   const bool parkingMarker = (turn_count == max_turns - 1);
@@ -1168,6 +1205,9 @@ void final_perform_line_turn() {
 // Full parking enabled: continue after first turn and R2C3 front alignment.
 #define FINAL_PARK_STOP_AFTER_FRONT_340 0
 
+// Execute the parking sequence: entry, first turn, front alignment, second
+// turn, side-post search and final parking arcs. Local helpers enforce the
+// existing clearance and progress guards.
 void final_park() {
   const int parkDir = turn_direction < 0 ? 1 : -1;
   // Both side ToFs are inspected during the wall search. A single hard-coded
@@ -2951,6 +2991,8 @@ void final_park() {
   Serial.println("FINAL PARK complete");
 }
 
+// Interpret complete OpenMV UART commands and arbitrate follow, avoidance and
+// recovery transitions.
 void final_execute_command(String cmd) {
   cmd.trim();
   cmd.toUpperCase();
@@ -2965,6 +3007,8 @@ void final_execute_command(String cmd) {
     }
     if (finalPendingTofCorner) return;
     if (turn_count == max_turns - 1) {
+// Apply the next floor-marker corner to the absolute heading sequence and
+// coordinate the associated advance and recovery.
       final_perform_line_turn();  // 13th marker always starts parking immediately.
       return;
     }

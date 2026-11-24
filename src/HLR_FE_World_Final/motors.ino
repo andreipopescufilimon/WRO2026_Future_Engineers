@@ -1,8 +1,6 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Motion primitives
-// Signed PWM, steering mapping, encoder distance and gyro-assisted movement routines.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// Actuation | PWM, steering servo, encoder and movement primitives
 // ============================================================================
 
 float lastFrontDistanceErrorMM = 0;
@@ -12,6 +10,7 @@ float lastFrontDistanceMM = -1;
 // -----------------------------------------------------------
 //                     Motor Functions
 // -----------------------------------------------------------
+// Configure drive direction and PWM hardware, then command zero motor output.
 void motor_driver_setup() {
   pinMode(PWMA, OUTPUT);
   pinMode(DIRA, OUTPUT);
@@ -20,6 +19,8 @@ void motor_driver_setup() {
   move(0);
 }
 
+// Send signed motor PWM to the driver and notify telemetry and gyro stationary
+// detection.
 void move(int speed) {
   telemetryMotorPwm = speed;
   gyro_note_motor_speed(speed);
@@ -27,16 +28,20 @@ void move(int speed) {
   digitalWrite(DIRA, speed > 0 ? LOW : HIGH);
 }
 
+// Configure the independent impeller PWM output.
 void impeller_setup() {
   pinMode(PWM_IMPELLER, OUTPUT);
   ledcSetup(PWM_IMPELLER_CHANNEL, PWM_IMPELLER_FREQ, PWM_IMPELLER_RESOLUTION);
   ledcAttachPin(PWM_IMPELLER, PWM_IMPELLER_CHANNEL);
 }
 
+// Write impeller PWM after limiting it to the eight-bit range.
 void setImpeller(int _pwm) {
   ledcWrite(PWM_IMPELLER_CHANNEL, constrain(_pwm, 0, 255));
 }
 
+// Apply the existing brief reverse braking command, then set drive PWM to
+// zero.
 void stop_motor() {
   move(-3);
   delay(100);
@@ -46,6 +51,8 @@ void stop_motor() {
 // -----------------------------------------------------------------
 // Helper: turn in place until you hit exactly target_angle
 // -----------------------------------------------------------------
+// Drive toward an accumulated gyro heading using the mode-dependent steering
+// formula and UART servicing.
 void move_until_angle(int speed, double target_angle) {
   int dir = (speed < 0) ? -1 : 1;
 
@@ -68,6 +75,7 @@ void move_until_angle(int speed, double target_angle) {
 }
 
 
+// Heading movement variant that does not service UART within the turn loop.
 void move_until_angle_no_flush(int speed, double target_angle) {
   int dir = (speed < 0) ? -1 : 1;
 
@@ -88,6 +96,8 @@ void move_until_angle_no_flush(int speed, double target_angle) {
   }
 }
 
+// Use full steering demand until the heading enters the existing ten-degree
+// exit band.
 void move_until_angle_max(int speed, double target_angle) {
     int dir = (speed < 0) ? -1 : 1;
 
@@ -110,6 +120,7 @@ void move_until_angle_max(int speed, double target_angle) {
 }
 
 
+// Full-lock heading movement without the UART service call.
 void move_until_angle_max_no_flush(int speed, double target_angle) {
     int dir = (speed < 0) ? -1 : 1;
 
@@ -153,6 +164,8 @@ void move_until_angle_max_no_flush(int speed, double target_angle) {
 // -----------------------------------------------------------------
 // Helper: drive forward target_cm while holding a given gyro angle
 // -----------------------------------------------------------------
+// Travel an encoder-measured distance while correcting toward the supplied
+// heading; reverse the steering correction for backward travel.
 void move_cm_gyro(int target_cm, int speed, double hold_angle) {
   int dir = (speed < 0) ? -1 : 1;
 
@@ -186,6 +199,8 @@ void move_cm_gyro(int target_cm, int speed, double hold_angle) {
 // -----------------------------------------------------------
 //           ISR & setup for single-edge counting
 // -----------------------------------------------------------
+// Count an A-channel rising edge with direction determined by the B-channel
+// level. Keep the interrupt routine short.
 void IRAM_ATTR encoderISR() {
   // On A’s rising edge, read B. If B==HIGH we’re turning “forward”
   if (digitalRead(ENCODER_B)) {
@@ -195,6 +210,7 @@ void IRAM_ATTR encoderISR() {
   }
 }
 
+// Configure quadrature inputs and attach the single-edge encoder interrupt.
 void encoder_setup() {
   // Enable pull-ups so A/B never float
   pinMode(ENCODER_A, INPUT_PULLUP);
@@ -204,6 +220,8 @@ void encoder_setup() {
   encoder_ticks = 0;
 }
 
+// Convert the encoder count into travel distance in centimeters using the
+// configured scale.
 float read_cm() {
   noInterrupts();
   int32_t t = encoder_ticks;
@@ -213,6 +231,8 @@ float read_cm() {
   return dist_mm / 10.0f;
 }
 
+// Drive a requested encoder distance using the existing gyro-offset
+// correction.
 void move_cm(int target_cm, int speed, double gyro_offset) {
   noInterrupts();
   encoder_ticks = 0;
@@ -240,6 +260,7 @@ void move_cm(int target_cm, int speed, double gyro_offset) {
 // -----------------------------------------------------------
 //                    Steering Functions
 // -----------------------------------------------------------
+// Attach and initialize the steering servo using the configured limits.
 void steering_servo_setup() {
   steeringServo.attach(STEERING_SERVO);
   delay(100);
@@ -252,6 +273,7 @@ void steering_servo_setup() {
   delay(300);
 }
 
+// Convert normalized steering demand into the physical servo range.
 void steer(double steering_angle) {
   // Clamp input between -1 and 1
   if (steering_angle > 1)  steering_angle = 1;
@@ -266,6 +288,7 @@ void steer(double steering_angle) {
   steeringServo.write(steering_angle);
 }
 
+// Apply the parking steering mapping for tight-radius maneuvers.
 void steer_parking(double steering_angle) {
   // Clamp input between -1 and 1
   if (steering_angle > 1)  steering_angle = 1;
@@ -276,6 +299,7 @@ void steer_parking(double steering_angle) {
   steeringServo.write(steering_angle);
 }
 
+// Maintain heading for a specified time while servicing camera messages.
 void move_straight_on_gyro(double speed, long duration_ms) {
   int sign = speed >= 0 ? 1 : -1;
 
@@ -299,6 +323,7 @@ void move_straight_on_gyro(double speed, long duration_ms) {
 }
 
 
+// Timed heading hold without servicing camera messages in the movement loop.
 void move_straight_on_gyro_no_flush(double speed, long duration_ms) {
   int sign = speed >= 0 ? 1 : -1;
 
@@ -324,6 +349,8 @@ void move_straight_on_gyro_no_flush(double speed, long duration_ms) {
 // Maintains a target heading using the gyro.
 // Keeps running until the distance is within tolerance band.
 // ===========================================================
+// Approach a directional ToF distance target while holding yaw and applying
+// the existing movement checks.
 void move_to_distance(DistanceDir dir, float target_mm, float tol_mm, int base_speed, double hold_angle)
 {
   // speed plan
@@ -390,6 +417,7 @@ void move_to_distance(DistanceDir dir, float target_mm, float tol_mm, int base_s
 
 
 // --- Common detect rule: wall is seen only if 1 < d < 300 (mm)
+// Classify a range value against the wall-detection thresholds.
 static inline bool is_wall_seen(float d_mm) {
   return (d_mm > 5.0f && d_mm < 200.0f);
 }
@@ -397,6 +425,7 @@ static inline bool is_wall_seen(float d_mm) {
 
 // Move straight (gyro hold) until side sensor goes:
 // DETECT  ->  NO DETECT  ->  DETECT (single edge transitions, no multi-sample debounce)
+// Track side-wall observations while driving on a fixed heading.
 void move_gyro_until_side_detect_cycle(DistanceDir side, int speed, double hold_angle)
 {
   digitalWrite(DEBUG_LED1, LOW);
@@ -476,6 +505,8 @@ void move_gyro_until_side_detect_cycle(DistanceDir side, int speed, double hold_
 // - Slows down near target
 // - Stops only when distance is stable inside tolerance
 // ===========================================================
+// Align to a front-wall distance target using the existing range filtering and
+// heading correction.
 void move_to_front_distance(float target_mm, float tol_mm, int base_speed, double hold_angle, bool debug) {
   const int MIN_SPEED = 42;
   const int FINAL_SPEED = 36;
@@ -736,6 +767,8 @@ void move_to_front_distance(float target_mm, float tol_mm, int base_speed, doubl
 // speed: positive = forward, negative = backward
 // stopDistanceMM: robot stops when selected sensor sees distance smaller than this
 // debug: true = prints gyro, PID, and sensor values
+// Drive on a held heading until the specified sensor distance condition is
+// reached.
 void move_straight_until_distance(char sensorSide, double speed, int stopDistanceMM, bool debug, bool stop_stil) {
   int sign = speed >= 0 ? 1 : -1;
   const uint32_t finalDistanceStartMs = millis();

@@ -1,8 +1,6 @@
 // ============================================================================
-// HyperLine Robotics | WRO 2026 Future Engineers | World Final
-// Read-only diagnostics
-// Local HTTP dashboard, live sensor/control values, bounded yaw history and parking/color CSV exports. No remote actuation.
-// Source revision: 24 November 2026, rolling parking release.
+// HYPERLINE ROBOTICS | WRO 2026 FUTURE ENGINEERS
+// Optional Wi-Fi telemetry | snapshots, plots and CSV diagnostics
 // ============================================================================
 
 // Set 0 for competition (Wi-Fi radio OFF); set 1 to enable the live AP.
@@ -49,6 +47,7 @@ static uint16_t telemetryColorHead = 0, telemetryColorCount = 0;
 static uint32_t telemetryColorLastLogMs = 0;
 static uint32_t telemetryColorLastRawStamp = 0;
 
+// Record raw floor-color samples into the diagnostic history buffer.
 static void telemetry_color_record() {
   if (!tcsReady || tcsLastReadMicros == 0 ||
       (uint32_t)(millis() - telemetryColorLastLogMs) < 85UL ||
@@ -64,6 +63,7 @@ static void telemetry_color_record() {
   if (telemetryColorCount < TELEMETRY_COLOR_LOG_CAP) ++telemetryColorCount;
 }
 
+// Serialize recorded floor-color samples as a downloadable CSV response.
 static void telemetry_send_color_log() {
   if (telemetryMotorPwm != 0) {
     telemetryServer.send(409, "text/plain", "Stop the robot before downloading the color log.");
@@ -99,6 +99,7 @@ static TelemetryHistorySample telemetryHistory[TELEMETRY_HISTORY_CAP];
 static uint16_t telemetryHistoryHead = 0;
 static uint16_t telemetryHistoryCount = 0;
 
+// Update the diagnostic representation of the most recent camera command.
 void telemetry_note_camera(const String &cmd) {
   if (cmd.startsWith("S")) {
     telemetryLastCamera = "FOLLOW S";
@@ -109,7 +110,9 @@ void telemetry_note_camera(const String &cmd) {
   else telemetryLastCamera = "Other";
   telemetryLastCameraMs = millis();
 }
+// Store the latest navigation event label for display.
 void telemetry_note_event(const char *msg) { telemetryEvent = msg; }
+// Publish the current parking stage and target heading to the dashboard.
 void telemetry_parking_stage(const char *name, double target) {
   telemetryParkingStarted = true;
   telemetryParkingStage = name;
@@ -117,16 +120,19 @@ void telemetry_parking_stage(const char *name, double target) {
   telemetryFrontTestStopped = String(name) == "STOP AT FRONT 270";
   telemetryEvent = name;
 }
+// Record a parking failure reason for later diagnosis.
 void telemetry_parking_fail(const char *reason) {
   telemetryParkingStarted = true;
   telemetryParkingStage = "STOPPED / FAULT";
   telemetryFault = reason;
   telemetryEvent = reason;
 }
+// Store the selected front ToF cells for the diagnostic snapshot.
 void telemetry_front_cells(int a, int b) {
   telemetryFrontR2C3 = a;
   telemetryFrontR3C3 = b;
 }
+// Store the latest selected side-zone distance.
 void telemetry_side_cell(int mm) { telemetrySideR2C3 = mm; }
 
 // Offline parking diagnostics: updated from each new ToF frame while running.
@@ -153,6 +159,7 @@ static uint16_t parkingLogHead = 0, parkingLogCount = 0;
 static uint32_t parkingLastLoggedMs[2] = {0, 0};
 static uint8_t parkingLastLoggedCount[2] = {0, 0};
 
+// Reset the side-post diagnostic recording state for a new parking maneuver.
 void telemetry_side_parking_reset() {
   for (uint8_t i=0;i<2;i++) {
     telemetryParkWalls[i] = telemetryParkPhases[i] = 0;
@@ -166,6 +173,7 @@ void telemetry_side_parking_reset() {
   parkingLogHead = parkingLogCount = 0;
 }
 
+// Record which side sensor is active during the parking search.
 void telemetry_side_parking_active(uint8_t sensorIndex) {
   telemetryParkActive = sensorIndex == LEFT_DIR ? 1 : (sensorIndex == RIGHT_DIR ? 2 : 0);
 }
@@ -198,10 +206,12 @@ void telemetry_side_parking_frame(uint8_t sensorIndex, uint8_t wallCount,
   parkingLogHead = (parkingLogHead + 1) % PARK_SIDE_LOG_CAP;
   if (parkingLogCount < PARK_SIDE_LOG_CAP) ++parkingLogCount;
 }
+// Record the completion of side-sensor parking diagnostics.
 void telemetry_side_parking_finished(uint8_t sensorIndex) {
   telemetryParkSelected = sensorIndex == LEFT_DIR ? 1 : (sensorIndex == RIGHT_DIR ? 2 : 0);
 }
 
+// Export the recorded parking-side observations as CSV.
 static void telemetry_send_parking_log() {
   if (telemetryMotorPwm != 0) {
     telemetryServer.send(409, "text/plain", "Stop the robot before downloading its parking log.");
@@ -231,6 +241,7 @@ static void telemetry_send_parking_log() {
 }
 
 
+// Translate the navigation-state enumeration into a dashboard label.
 static const char *telemetry_state_name() {
   switch (currentState) {
     case PID: return "PID";
@@ -241,6 +252,7 @@ static const char *telemetry_state_name() {
     default: return "UNKNOWN";
   }
 }
+// Translate the cube-phase state into a diagnostic label.
 static const char *telemetry_cube_name() {
   switch (finalCubePhase) {
     case FC_TURN_OUT: return "TURN_OUT";
@@ -250,17 +262,20 @@ static const char *telemetry_cube_name() {
     default: return "IDLE";
   }
 }
+// Select the relevant heading target for the current telemetry snapshot.
 static double telemetry_target_yaw() {
   if (telemetryParkingStarted && currentState == PARK) return telemetryParkingTarget;
   if ((currentState == AVOID_CUBE || currentState == AFTER_CUBE) &&
       finalCubePhase != FC_IDLE) return finalCubeTarget;
   return current_angle_gyro;
 }
+// Map the current parking stage to a compact diagnostic identifier.
 static uint8_t telemetry_stage_id() {
   if (telemetryParkingStarted) return 2;
   if (currentState == AVOID_CUBE || currentState == AFTER_CUBE) return 1;
   return 0;
 }
+// Capture a rate-limited history sample for plotting yaw and movement.
 static void telemetry_record_sample() {
   if (!gyroAvailable) return;
   const uint32_t now = millis();
@@ -279,6 +294,8 @@ static void telemetry_record_sample() {
 
 // Each module reports two central vertical zones, online state, and age.
 // The age allows a real distance to be distinguished from an old cache.
+// Append module status, frame age and the complete cached 4x4 range matrix to
+// JSON.
 static void telemetry_append_tof(String &j, const char *key, DistanceDir dir) {
   const bool online = tof_sensor_online(dir);
   const uint32_t stamp = tof_last_frame_ms(dir);
@@ -309,6 +326,7 @@ static void telemetry_append_tof(String &j, const char *key, DistanceDir dir) {
   j += "}";
 }
 
+// Build the read-only robot snapshot returned by the HTTP API.
 static String telemetry_json() {
   const double target = telemetry_target_yaw();
   String j;
@@ -388,6 +406,8 @@ static String telemetry_json() {
   j += "}";
   return j;
 }
+// Return stored plot history under the existing motion-related transfer
+// restrictions.
 static void telemetry_send_history() {
   // A large download in the middle of a gyro turn can delay angle integration.
   // The browser keeps building live history while the wheels are moving.
@@ -569,6 +589,8 @@ loadHistory().then(poll);
 </script></body></html>
 )HLRHTML";
 
+// When enabled at compile time, start the local access point and register
+// read-only HTTP routes. Otherwise disable the Wi-Fi radio.
 void telemetry_setup() {
 #if !HLR_ENABLE_WIFI_TELEMETRY
   WiFi.mode(WIFI_OFF);
@@ -610,6 +632,8 @@ void telemetry_setup() {
 #endif
 }
 
+// Service diagnostics and HTTP requests at controlled intervals; poll one ToF
+// module at a time for recently connected dashboards.
 void telemetry_tick() {
 #if !HLR_ENABLE_WIFI_TELEMETRY
   return;
@@ -619,6 +643,7 @@ void telemetry_tick() {
   if (telemetryFrontTestStopped && millis() - telemetryLastFrontMs >= 120UL) {
     telemetryLastFrontMs = millis();
     tof_poll_front_only();
+// Store the selected front ToF cells for the diagnostic snapshot.
     telemetry_front_cells(tof_zone_mm(FRONT_DIR, 2, 3),
                           tof_zone_mm(FRONT_DIR, 3, 3));
     int l2=tof_zone_mm(FRONT_DIR,2,2),l3=tof_zone_mm(FRONT_DIR,3,2);
