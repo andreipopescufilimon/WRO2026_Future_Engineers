@@ -23,11 +23,11 @@ The assembled electronics and vehicle can be inspected in the [robot photographs
 
 | System objective | Why it is difficult | V4.1 engineering response | Relevant evidence |
 |---|---|---|---|
-| Navigate three laps in either direction | Wall positions, approach geometry and accumulated heading error change the corner conditions | Front multi-zone ranging, direction recognition, gyro-referenced steering and turn counting | [Open-mode firmware](../src/HLR_FE_Separated/Open.ino), [ToF code](../src/HLR_FE_Separated/tof.ino) |
-| Respect red and green obstacles | Image recognition, vehicle clearance and recovery must agree | RT1062 color segmentation, UART commands, steering states and distance-aware movement | [Camera source](../src/camera.py), [Final-mode firmware](../src/HLR_FE_Separated/Final.ino) |
-| Start, stop and park predictably | The motor must provide low-speed control, and short movements accumulate odometry and yaw error | 50:1 geared rear drive, encoder, mechanical differential, low-speed states and ToF feedback | [Mobility](02-mobility.md), [motor routines](../src/HLR_FE_Separated/motors.ino) |
+| Navigate three laps in either direction | Wall positions, approach geometry and accumulated heading error change the corner conditions | Front multi-zone ranging, direction recognition, gyro-referenced steering and turn counting | [Open-mode firmware](../src/HLR_FE_World_Final/Open.ino), [ToF code](../src/HLR_FE_World_Final/tof.ino) |
+| Respect red and green obstacles | Image recognition, vehicle clearance and recovery must agree | RT1062 color segmentation, UART commands, steering states and distance-aware movement | [Camera source](../src/camera.py), [Final-mode firmware](../src/HLR_FE_World_Final/Final.ino) |
+| Start, stop and park predictably | The motor must provide low-speed control, and short movements accumulate odometry and yaw error | 50:1 geared rear drive, encoder, mechanical differential, low-speed states and ToF feedback | [Mobility](02-mobility.md), [motor routines](../src/HLR_FE_World_Final/motors.ino) |
 | Operate under constrained electrical power | Motor and steering transients share a small 2S battery with sensing electronics | Direct motor supply, regulated logic branch, distributed grounds and dedicated driver | [Power distribution](03-power-sensors.md#3-power-architecture-and-calculations) |
-| Fit a compact competition vehicle | Steering, tires, camera and range sensors need clear motion and viewing paths | Structural PCB, custom sensor boards, localized mounts and parallel front steering | [CAD](../3D-models/), [sensor placement](docs-media/v41-sensor-placement-reference.png) |
+| Fit a compact competition vehicle | Steering, tires, camera and range sensors need clear motion and viewing paths | Structural PCB, custom sensor boards, localized mounts and parallel front steering | [CAD](../3D-models/), [sensor placement](docs-media/v41-photo-annotated-sensor-placement.png) |
 
 ### 1.2 System-level architecture
 
@@ -56,7 +56,7 @@ flowchart LR
 
 The main controller owns the decisions. The camera reports what it sees; the ToFs report where walls are; the BMI088 measures angular motion; the encoder estimates traveled distance. None of these alone determines the car's complete state. The controller combines the information into steering, propulsion and mode transitions, and the mechanical vehicle supplies the real-world feedback.
 
-<p align="center"><img src="docs-media/v41-assembled-robot-top.png" width="445" alt="Physical V4.1 PCB chassis and installed electronics"><img src="docs-media/v41-sensor-placement-reference.png" width="400" alt="V4.1 sensor placement and viewing geometry"></p>
+<p align="center"><img src="docs-media/v41-photo-assembled-robot-top.png" width="445" alt="Physical V4.1 PCB chassis and installed electronics"><img src="docs-media/v41-photo-annotated-sensor-placement.png" width="400" alt="V4.1 sensor placement and viewing geometry"></p>
 <p align="center"><sub>Figure 5.2. Physical system integration and sensor-viewing geometry. These are references to the assembled hardware, not an idealized sensor-only design.</sub></p>
 
 ---
@@ -103,7 +103,7 @@ Here $a_b$ is the actual achievable braking deceleration and $\tau$ includes the
 
 **Alternatives considered:** a separate mechanical base with electronic modules mounted above it, or the existing structural PCB concept.
 
-**Our choice:** retain the PCB as the mechanical reference and electrical distribution platform. This preserves a low, compact arrangement and makes the controller, H-bridge, sensor connectors and mounts part of one documented assembly. The [main-board copper views](03-power-sensors.md#23-electrical-schematic-pcb-traces-and-assembled-board), [production files](../electrical-schematics/Main%20PCB/production-files/) and [assembled photograph](docs-media/v41-assembled-robot-top.png) show how the decision was implemented.
+**Our choice:** retain the PCB as the mechanical reference and electrical distribution platform. This preserves a low, compact arrangement and makes the controller, H-bridge, sensor connectors and mounts part of one documented assembly. The [main-board copper views](03-power-sensors.md#23-electrical-schematic-pcb-traces-and-assembled-board), [production files](../electrical-schematics/Main%20PCB/production-files/) and [assembled photograph](docs-media/v41-photo-assembled-robot-top.png) show how the decision was implemented.
 
 **What we accepted:** high-current copper routing is close to sensing electronics, board flex can stress solder joints, and a connector change can require remanufacturing the board. This is why mechanical support, motor-current return paths and connector placement are treated as system risks, not merely PCB layout details.
 
@@ -143,17 +143,16 @@ The drive firmware uses 1 kHz, 8-bit PWM. The Open Cruise request is **250/255 =
 
 **V4.1 choice:** four VL53L5CX modules, each configured for a **4 × 4 spatial matrix**. The devices share the main I²C bus with the BMI088; individual LPn pins isolate the sensors during startup and assign different addresses. In the Open mode, the firmware limits normal matrix transfer to the front sensor to reduce bus work.
 
-The key design decision is *not* simply to install a higher-resolution sensor. It is to make corner detection depend on **two specific front zones**, row 2/column 3 and row 3/column 3, rather than one unqualified range number. Both must be valid and **below 600 mm** to register a new corner. The detector rearms after both have returned to **at least 800 mm**, giving **200 mm of spatial hysteresis**. A missing or stale measurement is invalid rather than treated as a nearby wall.
+The current Open controller confirms a wall from three new valid pairs in R2C3/R3C3 below 700 mm and no more than 220 mm apart. The prior 600/800 mm threshold hysteresis is historical. The new scheme combines spatial agreement, temporal confirmation and encoder-based rearming.
 
-| Case from the current logic | System response | Why the distinction matters |
-|---|---|---|
-| Both selected zones below 600 mm, event armed | Corner request created | Agreement between two regions reduces dependence on a single return |
-| Only one zone below 600 mm | No new corner request | Prevents one isolated close zone from immediately causing a 90° maneuver |
-| One selected zone invalid or stale | No new corner request | Avoids treating missing information as a confirmed wall |
-| Either valid zone below 800 mm during normal approach | Reduce normal PWM to 40% | Creates more response margin as the wall approaches |
-| Both selected zones at least 800 mm | Rearm the event | Prevents a continuing wall from being counted repeatedly |
+| Current condition | Response |
+|---|---|
+| Three agreeing fresh pairs below 700 mm | Request one corner if armed and direction known |
+| Invalid, stale or inconsistent data | No new corner confirmation; conservative speed target |
+| Verified wall between 1000 and 700 mm | Interpolate approach speed toward PWM 80 |
+| Completed turn | Rearm after at least 600 ms and 25 cm straight movement |
 
-This table is derived from [`tof.ino`](../src/HLR_FE_Separated/tof.ino). It documents the *implemented control behavior*; physical false-trigger rates and range accuracy depend on the installed optical orientation, reflectivity and actual frame delivery.
+See [Open.ino](../src/HLR_FE_World_Final/Open.ino) and [ToF diagnostics](03-power-sensors.md#world-final-tof-matrix-evidence). Actual false/missed corner rates require field measurements.
 
 ### D06. Gyroscope-referenced turning instead of fixed turn timing
 
@@ -169,7 +168,7 @@ The software intentionally discards unusually long gyro integration intervals ra
 
 **Our choice:** the **OpenMV RT1062** performs image capture and color-blob processing. The **Nano ESP32** controls the state machine, motor, servo, ToF sensors and gyroscope. The camera sends small messages over **19,200-baud UART**. The TCS34725 independently detects colored floor markers on a separate I²C bus.
 
-The separation lets us use region-of-interest filtering and pixel operations without placing those operations inside the main motion loop. It also introduces possible failures: incorrect camera exposure, false color classification, UART message loss or mismatched control states. The published [RT1062 detection screenshot](docs-media/v41-openmv-RT1062-camera-view.png) shows actual red/green blob segmentation, while [`camera.py`](../src/camera.py) documents the filtering and serial protocol.
+The separation lets us use region-of-interest filtering and pixel operations without placing those operations inside the main motion loop. It also introduces possible failures: incorrect camera exposure, false color classification, UART message loss or mismatched control states. The published [RT1062 detection screenshot](docs-media/v41-screenshot-openmv-color-detection.png) shows actual red/green blob segmentation, while [`camera.py`](../src/camera.py) documents the filtering and serial protocol.
 
 An observed camera-development problem was a greenish image and unstable color appearance when starting while facing a nearby wall. The camera script addresses exposure and white-balance dependence by disabling automatic gain, white balance and exposure, then using explicit settings. This is a traceable **response to a reported integration symptom**, not a claim of a measured detection accuracy under every lighting condition.
 
@@ -177,7 +176,7 @@ An observed camera-development problem was a greenish image and unstable color a
 
 The two challenges have different information priorities. Open-mode cornering relies on front ToF events after direction detection; Obstacle mode additionally uses colored pillars, floor markers, approach/avoid/recovery states and parking. Sharing every decision branch would make tuning one challenge more likely to disturb the other.
 
-The current V4.1 source therefore separates [`Open.ino`](../src/HLR_FE_Separated/Open.ino) and [`Final.ino`](../src/HLR_FE_Separated/Final.ino), while retaining shared low-level motor, IMU, ToF and floor-color functions. At startup, **D11 HIGH** selects Final and **D12 HIGH** selects Open. When both selections are equal, the startup code remains in a non-driving indication loop rather than choosing a mode arbitrarily.
+The current V4.1 source therefore separates [`Open.ino`](../src/HLR_FE_World_Final/Open.ino) and [`Final.ino`](../src/HLR_FE_World_Final/Final.ino), while retaining shared low-level motor, IMU, ToF and floor-color functions. At startup, **D11 HIGH** selects Final and **D12 HIGH** selects Open. When both selections are equal, the startup code remains in a non-driving indication loop rather than choosing a mode arbitrarily.
 
 The compromise is that common functions and shared parameters still affect both challenges. Separating source files is an architectural improvement in maintainability, not by itself proof of a higher lap-completion rate.
 
@@ -195,7 +194,7 @@ Our V4-to-V4.1 changes began with limitations in the previous design rather than
 
 | Development problem or observation | Change made | Observable result or evidence | Engineering conclusion |
 |---|---|---|---|
-| A single distance value did not provide spatial context around a wall edge | Four VL53L5CX matrix boards and two-zone front-corner logic | Current code selects exact matrix zones, checks validity and uses 600/800 mm hysteresis; custom boards and their manufacturing files are published | A corner decision can now be conditioned on *where* the wall is seen, rather than only one scalar distance |
+| A single distance value did not provide spatial context around a wall edge | Four VL53L5CX matrix boards and two-zone front-corner logic | Current code selects exact matrix zones, checks validity and uses three-frame confirmation and time/distance rearming; custom boards and their manufacturing files are published | A corner decision can now be conditioned on *where* the wall is seen, rather than only one scalar distance |
 | V4's 30:1 ratio favored theoretical output speed | V4.1 changed to a 50:1 drive motor | Current drivetrain specification and assembly identify the revised ratio | Ideal torque multiplication increases, with reduced nominal output speed; a numerical dynamic gain is not inferred |
 | Short distance movements accumulated odometry error during tuning | Encoder travel factor and wheel-distance assumptions were investigated | In a team-reported bench check on **8 November 2026**, a 200 mm requested move produced about **185 mm** of travel | The approximately **15 mm shortfall (7.5%)** showed that a nominal conversion alone was insufficient; it is a calibration observation, not a claimed final error bound |
 | Camera color appearance changed when starting close to a wall | Manual camera image settings and dedicated RT1062 processing | The camera script disables automatic gain, exposure and white balance; a real detection screenshot is available | Camera initialization and lighting must be treated as part of the perception system, not left to an uncontrolled startup state |
@@ -208,7 +207,7 @@ $$
 d_{\mathrm{estimated}}=N_{\mathrm{ticks}}\,k_{\mathrm{mm/tick}}.
 $$
 
-Changing the numerical coefficient without confirming the actual tick source can conceal the problem. Chapter 02 explains the drivetrain and geometry; the [motor firmware](../src/HLR_FE_Separated/motors.ino) shows how ticks are used for short moves.
+Changing the numerical coefficient without confirming the actual tick source can conceal the problem. Chapter 02 explains the drivetrain and geometry; the [motor firmware](../src/HLR_FE_World_Final/motors.ino) shows how ticks are used for short moves.
 
 ### 4.1 An iteration can improve one subsystem and worsen another
 
@@ -228,7 +227,7 @@ A correct turn depends on several conditions being true in sequence:
 flowchart TD
     A["Robot started in Open mode"] --> B["Read first floor marker\nand establish direction"]
     B --> C["Poll fresh front ToF matrix"]
-    C --> D{"Two chosen zones\nvalid and below 600 mm?"}
+    C --> D{"Two chosen zones\nthree agreeing fresh pairs below 700 mm?"}
     D -->|No| E["Maintain gyro-guided heading\nand manage approach speed"]
     E --> C
     D -->|Yes| F["Consume one armed corner event"]
@@ -237,13 +236,13 @@ flowchart TD
     H --> I{"Corner completed?"}
     I -->|No| H
     I -->|Yes| J["Resume heading control"]
-    J --> K["Rearm after clear distance\nreaches 800 mm in both zones"]
+    J --> K["Rearm after 600 ms\nand 25 cm straight travel"]
     K --> C
 ```
 
 *Figure 5.3. Simplified current Open Challenge control sequence, derived from the separated `Open.ino` and `tof.ino` firmware. The diagram shows decision ownership rather than reproducing every helper call.*
 
-The 600 mm trigger only works if the sensor is correctly mounted, its zones refer to the intended field region, the reading is recent, the motor has slowed sufficiently and the steering system has clearance. The same software threshold may become too late when the car is faster or the sensor mounting angle changes. That is why the **sensor geometry, reaction distance and motor speed must be treated together**.
+The 700 mm trigger only works if the sensor is correctly mounted, its zones refer to the intended field region, the reading is recent, the motor has slowed sufficiently and the steering system has clearance. The same software threshold may become too late when the car is faster or the sensor mounting angle changes. That is why the **sensor geometry, reaction distance and motor speed must be treated together**.
 
 ### 5.2 Obstacle Challenge: perception is only the first step
 
@@ -267,7 +266,7 @@ We prioritize failures by their effect on completing a round. The priorities bel
 |---|---|---|---|---|
 | **6 V motor on a fully charged 8.7 V pack** | High motor current, winding heating, possible drivetrain or driver damage | PWM command and IFX9201SG fault behavior; motor temperature/current require physical assessment | Avoid stalled operation; consider duty and load; driver protections do **not** substitute for motor thermal qualification | **High** |
 | **Stale or invalid front ToF matrix** | Delayed or missing Open corner; incorrect wall interpretation | Rejects zones with invalid status and frames older than 150 ms | Correct mounting and optical clearance; confirm delivered update rate at driving speed | **High** |
-| **False repeated corner event** | Too many 90-degree turns, loss of course | Two-zone requirement and 600/800 mm arming hysteresis | Correct zone orientation, test wall angles and reflectivity | **High** |
+| **False repeated corner event** | Too many 90-degree turns, loss of course | Three-frame two-zone agreement and time/distance rearming | Correct zone orientation, test wall angles and reflectivity | **High** |
 | **Gyro startup movement or bias drift** | Incorrect heading, turn overshoot or failure to face the next straight | Startup stationary bias calibration; integrates corrected Z rate | Keep robot still during calibration; allow for temperature and missed intervals | **High** |
 | **Incorrect encoder conversion or wheel slip** | Short moves and parking distances differ from commands | Tick-based movement routines; reported 200 mm vs 185 mm tuning result | Calibrate the physical travel scale and distinguish wheel rotation from ground displacement | **High** |
 | **Camera starts with a nearby wall in view** | Color shift or inconsistent red/green detection | Manual exposure, white balance and gain configuration in camera code | Recheck thresholds in actual lighting; avoid assuming one captured frame proves reliability | **High** |
@@ -295,8 +294,8 @@ We separate **observed physical behavior**, **published implementation** and **e
 | [Assembly video](https://youtu.be/HSzWATB6nWQ) and [robot photos](../v-photos/) | Hardware was physically assembled, including drivetrain and electronics | Does not measure current, acceleration or reliability |
 | [Main PCB and sensor manufacturing files](../electrical-schematics/) | Design and reproducibility of fabricated boards | Physical test data depends on the assembled revision |
 | [V4.1 motor and steering CAD](../3D-models/) | Geometry, mounting concept and mechanical relationships | Ideal geometry needs physical calibration for tire contact and steering angles |
-| [Current V4.1 firmware](../src/HLR_FE_Separated/) | D11/D12 mode selection, Open/Final modules, ToF addresses, guards and movement routines | Demonstrates implementation, not the exact controller binary used in the earlier video |
-| [OpenMV RT1062 frame](docs-media/v41-openmv-RT1062-camera-view.png) | One real camera frame with color-detection output | Does not establish detection accuracy across repeated lighting conditions |
+| [Current V4.1 firmware](../src/HLR_FE_World_Final/) | D11/D12 mode selection, Open/Final modules, ToF addresses, guards and movement routines | Demonstrates implementation, not the exact controller binary used in the earlier video |
+| [OpenMV RT1062 frame](docs-media/v41-screenshot-openmv-color-detection.png) | One real camera frame with color-detection output | Does not establish detection accuracy across repeated lighting conditions |
 | **200 mm commanded, about 185 mm observed** in a team-reported calibration check | A real-world odometry discrepancy that informed tuning | One development observation, not a full repeated calibration curve |
 | **30:1 to 50:1 calculation** | Theoretical gear-ratio trade-off | Not a measured speed or torque result |
 
@@ -336,7 +335,7 @@ The engineering process spans multiple revisions. V4 was the national competitio
 |---|---|---|
 | **V4 national configuration** | [Historical V4 checkpoint](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/7e1b0b5b707511563fd0250af08e68c7288d2966) | Earlier mechanical and electrical implementation used as the V4 comparison |
 | **Firmware associated with filmed driving** | [Commit `de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | Team-identified revision used for the recorded physical driving; main sketch [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) |
-| **Later modular V4.1 implementation** | [Commit `045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), [source directory](../src/HLR_FE_Separated/) | Separate Open and Final modes, multi-zone ToF processing and current controller architecture |
+| **Later modular V4.1 implementation** | [Commit `045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), [source directory](../src/HLR_FE_World_Final/) | Separate Open and Final modes, multi-zone ToF processing and current controller architecture |
 
 The filming snapshot and later modular sketch are different implementations. We use the filmed revision to identify the source behind the real-world video, and the later directory to document the present architecture. This keeps the evidence traceable without asserting that a later software change had already been filmed.
 

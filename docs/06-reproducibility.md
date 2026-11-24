@@ -42,7 +42,7 @@ Our documentation covers the physical vehicle, its custom PCB assemblies, the me
 | --- | --- | --- |
 | Mechanical and electrical assembly | The built vehicle and its PCB, drivetrain, steering and sensor placement are documented in photographs and an assembly recording | [Assembly video](https://youtu.be/HSzWATB6nWQ) · [Vehicle photographs](../v-photos/) |
 | Autonomous driving | Our published video documents the physical robot in both Open and Obstacle challenges; the team identifies the filming software as commit `de34faf` | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) · [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
-| Camera perception | An RT1062 frame captures red and green detections on the actual vision interface | [Captured camera view](docs-media/v41-openmv-RT1062-camera-view.png) |
+| Camera perception | An RT1062 frame captures red and green detections on the actual vision interface | [Captured camera view](docs-media/v41-screenshot-openmv-color-detection.png) |
 | Electronic and mechanical release | The source repository includes STEP models, PCB manufacturing files, the Arduino V4.1 sketch and the RT1062 script | [Mechanical CAD](../3D-models/) · [PCB files](../electrical-schematics/) · [Controller source](../src/HLR_FE_World_Final/) · [Camera source](../src/camera.py) |
 
 **Firmware used during filming:** according to the team, the driving video was recorded with Git commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81). The associated Arduino program is [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino). The newer [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) firmware is documented separately because its software architecture differs from the filmed version.
@@ -67,7 +67,7 @@ Paths are shown from the repository root, while the Markdown links resolve from 
 | [`electrical-schematics/TOF sensors/production-files/`](../electrical-schematics/TOF%20sensors/production-files/) | ToF PCB production files |
 | [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) | V4.1 Arduino Nano ESP32 Open/Final firmware and supporting `.ino` files |
 | [`src/camera.py`](../src/camera.py) | OpenMV RT1062 camera-side Python source |
-| [`src/HLR_FE_Separated/README.txt`](../src/README.md) | Firmware setup and mode-selection reference |
+| [`src/README.md`](../src/README.md) | Firmware setup and mode-selection reference |
 | [`src/tests/`](../src/tests/) | Motor, steering, IMU, straight-driving and communication tests |
 | [`v-photos/`](../v-photos/) | Vehicle photographs from all sides |
 | [`t-photos/`](../t-photos/) | Team photograph |
@@ -355,34 +355,24 @@ Use the eight current STEP models, the structural main PCB, the matching IMU and
 
 Import the current STEP models in millimetres into CAD or a compatible slicer. Export meshes at sufficient resolution to preserve holes and bearing seats. Do not use the archived V3/V4.0 impeller or wheel models for the V4.1 build.
 
-| Slicer parameter | Starting profile |
+| Slicer parameter | Captured V4.1 process setting |
 |---|---|
-| Layer height | **0.08 mm**, team-specified |
-| Nozzle | 0.4 mm, recommended starting point |
-| First layer | 0.20 mm, recommended |
-| Line width | 0.42 mm, recommended |
-| Perimeters | 4, recommended |
-| Top/bottom | At least 0.8 mm solid thickness (10 layers at 0.08 mm) |
-| Infill | 35–50% gyroid for mounts; increase locally for loaded hubs as needed |
-| Print speed | 35–50 mm/s; slower external walls for dimensional accuracy |
-| Material, nozzle/bed temperature, cooling | Use the actual filament manufacturer's profile and record the material and settings |
-| Supports | Only where needed; avoid support contact on bearing seats and optical openings |
-| Adhesion | Brim when small contact area requires it |
-| Scaling | 100% in millimetres; compensate only after measuring a test fit |
+| Profile | 0.08mm Standard @AC KS1 - High Qual… (visible profile name is truncated) |
+| Layer / first layer height | **0.08 / 0.20 mm** |
+| Default / outer wall / top surface | 0.42 mm |
+| First-layer line width | 0.50 mm |
+| Inner wall / sparse infill line width | 0.45 mm |
+| Internal solid infill / support line width | 0.42 mm |
+| Supports | Enabled; Tree (auto), Tree Slim, threshold 15° |
+| Support placement | Build plate only unchecked; critical regions only unchecked; remove small overhangs checked |
+| Material, nozzle diameter, wall count, infill density, speeds, temperatures | Not visible in supplied captures; record the actual material and remaining slicer settings before reproducing |
 
-Only the 0.08 mm layer height is supplied as a team setting; the other numeric values are a suggested starting profile, not a verified historical print recipe. Save the actual slicer profile and record printer, material, orientation and any dimensional compensation. Remove support material, inspect holes, and dry-fit each part before installing hardware. A smooth printed surface does not guarantee correct fit or adequate strength.
+These settings are transcribed from the two supplied V4.1 slicer screenshots, rather than a proposed recipe. Thin layers help preserve curved surfaces and small mounting features; tree supports provide access around overhangs. Verify hole and bearing fits after support removal. Use the current STEP geometry at 100% scale unless measured compensation is required. The screenshots do not establish dimensional tolerance or strength.
 
-**Evidence to add:** `docs/docs-media/world-final/printing-slicer-profile.png`
-
-![Actual slicer profile showing 0.08 mm layer height, material and process settings](docs-media/world-final/printing-slicer-profile.png)
-
-*Actual slicer profile showing 0.08 mm layer height, material and process settings (capture pending).*
-
-**Evidence to add:** `docs/docs-media/world-final/assembly-01-printed-parts.jpg`
-
-![Printed mounts, hubs, steering bar and wheels laid out before assembly](docs-media/world-final/assembly-01-printed-parts.jpg)
-
-*Printed mounts, hubs, steering bar and wheels laid out before assembly (capture pending).*
+<p align="center"><img src="docs-media/v41-screenshot-slicer-quality.png" width="390" alt="Slicer quality settings"></p>
+<p align="center"><sub>V4.1 captured quality profile: layer heights and extrusion widths.</sub></p>
+<p align="center"><img src="docs-media/v41-screenshot-slicer-support.png" width="390" alt="Slicer tree support settings"></p>
+<p align="center"><sub>V4.1 captured support profile: automatic slim tree supports and 15° threshold.</sub></p>
 
 #### 2.2 Hardware assembly sequence
 
@@ -399,37 +389,22 @@ Only the 0.08 mm layer height is supplied as a team setting; the other numeric v
 | 9. First power | With wheels raised and drive disabled, verify power rails and serial initialization. Confirm all four ToF addresses and stationary IMU calibration before starting motors. | No unexpected heating, resets or movement; stop and investigate faults. |
 | 10. Calibration | Follow the steering, encoder, camera, ToF and IMU checks below, then perform controlled low-speed driving. | Record measured results with the actual firmware SHA. |
 
-**Evidence to add:** `docs/docs-media/world-final/assembly-02-pcb-chassis.jpg`
+#### 2.3 Assembly photographs from V4.1
 
-![Structural PCB and mechanical mounting points before drivetrain installation](docs-media/world-final/assembly-02-pcb-chassis.jpg)
+The following photographs document actual subassemblies at different stages. They complement the step-by-step procedure and CAD; they are not a complete electrical inspection or a test of mechanical tolerances.
 
-*Structural PCB and mechanical mounting points before drivetrain installation (capture pending).*
+<p align="center"><img src="docs-media/v41-photo-assembly-populated-chassis-pcb.png" width="390" alt="Populated structural PCB before mechanical installation"></p>
+<p align="center"><sub>Structural PCB populated with the Nano ESP32, regulator, drive electronics and sensor boards; remaining headers and mounting holes are accessible.</sub></p>
+<p align="center"><img src="docs-media/v41-photo-assembly-rear-drivetrain.png" width="500" alt="Rear motor transmission and wheel assembly"></p>
+<p align="center"><sub>Rear drivetrain on the workbench: wheels, visible gears, motor and drive support before installation.</sub></p>
+<p align="center"><img src="docs-media/v41-photo-assembly-front-camera-servo-mount.png" width="420" alt="Front camera and steering servo bracket"></p>
+<p align="center"><sub>Front camera/servo mounting subassembly with steering linkage elements; wheels are not yet attached in this view.</sub></p>
+<p align="center"><img src="docs-media/v41-photo-assembly-camera-sensor-wiring.png" width="390" alt="Front camera and sensor wiring on robot"></p>
+<p align="center"><sub>Installed camera and front sensor wiring on the chassis. Route leads clear of the steering linkage and check polarity against the schematic.</sub></p>
+<p align="center"><img src="docs-media/v41-photo-assembled-robot-top.png" width="520" alt="Complete V4.1 top view"></p>
+<p align="center"><sub>Existing assembled-vehicle photograph: integrated chassis, drivetrain, electronics and battery.</sub></p>
 
-**Evidence to add:** `docs/docs-media/world-final/assembly-03-rear-drivetrain.jpg`
-
-![Rear motor, gear transmission, differential and wheels installed](docs-media/world-final/assembly-03-rear-drivetrain.jpg)
-
-*Rear motor, gear transmission, differential and wheels installed (capture pending).*
-
-**Evidence to add:** `docs/docs-media/world-final/assembly-04-front-steering.jpg`
-
-![Front hubs, servo and parallel steering linkage installed](docs-media/world-final/assembly-04-front-steering.jpg)
-
-*Front hubs, servo and parallel steering linkage installed (capture pending).*
-
-**Evidence to add:** `docs/docs-media/world-final/assembly-05-sensor-wiring.jpg`
-
-![Camera, IMU, ToF modules and secured electrical connections](docs-media/world-final/assembly-05-sensor-wiring.jpg)
-
-*Camera, IMU, ToF modules and secured electrical connections (capture pending).*
-
-**Evidence to add:** `docs/docs-media/world-final/assembly-06-complete-robot.jpg`
-
-![Complete assembled robot with battery retained and cable routing visible](docs-media/world-final/assembly-06-complete-robot.jpg)
-
-*Complete assembled robot with battery retained and cable routing visible (capture pending).*
-
-See [Mobility](02-mobility.md), [technical drawings](technical-drawings/) and [electrical schematics](../electrical-schematics/) for geometry and wiring references.
+See the [six vehicle views](../v-photos/) and [assembly video](https://youtu.be/HSzWATB6nWQ) for additional orientation. The new photographs are identified by the team as V4.1; exact capture dates and flashed firmware SHA were not provided.
 
 ### 3. Prepare the software environment
 
@@ -467,8 +442,8 @@ The repository contains the assembled vehicle documentation and the separated V4
 | --- | --- | --- |
 | Filmed robot's source revision | de34faf039a70443361197de540879f212e3de81 identified by the team as the code running in the driving recording; original sketch in `src/HLR_FE/` | [Filming firmware commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
 | Current V4.1 source checkpoint | Repository snapshot `045c57e7388c08f9281642a864de0ba3b099c0df` (10 November 2026), containing the newer separated sketch | [Later source snapshot](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
-| V4.1 controller source | `src/HLR_FE_Separated/HLR_FE_Separated.ino` with `Open.ino`, `Final.ino` and the hardware-control tabs | [Controller firmware](../src/HLR_FE_World_Final/) |
-| RT1062 image-processing demonstration | Captured camera frame shows red and green object detections | [Camera view](docs-media/v41-openmv-RT1062-camera-view.png) |
+| V4.1 controller source | `src/HLR_FE_World_Final/HLR_FE_World_Final.ino` with `Open.ino`, `Final.ino` and the hardware-control tabs | [Controller firmware](../src/HLR_FE_World_Final/) |
+| RT1062 image-processing demonstration | Captured camera frame shows red and green object detections | [Camera view](docs-media/v41-screenshot-openmv-color-detection.png) |
 | Physical autonomous driving | We published our real-world driving demonstration for both Open and Obstacle modes | [Driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
 
 The separate V4.1 sketch tabs compile together as one Arduino program. The board package and supporting libraries are installed through Arduino IDE before uploading.
@@ -500,7 +475,7 @@ The OpenMV RT1062 performs image capture and detection of coloured obstacles. Th
 
 On the RT1062, **P4 = UART1 TX** and **P5 = UART1 RX**, at **19,200 baud** in this release. Connect TX to the Nano UART receive and use a common GND. Both devices use 3.3 V logic. Keep the matching camera script and controller revision together. The controller also routes its camera communication over D0/D1 (Serial0).
 
-<img src="docs-media/v41-openmv-RT1062-camera-view.png" alt="OpenMV RT1062 camera frame showing the image used for obstacle detection" width="32%">
+<img src="docs-media/v41-screenshot-openmv-color-detection.png" alt="OpenMV RT1062 camera frame showing the image used for obstacle detection" width="32%">
 
 *Figure 6.1. OpenMV RT1062 frame buffer used to verify image orientation, detection thresholds and the active region of interest.*
 
@@ -518,7 +493,7 @@ The steps below connect the assembled robot to the values in the **modular V4.1*
 | 2 | **Motor direction and encoder** | Rear motor PWM on D7, direction on D8; encoder A on D5 (rising-edge interrupt), B on D4 (direction). The source defines `WHEEL_DIAM = 29.0` mm and `MM_PER_TICK = 0.858` mm for its distance helper. Drive a measured straight distance on the actual surface and compare to `read_cm()`. | Positive wheel travel has the expected encoder direction and measured displacement agrees with the selected distance conversion. |
 | 3 | **BMI088 heading** | [`gyro.ino`](../src/HLR_FE_World_Final/gyro.ino) estimates Z-axis bias over `DRIFT_TEST_TIME = 10` seconds at boot, with ±2000°/s gyro and ±6 g accelerometer settings. Keep the robot still during this interval, then rotate it manually both ways. | Heading increases/decreases consistently with the sign expected by the steering controller, without visible stationary jumps. |
 | 4 | **Four ToF matrices** | [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) releases one LPn pin at a time and assigns front A3=`0x30`, left A2=`0x31`, right A1=`0x32`, rear A0=`0x33`; each is 4×4, configured at 30 Hz. Test all four optical directions with a flat target and check that mount/wheels do not occlude the field of view. | All four sensors initialize with unique addresses and provide valid ranges for targets in their respective directions. |
-| 5 | **Front corner zones** | The Open controller uses front ToF zones `(2,3)` and `(3,3)` (1-based row/column) for a corner below 700 mm (current World Final source), with rearming once both are at least 800 mm. Data older than 150 ms is rejected. Check which physical side corresponds to those zones after mounting. | The correct wall and zones trigger a single turn, without mirrored indexing or repeated corner events. |
+| 5 | **Front corner zones** | The Open controller uses front ToF zones `(2,3)` and `(3,3)` (1-based row/column) for a corner below 700 mm (current World Final source), with three agreeing fresh pairs and rearming after 600 ms and 25 cm of straight travel. Data older than 150 ms is rejected. Check which physical side corresponds to those zones after mounting. | The correct wall and zones trigger a single turn, without mirrored indexing or repeated corner events. |
 | 6 | **Floor colors** | The TCS34725 uses separate I²C pins A6/A7. [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) reads normalized RGB channels; the source selects 16× gain and a short exposure. Present white, blue and red/orange field markings at the installed floor clearance. | White re-arms detection and colored markers set or confirm the intended travel direction. |
 | 7 | **RT1062 image and UART** | [`camera.py`](../src/camera.py) configures QVGA 320×240, `vflip=True`, `hmirror=True`, gain/AWB disabled, fixed 16,000 µs exposure and `UART(1, 19200)`. Connect P4 TX to Nano RX D0, and share ground. Recheck red/green blob thresholds under the actual lighting. | Red and green objects appear in the configured region of interest; the Nano receives correctly formatted UART messages. |
 | 8 | **Round selection and start** | D12 HIGH and D11 LOW selects Open; D11 HIGH and D12 LOW selects Final. Both HIGH or both LOW leave the program stopped. Restart after changing mode. D10 is an active-LOW start input. | The requested challenge starts only after initialization and the start action; invalid mode combinations never drive the motor. |
@@ -551,16 +526,16 @@ Motor speed values are controller PWM commands on an 8-bit scale, **not km/h or 
 
 ### World Final release verification
 
-The 24 November 2026 rolling-parking upload is the current controller release. Open `src/HLR_FE_World_Final/HLR_FE_World_Final.ino` with all eight tabs in the same directory. The [source manifest](../src/HLR_FE_World_Final/SOURCE_MANIFEST.json) records original and documented SHA-256 hashes; the added file comments do not alter executable source. This does not constitute a successful Arduino build or a physical run. Record the actual board package, compile output, flashed commit and measured results before identifying this revision as tested.
+The 24 November 2026 rolling-parking upload is the current controller release. Open `src/HLR_FE_World_Final/HLR_FE_World_Final.ino` with all eight tabs in the same directory. The [source manifest](validation/evidence/source-sha256.json) records SHA-256 hashes of the packaged source files; this documentation update does not alter the firmware. This does not constitute a successful Arduino build or a physical run. Record the actual board package, compile output, flashed commit and measured results before identifying this revision as tested.
 
 | Test | Evidence to save |
 |---|---|
-| Compile and upload | `docs/docs-media/world-final/firmware-build-log.txt` |
+| Compile and upload | `docs/validation/evidence/firmware-build-log.txt` |
 | Encoder calibration, both rounds | Measured distance versus 0.858 mm/tick |
 | Open corner and braking | Three fresh agreeing pairs, speed ramp, re-arm distance and time |
 | Final cube recovery | Camera commands, phase transitions, lateral estimate and return behavior |
 | Rolling parking | Front 400 mm alignment, two side posts, 45 mm offset and final stop |
-| Parking/color diagnostics | `docs/docs-media/world-final/parking-side-log.csv`, `docs/docs-media/world-final/color-log.csv` |
+| Parking/color diagnostics | `docs/validation/evidence/parking-side-log.csv`, `docs/validation/evidence/color-log.csv` |
 
 Keep prior revision datasets separate from new results. The existing hardware assembly and 0.08 mm print profile remain applicable subject to actual hardware confirmation.
 
@@ -575,35 +550,22 @@ The uploaded `src/HLR_FE_World_Final/` firmware integrates a read-only Wi-Fi das
 1. Flash the complete `HLR_FE_World_Final` sketch with its matching hardware and camera code. Select Final mode before boot.
 2. Keep the wheels raised or the robot securely stationary during connection and initial checks. Allow IMU initialization to complete.
 3. Join SSID `HyperLine` using password `HyperLine-FE`, then open [http://192.168.4.1](http://192.168.4.1). Internet access is unnecessary.
-4. Check the Live indicator and the robot state. Observe yaw, target, heading error, angular rate, gyro bias, acceleration, pitch/roll, PWM, encoder counts, camera commands and selected ToF cells.
+4. Check the Live indicator and the robot state. Observe yaw, target, heading error, angular rate, gyro bias, acceleration, pitch/roll, PWM, encoder counts, camera commands and all four cached 4×4 ToF matrices, selected zones and their ages.
 5. Capture the actual dashboard during stationary tests, controlled movement and parking. Record the flashed SHA, date and scenario with each image.
 
 
-**Evidence to add:** `docs/docs-media/world-final/telemetry-01-idle.png`
+#### Captured dashboard views
 
-![World Final dashboard at rest after IMU calibration](docs-media/world-final/telemetry-01-idle.png)
+The three supplied screenshots show the V4.1 dashboard at `192.168.4.1`. The first displays **Connecting...** and placeholder values; the second retains a populated yaw history plot; the third shows the layout of the four ToF and camera panels. These are genuine interface captures, but unavailable values must not be interpreted as live readings, completed parking or successful cube detection.
 
-*World Final dashboard at rest after IMU calibration (capture pending).*
+<p align="center"><img src="docs-media/v41-screenshot-telemetry-imu-overview.png" width="350" alt="Telemetry IMU and motor overview while connecting"></p>
+<p align="center"><sub>IMU/heading, acceleration, tilt and PWM cards while the current data connection is unavailable.</sub></p>
+<p align="center"><img src="docs-media/v41-screenshot-telemetry-yaw-history.png" width="350" alt="Recorded actual and target yaw traces"></p>
+<p align="center"><sub>Stored yaw history, state cards, parking CSV link and floor-color panel. The plot shows actual and target headings converging after transient deviations; no numeric tracking error is inferred.</sub></p>
+<p align="center"><img src="docs-media/v41-screenshot-telemetry-tof-camera-panels.png" width="350" alt="Four ToF matrix and camera telemetry panels"></p>
+<p align="center"><sub>Front, left, right and rear module panels with their I²C addresses and selected zones; values are unavailable in this capture.</sub></p>
 
-**Evidence to add:** `docs/docs-media/world-final/telemetry-02-heading-control.png`
-
-![Live actual and target yaw history during a controlled turn](docs-media/world-final/telemetry-02-heading-control.png)
-
-*Live actual and target yaw history during a controlled turn (capture pending).*
-
-**Evidence to add:** `docs/docs-media/world-final/telemetry-03-cube-avoidance.png`
-
-![Cube navigation state, camera command, steering and heading response](docs-media/world-final/telemetry-03-cube-avoidance.png)
-
-*Cube navigation state, camera command, steering and heading response (capture pending).*
-
-**Evidence to add:** `docs/docs-media/world-final/telemetry-04-parking.png`
-
-![Parking stage, selected ToF distances, heading and stop/event status](docs-media/world-final/telemetry-04-parking.png)
-
-*Parking stage, selected ToF distances, heading and stop/event status (capture pending).*
-
-For the dashboard implementation and limitations see [Software](04-software.md#world-final-read-only-telemetry). For complete 4×4 matrix capture and zone validation see [Power and sensors](03-power-sensors.md#world-final-tof-matrix-evidence). The historic dashboard pictures remain archived in `docs-media/`; they are not evidence that the current dashboard supports remote tuning.
+For the JSON matrix format, cached-data freshness and export procedure see [software telemetry](04-software.md#world-final-read-only-telemetry). For the populated 8×8 diagnostic capture see [ToF matrix evidence](03-power-sensors.md#world-final-tof-matrix-evidence). Use the [media and evidence index](media-index.md) to locate supplementary captures and logs.
 
 ---
 
@@ -648,7 +610,7 @@ Our project includes a recorded assembly, physical driving footage for both chal
 | Physical vehicle assembly | [Assembly video](https://youtu.be/HSzWATB6nWQ), [vehicle photographs](../v-photos/) | **Documented:** completed robot and assembly process shown |
 | Open Challenge operation | [Recorded driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), [video index](../video/video.md) | **Recorded:** physical robot driving autonomously in the Open Challenge |
 | Obstacle Challenge operation | [Recorded driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), [video index](../video/video.md) | **Recorded:** physical robot driving autonomously in the Obstacle Challenge |
-| RT1062 red and green perception | [Captured camera screenshot](docs-media/v41-openmv-RT1062-camera-view.png) | **Captured:** detection interface displaying red and green targets |
+| RT1062 red and green perception | [Captured camera screenshot](docs-media/v41-screenshot-openmv-color-detection.png) | **Captured:** detection interface displaying red and green targets |
 | Controller firmware and source | [V4.1 sketch](../src/HLR_FE_World_Final/) | **Available:** published source modules for the controller and both challenge modes |
 | Four VL53L5CX modules | [Sensor implementation](../src/HLR_FE_World_Final/tof.ino), [sensor calibration section](03-power-sensors.md#51-distance-sensor-calibration-matrix) | **Implemented in source:** four sensor addresses and 4×4 ranging configuration |
 | BMI088 and steering/drive | [Gyro implementation](../src/HLR_FE_World_Final/gyro.ino), [motor implementation](../src/HLR_FE_World_Final/motors.ino) | **Implemented in source:** IMU acquisition, steering and motor-control routines |
@@ -671,7 +633,7 @@ This table identifies the V4.1 configuration to reproduce and the existing recor
 | Main controller | Arduino Nano ESP32 |
 | Vision processor | OpenMV RT1062 |
 | Fixed candidate Git snapshot | [`4e5da95c8b87787be97cb1e5f976c625865338bb`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/4e5da95c8b87787be97cb1e5f976c625865338bb), repository checkpoint on 10 November 2026; record the actual flashed SHA if different |
-| Controller firmware | [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/), including `HLR_FE_Separated.ino`, `Open.ino`, `Final.ino` and the shared hardware tabs |
+| Controller firmware | [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/), including `HLR_FE_World_Final.ino`, `Open.ino`, `Final.ino` and the shared hardware tabs |
 | Camera firmware source | [`src/camera.py`](../src/camera.py); use the version from the same fixed Git snapshot as the controller and record the camera firmware/IDE version |
 | Bundled Arduino libraries | [BMI088 1.0.0](../src/libraries/BMI088/library.properties), [ESP32Encoder 5.0.0](../src/libraries/ESP32Encoder/library.properties), [ESP32Servo 3.0.3](../src/libraries/ESP32Servo/library.properties), [SparkFun VL53L5CX 1.0.3](../src/libraries/SparkFun_VL53L5CX_Arduino_Library/library.properties). [Adafruit TCS34725 1.4.4](../src/libraries/Adafruit_TCS34725/library.properties) is also bundled; the autonomous sketch accesses this sensor directly over I²C |
 | Board-core and installed build environment | Record the Arduino CLI version, installed board platforms and libraries with `arduino-cli version`, `arduino-cli core list` and `arduino-cli lib list`; retain the build output from the GitHub Actions workflow or local compilation |
@@ -752,7 +714,7 @@ For numeric characterization, the appropriate datasets are [`tof_samples.csv`](v
 
 ### 6. Demonstrating the current Open, Obstacle and Surprise Rule implementation
 
-The modular V4.1 Open program chooses a course direction from the first valid TCS34725 floor marker, then uses two front ToF zones with **600 mm trigger** and **800 mm re-arm** thresholds for corners. The Obstacle program receives the RT1062's red/green and steering messages and uses the ToF sensors for distance-dependent positioning and parking. [Chapter 04](04-software.md) documents the exact state transitions and code; the following test matrix records how to verify the implemented behavior on a complete field.
+The modular V4.1 Open program chooses a course direction from the first valid TCS34725 floor marker, then uses two front ToF zones with three fresh agreeing pairs below **700 mm**, with rearming after **600 ms and 25 cm** of straight travel. The Obstacle program receives the RT1062's red/green and steering messages and uses the ToF sensors for distance-dependent positioning and parking. [Chapter 04](04-software.md) documents the exact state transitions and code; the following test matrix records how to verify the implemented behavior on a complete field.
 
 | Mode or feature | Physical procedure | What the recording must show | Dataset |
 | --- | --- | --- | --- |
@@ -811,7 +773,7 @@ The filmed robot used the earlier `src/HLR_FE/` sketch. The later V4.1 source se
 
 The team identifies [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the code revision running in the [real Open and Obstacle Challenge footage](https://www.youtube.com/watch?v=bg92ulHXomw). That snapshot contains `src/HLR_FE/HLR_FE.ino`. Its source, camera program and mechanical/electrical documentation are accessible as a fixed historical Git state.
 
-The later source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_World_Final/`, which moves Open and Final behavior into their respective files and uses the four-matrix ToF interface. It is the basis of the modular configuration and calibration references in this chapter. This distinction keeps the historical demonstration and newer implementation individually traceable.
+The historical source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_Separated/`, which moves Open and Final behavior into their respective files and uses the four-matrix ToF interface. It is the basis of the modular configuration and calibration references in this chapter. This distinction keeps the historical demonstration and newer implementation individually traceable.
 
 | Release resource | Reference |
 | --- | --- |

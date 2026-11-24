@@ -13,7 +13,7 @@
 
 V4.1 is a compact four-wheel, front-steered and rear-driven autonomous vehicle. Our mechanical priorities are precise steering, sufficient low-speed torque for parking, traction through the corners and easy access to the electronics. The structural base is also the main PCB, reducing the number of separate chassis layers and keeping the drivetrain low.
 
-<p align="center"><img src="docs-media/cad-isometric-actual.png" width="720" alt="V4.1 assembly CAD isometric view"></p>
+<p align="center"><img src="docs-media/v41-cad-chassis-isometric.png" width="720" alt="V4.1 assembly CAD isometric view"></p>
 <p align="center"><sub>Figure 2.1. V4.1 assembly showing the front camera, parallel steering linkage, PCB chassis and rear drivetrain.</sub></p>
 
 ## 1. Mechanical architecture and design objectives
@@ -33,14 +33,14 @@ The V4.1 axle configuration is **not Ackermann steering**. The left and right fr
 
 The front axle is at the camera end of the vehicle, with the driven axle at the opposite end. The independent front steering hubs are connected through the steering bar and actuated by a single MG90S-type servo. One Pololu 50:1 HPCB geared motor supplies the rear drivetrain through the gear train and differential.
 
-<p align="center"><img src="docs-media/cad-top-straight.png" width="560" alt="Real V4.1 robot top CAD view, steering centered"></p>
+<p align="center"><img src="docs-media/v41-cad-chassis-top-neutral.png" width="560" alt="Real V4.1 robot top CAD view, steering centered"></p>
 <p align="center"><sub>Figure 2.2. Top view of the actual V4.1 assembly, straight steering position.</sub></p>
 
 ## 2. Dimensions, wheel geometry and packaging
 
 We describe longitudinal dimensions along the vehicle's $x$ axis and lateral dimensions along its $y$ axis. For the drawing convention, the front axle has coordinate $x_f=22.55$ mm and the rear axle has coordinate $x_r=103.55$ mm. Increasing $x$ therefore points toward the rear of the vehicle.
 
-<p align="center"><img src="docs-media/real-robot-top-dimensions.png" width="780" alt="Real CAD top view with wheelbase, track and body dimensions"></p>
+<p align="center"><img src="docs-media/v41-cad-top-dimensions.png" width="780" alt="Real CAD top view with wheelbase, track and body dimensions"></p>
 <p align="center"><sub>Figure 2.3. Dimensions overlaid on V4.1 geometry. The dimensions describe the assembled robot, not a schematic substitute.</sub></p>
 
 | Geometric quantity | Symbol | CAD value | Physical check |
@@ -176,7 +176,7 @@ $$
 k_{\mathrm{mm/tick}}=\frac{C}{N}
 $$
 
-For comparison, if $N=48$, the ideal value would be $1.898$ mm/tick; if $N=12$, it would be $7.592$ mm/tick. The controller's current distance scale is `MM_PER_TICK = 1.831`, an **empirical configuration value**, not proof of $N$ or physical wheel circumference. The gear ratio between the sensed encoder shaft and the wheel must also be included when relevant.
+For comparison, if $N=48$, the ideal value would be $1.898$ mm/tick; if $N=12$, it would be $7.592$ mm/tick. The controller's historical distance scale was `MM_PER_TICK = 1.831`; the current World Final scale is `0.858`, an **empirical configuration value**, not proof of $N$ or physical wheel circumference. The gear ratio between the sensed encoder shaft and the wheel must also be included when relevant.
 
 To calibrate, command several known distances and measure actual displacement. A correction to the currently configured factor can be calculated as:
 
@@ -196,7 +196,7 @@ This relationship assumes the target tick count is calculated as $d_{\mathrm{com
 
 The two front wheel knuckles are linked by a steering bar so that the wheels rotate together. The servo controls the linkage through a center position and left/right endpoints. A control value sent to the servo is **not** a direct measurement of wheel angle.
 
-<p align="center"><img src="docs-media/real-robot-parallel-steering.png" width="860" alt="Actual robot CAD geometry with parallel steering at straight, left and right positions"></p>
+<p align="center"><img src="docs-media/v41-cad-parallel-steering-positions.png" width="860" alt="Actual robot CAD geometry with parallel steering at straight, left and right positions"></p>
 <p align="center"><sub>Figure 2.4. The V4.1 front wheel geometry at neutral and illustrative ±20° wheel angles. The tire solids are rotated geometrically; the figure does not claim a measured servo-to-wheel calibration.</sub></p>
 
 Parallel steering is defined by:
@@ -225,10 +225,10 @@ This is a **kinematic approximation**, not an exact solution for the four indivi
 | 25° | 173.7 mm |
 | 30° | 140.3 mm |
 
-<p align="center"><img src="docs-media/real-robot-parallel-turn-radius.png" width="840" alt="Actual CAD top view overlaid with parallel-steering turning radius and wheel paths"></p>
+<p align="center"><img src="docs-media/v41-cad-parallel-steering-wheel-paths.png" width="840" alt="Actual CAD top view overlaid with parallel-steering turning radius and wheel paths"></p>
 <p align="center"><sub>Figure 2.5. Theoretical turn center and wheel paths overlaid on V4.1 geometry. The 20° example is illustrative; real turning radii are to be measured.</sub></p>
 
-<p align="center"><img src="docs-media/real-robot-parallel-radius-curve.png" width="740" alt="Computed turning radius as a function of parallel wheel angle for 81 mm wheelbase"></p>
+<p align="center"><img src="docs-media/v41-calculated-parallel-steering-radius-curve.png" width="740" alt="Computed turning radius as a function of parallel wheel angle for 81 mm wheelbase"></p>
 <p align="center"><sub>Figure 2.6. Calculated radius sensitivity for the V4.1 wheelbase.</sub></p>
 
 At $\delta=20^\circ$, $R=222.5$ mm, so the idealized rear-wheel path radii are:
@@ -322,7 +322,7 @@ $$
 
 A uniform-density **geometric centroid** of the assembled CAD volume is located at approximately $(x,y,z)=(53.78,36.67,11.77)$ mm in the CAD axes. The model ground-plane offset is approximately $z=-5.83$ mm, giving a proxy center-of-mass height of **17.6 mm above ground**. This is not the true measured center of mass because the PCB, battery, steel wheels, motors and printed polymer parts have different densities, and some CAD solids may overlap.
 
-<p align="center"><img src="docs-media/v41-dimension-reference-clean.png" width="820" alt="V4.1 top and side geometry reference with key dimensions"></p>
+<p align="center"><img src="docs-media/v41-cad-dimension-reference.png" width="820" alt="V4.1 top and side geometry reference with key dimensions"></p>
 <p align="center"><sub>Figure 2.7. V4.1 geometric reference. Center-of-mass location is a geometric estimate awaiting a physical balance test.</sub></p>
 
 If the proxy longitudinal COM (center of mass) position were exact, the front-axle and rear-axle static loads would be:
@@ -442,9 +442,9 @@ $$
 A small radius error without good repeatability is not sufficient: the vehicle must produce consistent paths at both steering directions and across battery levels.
 
 <!-- CODE-DERIVED DATA VIEW -->
-### 9.1 Documented steering commands
+### 9.1 Historical steering commands and current release
 
-Parallel steering uses one servo with two command maps. These are **servo API write values**, not independently measured physical left- and right-wheel angles:
+The historical parallel steering firmware used one servo with two command maps. These are **servo API write values**, not independently measured physical left- and right-wheel angles:
 
 | Normalized input | Normal servo write | Parking servo write |
 | --- | --- | --- |
@@ -454,14 +454,14 @@ Parallel steering uses one servo with two command maps. These are **servo API wr
 | 0.5 | 108° | 113° |
 | 1 | 131° | 138° |
 
-<p align="center"><img src="docs-media/data-steering-command-map.png" width="720" alt="Normal versus parking servo command mappings"></p>
-<p align="center"><sub>Figure 2.12. Servo command mappings calculated from controller settings; front-wheel deflection and effective turn radius still require physical calibration.</sub></p>
+<p align="center"><img src="docs-media/historical-calculated-servo-command-map.png" width="720" alt="Normal versus parking servo command mappings"></p>
+<p align="center"><sub>Figure 2.12. Historical servo command mappings calculated from previous controller settings; front-wheel deflection and effective turn radius still require physical calibration.</sub></p>
 
 [Full `validation/steering_calibration.csv` dataset](validation/steering_calibration.csv). The corresponding [steering measurement template](validation/measurement_templates/steering_calibration.csv) records actual wheel angle and measured radius, rather than treating the servo command as a wheel angle.
 
-### 9.2 Encoder distance thresholds
+### 9.2 Historical encoder distance thresholds and current release
 
-The active distance primitive uses `MM_PER_TICK = 1.831` as its configured scale and stops when the reported distance reaches the requested command. The minimum crossing count is:
+The historical distance primitive used `MM_PER_TICK = 1.831` as its configured scale and stops when the reported distance reaches the requested command. The minimum crossing count is:
 
 $$
 N_{\mathrm{stop}}=\left\lceil\frac{d_{\mathrm{target}}}{1.831\ \mathrm{mm/tick}}\right\rceil
@@ -477,11 +477,26 @@ $$
 | 350 mm | 192 | 351.552 mm |
 | 600 mm | 328 | 600.568 mm |
 
-<p align="center"><img src="docs-media/data-odometry-tick-thresholds.png" width="750" alt="Calculated encoder tick thresholds for commanded movement"></p>
-<p align="center"><sub>Figure 2.13. Calculated count thresholds in current control logic. This chart is not a plot of actual distance traveled.</sub></p>
+<p align="center"><img src="docs-media/historical-calculated-encoder-thresholds.png" width="750" alt="Calculated encoder tick thresholds for commanded movement"></p>
+<p align="center"><sub>Figure 2.13. Historical calculated count thresholds. This chart is not a plot of actual distance traveled.</sub></p>
 
 [Full `validation/odometry.csv` dataset](validation/odometry.csv). Real calibration uses the [odometry measurement template](validation/measurement_templates/odometry.csv) with encoder counts, ruler distance, repeat trials, wheel surface and battery voltage. The declared 48 quadrature edges must not be used as an actual counted-tick assumption because the interrupt routine counts A-channel rising edges.
 <!-- END CODE-DERIVED DATA VIEW -->
+
+### Current World Final movement settings
+
+The published sketch uses normal, Final and parking servo endpoints 30 and 140, with neutral 85. The linear mapping gives 30, 57.5, 85, 112.5 and 140 for normalized inputs −1, −0.5, 0, 0.5 and 1 (the servo API receives integer commands). These are not physical wheel angles. Both encoder scale constants are now **0.858 mm/tick**. Calculated crossing counts for the current setting are:
+
+| Command (mm) | First qualifying tick count | Calculated travel (mm) |
+|---:|---:|---:|
+| 40 | 47 | 40.326 |
+| 70 | 82 | 70.356 |
+| 100 | 117 | 100.386 |
+| 200 | 234 | 200.772 |
+| 350 | 408 | 350.064 |
+| 600 | 700 | 600.600 |
+
+These are software-derived values, not actual wheel travel. The historical charts above remain useful for documenting revision evolution.
 
 ### Evidence from the drivetrain tuning cycle
 

@@ -13,7 +13,7 @@
 
 The V4.1 electrical design combines propulsion, steering, four multi-zone distance sensors, inertial sensing, floor-color detection and an independent vision processor in a compact PCB-based platform. Our architecture separates high-current motor loads from regulated logic loads and splits perception between the Arduino Nano ESP32 and OpenMV RT1062.
 
-<p align="center"><img src="docs-media/v41-electronics-architecture.png" width="880" alt="V4.1 actual electrical interfaces and signal flow"></p>
+<p align="center"><img src="docs-media/v41-diagram-electronics-architecture.png" width="880" alt="V4.1 actual electrical interfaces and signal flow"></p>
 <p align="center"><sub>Figure 3.1. Electrical system architecture, showing the implemented interfaces and the regulated-power branches. Exact power wiring is defined by the main PCB design and must be verified before energizing.</sub></p>
 
 ## 1. Design goals and system constraints
@@ -76,7 +76,7 @@ The Nano ESP32 is the coordinator of the electrical system. It communicates with
 
 #### 2.1.3 Custom inertial sensor: BMI088
 
-| <img src="docs-media/v41-bmi088-board.png" width="300"> | **Specifications** |
+| <img src="docs-media/v41-photo-bmi088-imu-board.png" width="300"> | **Specifications** |
 |------------------------------|------------------------------|
 | **Gyroscope Range:** ±2000°/s | **Accelerometer Range:** ±24g |
 | **Interface:** I2C | **Supply Voltage:** 3.0V – 3.6V |
@@ -191,19 +191,19 @@ V4.1 uses a compact custom PCB to integrate the motor driver, distribution paths
 
 | Electrical schematic | Copper layout (Top) | Copper layout (Inner 1) | Copper layout (Inner 2) | Copper layout (Bottom) | Populated robot chassis |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| <a href="docs-media/v41-schematic-design-export.png"><img src="docs-media/v41-schematic-design-export.png" width="275" alt="HyperLine EasyEDA schematic drawing"></a> | <a href="docs-media/v41-pcb-copper-view.png"><img src="docs-media/v41-pcb-copper-view.png" width="275" alt="HyperLine main PCB copper routing"></a> | <a href="docs-media/v41-inner1-layer.png"><img src="docs-media/v41-inner1-layer.png" width="275" alt="inner 1"></a> | <a href="docs-media/v41-inner2-layer.png"><img src="docs-media/v41-inner2-layer.png" width="275" alt="inner 2"></a> | <a href="docs-media/v41-bottom-layer.png"><img src="docs-media/v41-bottom-layer.png" width="275" alt="bottom layer"></a> | <a href="docs-media/v41-assembled-robot-top.png"><img src="docs-media/v41-assembled-robot-top.png" width="275" alt="Real assembled robot electronics top view"></a> |
+| <a href="docs-media/v41-pcb-schematic-export.png"><img src="docs-media/v41-pcb-schematic-export.png" width="275" alt="HyperLine EasyEDA schematic drawing"></a> | <a href="docs-media/v41-pcb-layout-top-copper.png"><img src="docs-media/v41-pcb-layout-top-copper.png" width="275" alt="HyperLine main PCB copper routing"></a> | <a href="docs-media/v41-pcb-layout-inner-layer-1.png"><img src="docs-media/v41-pcb-layout-inner-layer-1.png" width="275" alt="inner 1"></a> | <a href="docs-media/v41-pcb-layout-inner-layer-2.png"><img src="docs-media/v41-pcb-layout-inner-layer-2.png" width="275" alt="inner 2"></a> | <a href="docs-media/v41-pcb-layout-bottom-copper.png"><img src="docs-media/v41-pcb-layout-bottom-copper.png" width="275" alt="bottom layer"></a> | <a href="docs-media/v41-photo-assembled-robot-top.png"><img src="docs-media/v41-photo-assembled-robot-top.png" width="275" alt="Real assembled robot electronics top view"></a> |
 | EasyEDA drawing export | Main PCB routing and copper planes on top layer |  Main PCB routing and copper planes on first inner layer |  Main PCB routing and copper planes on second inner layer | Main PCB routing and copper planes on bottom layer | Actual packaging of the motor, battery and electronics |
 
 #### Functional power distribution
 
-<p align="center"><a href="docs-media/v41-functional-power-diagram.svg"><img src="docs-media/v41-functional-power-diagram.png" width="850" alt="Functional distribution of 2S LiHV battery, IFX9201SG drive path, D24V50F5 regulator and controlled loads"></a></p>
+<p align="center"><a href="docs-media/v41-diagram-power-distribution.svg"><img src="docs-media/v41-diagram-power-distribution.png" width="850" alt="Functional distribution of 2S LiHV battery, IFX9201SG drive path, D24V50F5 regulator and controlled loads"></a></p>
 <p align="center"><sub>Functional power domains. This is a system-level explanation, not a substitute for the board's exact netlist.</sub></p>
 
 The direct battery path and the regulated electronics path share a ground reference for communication. High-current paths should avoid routing under sensitive measurement circuitry. The camera, servo and controller require a stable regulator output during drive load changes. The ToF, BMI088 and floor-color circuits must receive voltages consistent with their particular custom-board regulators and logic levels.
 
 #### Custom IMU and sensor placement
 
-<p align="center"><img src="docs-media/v41-bmi088-board.png" width="360" alt="Custom BMI088 IMU board"><img src="docs-media/v41-sensor-placement-reference.png" width="490" alt="Sensor position and view-angle reference on the real robot"></p>
+<p align="center"><img src="docs-media/v41-photo-bmi088-imu-board.png" width="360" alt="Custom BMI088 IMU board"><img src="docs-media/v41-photo-annotated-sensor-placement.png" width="490" alt="Sensor position and view-angle reference on the real robot"></p>
 <p align="center"><sub>Custom BMI088 board at left and a mounting/viewing reference at right. Field-of-view lines illustrate the design intention; the optical orientation and blocked zones are checked on the assembled robot.</sub></p>
 
 ## 3. Power architecture and calculations
@@ -325,7 +325,7 @@ A useful power budget must distinguish **manufacturer-specified electrical value
 
 The 3.639 W total includes a design margin for the RT1062 and is the sum of modeled powers at each module's voltage. It is **not** the actual measured current drawn from the 5 V regulator. Sensor-board support electronics, voltage conversion between the 5 V bus and any local 3.3 V rails, copper losses and servo-current transients can increase consumption. The actual PCB rail map determines how the load is distributed.
 
-<p align="center"><a href="docs-media/v41-power-components.svg"><img src="docs-media/v41-power-components.png" width="790" alt="Calculated V4.1 regulated subsystem power budget"></a></p>
+<p align="center"><a href="docs-media/v41-calculated-regulated-load-budget.svg"><img src="docs-media/v41-calculated-regulated-load-budget.png" width="790" alt="Calculated V4.1 regulated subsystem power budget"></a></p>
 <p align="center"><sub>Modeled component consumption from manufacturer values and explicit assumptions. Motor power is excluded; no measurement is implied.</sub></p>
 
 [Power budget assumptions (CSV)](validation/power_model_assumptions.csv).
@@ -350,7 +350,7 @@ $$
 P_{\mathrm{battery}}\approx\frac{3.639}{0.90}+7.6(0.80+0.010)=10.20\ \mathrm{W}
 $$
 
-<table><tr><td align="center" width="50%"><a href="docs-media/v41-power-motor-sensitivity.svg"><img src="docs-media/v41-power-motor-sensitivity.png" width="480" alt="Sensitivity of calculated pack input power to drive current and regulator efficiency"></a></td><td align="center" width="50%"><a href="docs-media/v41-ideal-runtime.svg"><img src="docs-media/v41-ideal-runtime.png" width="480" alt="Ideal upper-bound runtime from nominal pack energy"></a></td></tr><tr><td align="center"><sub>Battery power depends strongly on direct motor current.</sub></td><td align="center"><sub>Ideal runtime, before reserve, sag, thermal losses or cutoff.</sub></td></tr></table>
+<table><tr><td align="center" width="50%"><a href="docs-media/v41-calculated-motor-power-sensitivity.svg"><img src="docs-media/v41-calculated-motor-power-sensitivity.png" width="480" alt="Sensitivity of calculated pack input power to drive current and regulator efficiency"></a></td><td align="center" width="50%"><a href="docs-media/v41-calculated-ideal-battery-runtime.svg"><img src="docs-media/v41-calculated-ideal-battery-runtime.png" width="480" alt="Ideal upper-bound runtime from nominal pack energy"></a></td></tr><tr><td align="center"><sub>Battery power depends strongly on direct motor current.</sub></td><td align="center"><sub>Ideal runtime, before reserve, sag, thermal losses or cutoff.</sub></td></tr></table>
 
 | Assumed motor current | Estimated pack input power | Ideal energy-only runtime |
 |---:|---:|---:|
@@ -366,7 +366,7 @@ These durations are **upper bounds using nominal pack energy**, not predictions 
 [Model scenarios (CSV)](validation/power_model_scenarios.csv) · [Blank physical power measurements](validation/measurement_templates/power_budget.csv).
 
 
-### 3.3.3 Configured PWM operating points
+### 3.3.3 Historical and current configured PWM operating points
 
 The drive controller uses 1 kHz, 8-bit PWM. Its nominal duty request is calculated by:
 
@@ -376,7 +376,7 @@ $$
 
 This is useful for preparing reproducible electrical tests. **PWM duty does not measure motor current, battery power, voltage at the motor terminals, or actual speed.**
 
-| Operating condition | Signed PWM command | Nominal duty |
+| Historical operating condition | Signed PWM command | Nominal duty |
 | --- | --- | --- |
 | Start Wait | 0 | 0.00% |
 | Open Cruise | 250 | 98.04% |
@@ -385,15 +385,17 @@ This is useful for preparing reproducible electrical tests. **PWM duty does not 
 | Final Parking | 45 | 17.65% |
 | Final Fine Move | 30 | 11.76% |
 
-<p align="center"><img src="docs-media/data-pwm-duty-commands.png" width="770" alt="Configured drive PWM command percentages"></p>
-<p align="center"><sub>Figure 3.3. Configured PWM fractions across driving and parking phases. Not a measured power budget.</sub></p>
+<p align="center"><img src="docs-media/historical-calculated-pwm-duty.png" width="770" alt="Configured drive PWM command percentages"></p>
+<p align="center"><sub>Figure 3.3. Historical configured PWM fractions across driving and parking phases. Not a measured power budget.</sub></p>
 
-[Full `validation/power_budget.csv` dataset](validation/power_budget.csv). Use the [physical electrical measurement template](validation/measurement_templates/power_budget.csv) to record battery input current, regulator output current and voltage minima under real motor and servo load.
+Current World Final requests include Open 80/250/80 (initial/cruise/corner), Final cruise 50 (19.61%), parking approach/turn/search 35 (13.73%), final parking arcs 32 (12.55%) and bounded parking correction 38 (14.90%). These are configured commands, not measurements.
+
+[Historical `validation/power_budget.csv` dataset](validation/power_budget.csv). Use the [physical electrical measurement template](validation/measurement_templates/power_budget.csv) to record battery input current, regulator output current and voltage minima under real motor and servo load.
 <!-- END CODE-DERIVED DATA VIEW -->
 
 #### Intentional motor overvoltage
 
-The Pololu 50:1 drive motor is rated for 6 V, but our configuration **deliberately operates it above its nominal voltage**. The IFX9201SG's motor-power path is supplied from the 2S LiHV battery (7.6 V nominal, up to 8.7 V fully charged), not from the regulated 5 V electronics rail or a dedicated 6 V regulator. Speed requests are adjusted in software using the operating-state PWM values shown above. In Open Cruise, the requested 98.04% duty leaves the motor exposed to nearly the full battery voltage for much of the PWM cycle.
+The Pololu 50:1 drive motor is rated for 6 V, but our configuration **deliberately operates it above its nominal voltage**. The IFX9201SG's motor-power path is supplied from the 2S LiHV battery (7.6 V nominal, up to 8.7 V fully charged), not from the regulated 5 V electronics rail or a dedicated 6 V regulator. Speed requests are adjusted in software using operating-state PWM values. In Open Cruise, the requested 98.04% duty leaves the motor exposed to nearly the full battery voltage for much of the PWM cycle.
 
 The purpose of this decision is to prioritize motor speed and response during short challenge maneuvers. It also increases the risk of excessive current and winding temperature, particularly under heavy load or stalled conditions. The motor driver's protection functions provide driver protection, **not a guarantee that a nominal 6 V motor will remain thermally safe**. No measured motor temperature, winding-current limit or thermal qualification is asserted here.
 
@@ -465,12 +467,12 @@ The four ToF boards are addressed individually after startup:
 
 The driver holds LPn low for all four sensors before initialization. It then releases them one at a time, communicates at the default address `0x29`, assigns each new address and starts ranging. This prevents two unconfigured devices from answering the same I²C request.
 
-Each sensor is configured to **4 × 4 zones at 30 Hz**. The data age is checked against a **150 ms freshness limit**. Invalid or unavailable measurements return `-1` rather than a fabricated distance. General distance queries use the closest valid zone in the central 2 × 2 area.
+Each sensor is configured to **4 × 4 zones at 30 Hz**. The data age is checked against a **150 ms freshness limit**. Invalid or unavailable measurements return `-1` rather than a fabricated distance. Open generic distance queries use the closest valid central 2 × 2 zone; Final generic queries require both R2C3 and R3C3 and average them.
 
-<p align="center"><img src="docs-media/v41-tof-zones.png" width="690" alt="The sixteen zone indices and actual front corner logic"></p>
-<p align="center"><sub>Figure 3.2. ToF 4 × 4 zoning and the specific front readings used for Open Challenge corner detection. The physical sensor orientation must be checked to confirm the indexed cells correspond to the intended side of the image.</sub></p>
+<p align="center"><img src="docs-media/v41-diagram-current-tof-zones.svg" width="690" alt="The sixteen zone indices and actual front corner logic"></p>
+<p align="center"><sub>Figure 3.2. Current source-derived 4 × 4 zone diagram and Open decision thresholds. The physical sensor orientation must be checked to confirm the indexed cells correspond to the intended side of the image.</sub></p>
 
-For Open Challenge, the controller uses **front row 2, column 3** and **front row 3, column 3**. Both values must be valid and below 600 mm to generate a corner request. Both must recover to at least 800 mm before the next corner is armed. This 200 mm hysteresis separates successive corner events and prevents repeated triggers while the wall remains close.
+For Open Challenge, the controller uses **front row 2, column 3** and **front row 3, column 3**. Three consecutive fresh valid pairs below 700 mm, differing by no more than 220 mm, confirm a corner. Speed is reduced from 1000 mm toward PWM 80 at 700 mm; rearming requires 600 ms and 25 cm of straight travel after the turn. The earlier 600/800 mm diagram is preserved in the media index for revision history.
 
 The nominal 30 Hz frame period is:
 
@@ -479,6 +481,27 @@ T_{\mathrm{frame}}=\frac{1}{30}=33.3\ \mathrm{ms}
 $$
 
 This is the device configuration target, **not** a measurement of full-loop latency. Bus transfers, polling workload, blocking turns and communication may increase the age of data available to navigation. Log the actual inter-frame interval to validate the control timing.
+
+### World Final ToF matrix evidence
+
+The VL53L5CX measures range independently across a spatial array. Row and column are 1-based in the journal; row-major buffer index is `(row - 1) * width + (column - 1)`. A range is in millimetres along the corresponding optical region, not a pixel color or direct Cartesian coordinate. The firmware configures four modules at 4×4 and nominally 30 Hz (16 zones per device); the separate diagnostic interface can also inspect 8×8 at nominally 15 Hz (64 zones). Higher spatial resolution helps inspect edge transitions but increases transfer size and reduces the nominal update rate. The 8×8 capture is **diagnostic evidence**, not evidence that the driving firmware uses 8×8.
+
+<p align="center"><img src="docs-media/v41-screenshot-tof-8x8-diagnostic.png" width="480" alt="Populated 8 by 8 ToF diagnostic matrix"></p>
+<p align="center"><sub>V4.1 diagnostic screenshot: frame 633, age 3 ms, zero failed reads displayed, 8×8 / 15 Hz selected. Sensor orientation, reference target distance and diagnostic firmware revision are not identified.</sub></p>
+
+| Feature in the captured frame | Reading / interpretation |
+|---|---|
+| Leftmost column | 71–77 mm, status 5; nearby surface in that optical region |
+| Highlighted R3C5, R3C6, R4C5, R4C6 | 636, 614, 631, 629 mm; median **630 mm** |
+| Farther valid returns | Up to 2323 mm in the shown frame; multiple depth regions are visible |
+| Invalid returns | `--`, including status 255 and status 10; not zero distance and not proof of open space |
+| Capture counters | Frame 633, 3 ms age, zero failed reads displayed; a single snapshot, not a measured frame-rate or reliability study |
+
+A 4×4 cell R2C3 corresponds spatially to the 8×8 block R3–R4/C5–C6; R3C3 corresponds to R5–R6/C5–C6. The highlighted block is the first of those regions. The median above is calculated from the four visible valid values, not from a calibrated reference target. Different zone widths and ranging settings can yield different readings, so do not assume that averaging 8×8 cells reproduces the actual 4×4 sensor output.
+
+In the current [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino), each module's JSON contains `online`, `age`, `r2c3`, `r3c3`, `matrix` and `status`. All sixteen cached distances and statuses are displayed as a 4×4 grid; selected cells are outlined, and stale grids are visually dimmed. Navigation rejects data older than 150 ms. The telemetry cache may retain the last range so the age must be checked before interpreting a display. Status 5 or 9 and positive distance are required by the range filter. See [software telemetry](04-software.md#world-final-read-only-telemetry) for the capture and export process.
+
+For independent verification, place a flat target at known distances from the sensor, capture all four 4×4 views and record raw distances, statuses, timestamps, reference distance and orientation in the [physical ToF dataset](validation/physical/tof_samples.csv). Repeat with a narrow target, motor running, and varying surface angles. This demonstrates spatial selectivity and measures accuracy separately from the screenshot.
 
 #### Placement and field geometry
 
@@ -551,7 +574,7 @@ This division is deliberate: image operations have variable processing time, whi
 
 The frame below is captured from the robot camera's vision interface, including the **green and red detection boxes**, their estimated distances and the selected cube-processing region.
 
-<p align="center"><img src="docs-media/v41-openmv-RT1062-camera-view.png" width="380" alt="OpenMV RT1062 full output window and histogram"></p>
+<p align="center"><img src="docs-media/v41-screenshot-openmv-color-detection.png" width="380" alt="OpenMV RT1062 full output window and histogram"></p>
 <p align="center"><sub>Camera frame crop from the actual OpenMV output. Click to view the full diagnostic screenshot, including its intensity histogram.</sub></p>
 
 The purpose of this view is to make perception behavior inspectable, rather than to claim a particular success rate from a single frame. The two boxes demonstrate the color-segmentation stage. A valid object needs to satisfy the configured region, size, color and position conditions before its message influences the Obstacle Challenge state machine. Test sequences with lighting changes and the camera initially facing a nearby wall are documented in [04 Software](04-software.md).
@@ -597,9 +620,9 @@ The following values are an **illustrative calculation example**, not measuremen
 Repeat the physical test with the drive motor running and the chassis tilted slightly, because reflections from the floor and sensor mounting geometry can alter individual zones.
 
 <!-- CODE-DERIVED DATA VIEW -->
-### 5.1.1 Open-mode ToF decision boundaries
+### 5.1.1 Historical Open-mode ToF decision boundaries
 
-The controller uses both front matrix zones `(2,3)` and `(3,3)`. In the current logic, 600 mm is the corner-event boundary, 800 mm initiates reduced drive PWM, and a frame older than 150 ms is rejected by the relevant freshness guard. The examples below are **deterministic synthetic inputs**, useful for regression testing, not wall measurements.
+The historical controller uses both front matrix zones `(2,3)` and `(3,3)`. In that historical logic, 600 mm is the corner-event boundary, 800 mm initiates reduced drive PWM, and a frame older than 150 ms is rejected by the relevant freshness guard. The examples below are **deterministic synthetic inputs**, useful for regression testing, not wall measurements.
 
 | Synthetic case | Zone 2:3 / 3:3 | Frame age | Base → expected PWM | Turn accepted |
 | --- | --- | --- | --- | --- |
@@ -612,8 +635,8 @@ The controller uses both front matrix zones `(2,3)` and `(3,3)`. In the current 
 | missing zone2 | 0 / 500 mm | 100 ms | 250 → 250 | No |
 | clear rearm | 800 / 800 mm | 100 ms | 250 → 250 | No |
 
-<p align="center"><img src="docs-media/data-tof-threshold-cases.png" width="780" alt="Synthetic two-zone ToF threshold cases and expected PWM"></p>
-<p align="center"><sub>Figure 3.6. Reproducible code logic for valid, missing, stale, slow and corner-event cases. No physical sensor accuracy is inferred.</sub></p>
+<p align="center"><img src="docs-media/historical-synthetic-tof-thresholds.png" width="780" alt="Synthetic two-zone ToF threshold cases and expected PWM"></p>
+<p align="center"><sub>Figure 3.6. Historical synthetic code logic for valid, missing, stale, slow and corner-event cases. No physical sensor accuracy is inferred.</sub></p>
 
 [Full `validation/tof_corners.csv` dataset](validation/tof_corners.csv). Physical range bias and false/missed event rates are recorded independently with the [ToF measurement template](validation/measurement_templates/tof_corners.csv). A successful synthetic threshold test is not evidence that the modules can see an actual wall at that distance.
 <!-- END CODE-DERIVED DATA VIEW -->
@@ -641,7 +664,7 @@ The camera validation procedure records images of red and green pillars at repre
 
 #### Recorded detection performance
 
-The [RT1062 diagnostic image](docs-media/v41-openmv-RT1062-camera-view.png) documents the color-segmentation output on a real camera frame. It demonstrates that red and green candidates were identified in that frame; it is not a repeated-trial accuracy measurement. The evaluation is repeated at near, medium and far positions under normal and difficult lighting, including startup facing a nearby wall.
+The [RT1062 diagnostic image](docs-media/v41-screenshot-openmv-color-detection.png) documents the color-segmentation output on a real camera frame. It demonstrates that red and green candidates were identified in that frame; it is not a repeated-trial accuracy measurement. The evaluation is repeated at near, medium and far positions under normal and difficult lighting, including startup facing a nearby wall.
 
 | Observation | Required record | Calculation |
 |---|---|---|
@@ -691,7 +714,7 @@ The central systems trade-off is between **sensor richness and deterministic con
 
 ### Observed engineering progression
 
-The most directly documented outcomes are the change in physical hardware and the demonstrated operation of the robot. The V4.1 [assembled board photograph](docs-media/v41-assembled-robot-top.png) shows the integrated electronics, and the [real driving video](https://www.youtube.com/watch?v=bg92ulHXomw) documents autonomous runs. Those records establish an assembled, functioning vehicle, but do not quantify the individual contribution of each design change.
+The most directly documented outcomes are the change in physical hardware and the demonstrated operation of the robot. The V4.1 [assembled board photograph](docs-media/v41-photo-assembled-robot-top.png) shows the integrated electronics, and the [real driving video](https://www.youtube.com/watch?v=bg92ulHXomw) documents autonomous runs. Those records establish an assembled, functioning vehicle, but do not quantify the individual contribution of each design change.
 
 | V4 limitation / design constraint | V4.1 change | Outcome supported by existing evidence |
 |---|---|---|

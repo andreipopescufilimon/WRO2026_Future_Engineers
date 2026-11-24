@@ -21,3 +21,6 @@ This is the navigation page for the Future Engineers engineering evidence. The s
 cpcb), firmware installation and calibration |
 
 The distinction between source-derived constants, estimates, synthetic datasets and physical measurements is intentional. The latter require a dated record with a source revision and identifiable raw evidence. No additional documentation chapters are needed.
+
+
+[Media and evidence index](media-index.md) · V4.1 assembly, captured print settings, telemetry and ToF diagnostics.

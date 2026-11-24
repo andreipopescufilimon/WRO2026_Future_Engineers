@@ -191,16 +191,16 @@ The front MG90S servo uses the `ESP32Servo` interface. The current source define
 
 | Reference | Command passed to `Servo.write()` |
 |---|---:|
-| `STEERING_LEFT` | 39 |
+| `STEERING_LEFT` | 30 |
 | `STEERING_CENTER` | 85 |
-| `STEERING_RIGHT` | 131 |
-| `STEERING_LEFT_PARK` | 40 |
-| `STEERING_RIGHT_PARK` | 138 |
+| `STEERING_RIGHT` | 140 |
+| `STEERING_LEFT_PARK` | 30 |
+| `STEERING_RIGHT_PARK` | 140 |
 
 These values are **servo commands**, not measured steering angles at the wheels. The normalized control function clamps $s$ to $[-1,1]$ and maps it linearly from the left command to the right command:
 
 $$
-\theta_{\mathrm{servo}}=39+\frac{s+1}{2}(131-39)
+\theta_{\mathrm{servo}}=30+\frac{s+1}{2}(140-30)
 $$
 
 ```cpp
@@ -219,14 +219,14 @@ void steer(double steering_angle) {
 }
 ```
 
-There is a second `steer_parking()` mapping using the parking-specific limits. This preserves a wider steering command range for short parking arcs without changing the straight-driving calibration. The actual tire angle depends on the linkage dimensions documented in [Chapter 02](02-mobility.md).
+There is a second `steer_parking()` mapping using the parking-specific limits. The current source uses the same 30–140 command limits for Open, Final and parking; the separate function preserves independent future tuning. The actual tire angle depends on the linkage dimensions documented in [Chapter 02](02-mobility.md).
 
 ### 3.3 Wheel encoder and controlled travel
 
 The motor encoder is read by an interrupt on **D5, rising edge of channel A**, while D4 supplies direction information. This is a **single-edge A-channel counter**, even though the source also retains constants describing quadrature edges. The firmware converts the absolute count to distance using its calibrated value:
 
 $$
- d_{\mathrm{mm}}=|N_{\mathrm{ticks}}|\times 1.831,
+ d_{\mathrm{mm}}=|N_{\mathrm{ticks}}|\times 0.858,
  \qquad d_{\mathrm{cm}}=\frac{d_{\mathrm{mm}}}{10}.
 $$
 
@@ -244,7 +244,7 @@ float read_cm() {
 }
 ```
 
-The current firmware sets `MM_PER_TICK = 1.831f`. This is the **software calibration constant** and should be distinguished from a measurement of physical wheel travel. Both `move_cm()` and `move_cm_gyro()` reset encoder ticks at the beginning of a distance-limited movement. The latter combines that distance target with a gyro-held steering correction.
+The current firmware sets `MM_PER_TICK = 0.858f`. This is the **software calibration constant** and should be distinguished from a measurement of physical wheel travel. Both `move_cm()` and `move_cm_gyro()` reset encoder ticks at the beginning of a distance-limited movement. The latter combines that distance target with a gyro-held steering correction.
 
 ### 3.4 BMI088 startup calibration and gyro integration
 
@@ -322,16 +322,16 @@ ToFUnit tofUnits[4] = {
 
 A 4 × 4 frame is stored in row-major order. The firmware accepts zones with ST `target_status` values **5 or 9**, provided the reported distance is positive. All other zones are stored as zero. A zone query returns **`-1`** if the sensor is offline, its sample is older than **150 ms**, the indices are outside the 1...4 range or the zone has no accepted range.
 
-For a generic direction query, `readDistanceMM()` chooses the **nearest valid zone in the central 2 × 2 region** (rows 2–3, columns 2–3):
+In Open mode, a generic direction query `readDistanceMM()` chooses the **nearest valid zone in the central 2 × 2 region** (rows 2–3, columns 2–3):
 
 $$
  d_{\mathrm{direction}}=\min\{d_{r,c}>0\mid r,c\in\{2,3\}\}.
 $$
 
-If there is no valid zone, the function returns `-1`. The actual optical orientation of row/column indices must agree with the physical sensor mounts, since a rotated or mirrored breakout changes which part of the scene a numbered cell represents.
+If there is no valid zone, the function returns `-1`. Final mode instead polls the requested module and returns the average of R2C3 and R3C3 only if both are fresh and valid. The actual optical orientation of row/column indices must agree with the physical sensor mounts, since a rotated or mirrored breakout changes which part of the scene a numbered cell represents.
 
-<p align="center"><img src="docs-media/v41-tof-zones.png" width="720" alt="4 by 4 VL53L5CX zone indexing and selected front corner zones"></p>
-<p align="center"><sub>Figure 4.1. Four-by-four distance cells used by the V4.1 ranging code. The two front-corner cells are row 2/column 3 and row 3/column 3.</sub></p>
+<p align="center"><img src="docs-media/v41-diagram-current-tof-zones.svg" width="720" alt="4 by 4 VL53L5CX zone indexing and selected front corner zones"></p>
+<p align="center"><sub>Figure 4.1. Current source-derived zone map and Open thresholds. The two front-corner cells are row 2/column 3 and row 3/column 3.</sub></p>
 
 ```cpp
 // Read a specific zone from a 4x4 VL53L5CX matrix.
@@ -350,26 +350,29 @@ int tof_zone_mm(DistanceDir dir, uint8_t row, uint8_t col) {
   return v == 0 ? -1 : (int)v;
 }
 
-// Convert the 4x4 matrix into one distance measurement.
-// Select the closest valid reading from the central 2x2 zones.
 float readDistanceMM(DistanceDir dir) {
+  if (activeMode == MODE_FINAL) {
+    // For parking/exit, update only the ToF being queried.
+    tof_poll_one((uint8_t)dir);
+    const int row2 = tof_zone_mm(dir, 2, 3);
+    const int row3 = tof_zone_mm(dir, 3, 3);
+    // Both samples must be fresh and valid. Average stabilizes target alignment.
+    if (row2 <= 0 || row3 <= 0) return -1.0f;
+    return ((float)row2 + (float)row3) * 0.5f;
+  }
   tof_poll();
-
   int nearest = 32767;
-
   for (uint8_t row = 2; row <= 3; row++) {
     for (uint8_t col = 2; col <= 3; col++) {
       int d = tof_zone_mm(dir, row, col);
-
       if (d > 0 && d < nearest) nearest = d;
     }
   }
-
   return (nearest == 32767) ? -1.0f : (float)nearest;
 }
 ```
 
-The tof_zone_mm() function accesses an individual cell of the 4 × 4 distance matrix and rejects unavailable, invalid or outdated readings. The readDistanceMM() function provides a common distance interface for the navigation and parking algorithms by selecting the closest valid measurement from the central four zones. This allows the movement functions to use the new VL53L5CX sensors without depending on the older PWM-based distance measurement system.
+The tof_zone_mm() function accesses an individual cell of the 4 × 4 distance matrix and rejects unavailable, invalid or outdated readings. The readDistanceMM() function provides a common distance interface for the navigation and parking algorithms by selecting the closest central valid measurement in Open, or averaging the two selected cells in Final. This allows the movement functions to use the new VL53L5CX sensors without depending on the older PWM-based distance measurement system.
 
 ### 4.3 Reading frequency by challenge mode
 
@@ -467,7 +470,7 @@ The parking sequence uses fixed absolute heading targets derived from the twelve
 | Final reverse entry arc | +80 degrees | -80 degrees |
 | Final two targets relative to lane | +5, -5 degrees | -5, +5 degrees |
 
-Parking entry, front alignment, turns and post search use PWM 35; the final three movements use PWM 32. Front alignment uses a rolling median of three fresh valid R2C3 readings, with bounded recovery for invalid data, overshoot or reversal. The second turn follows the verified target without a deliberate stationary settle. Both side sensors are assessed before choosing the post-search side; the selected 4x4 sensor attempts 60 Hz and falls back to 30 Hz if necessary. The detector observes column 3 (all four rows), validates two distinct close pulses using encoder travel and then advances 45 mm before the final reverse/reverse/forward sequence. Completion stops the motor and centers steering. The initial 150 ms settle and fault stops are intentional.
+Parking entry, front alignment, turns and post search use PWM 35; the final three movements use PWM 32. Front alignment uses a rolling median of three fresh valid R2C3 readings, with bounded recovery for invalid data, overshoot or reversal. The second turn follows the verified target without a deliberate stationary settle. Both side sensors are assessed before choosing the post-search side; the selected 4x4 sensor attempts 60 Hz and falls back to 30 Hz if necessary. The detector observes column 3 (all four rows), validates two distinct close pulses using encoder travel and then advances 45 mm before the final reverse/reverse/forward sequence. Completion stops the motor and centers steering. The initial settle, fault stops, and any bounded stationary heading correction when rolling acceptance fails are intentional.
 
 ```mermaid
 flowchart TD
@@ -540,7 +543,7 @@ The deterministic ratio tables in [`docs/validation/v41_camera_height_logic_case
 4. Enter each actual result into [`camera_trials.csv`](validation/physical/camera_trials.csv) and [`sign_height_trials.csv`](validation/physical/sign_height_trials.csv). Report correct, wrong-colour and missed outcomes separately.
 5. Repeat using the **same committed release that produced the recorded driving demonstration**. A screenshot of one successful frame is not an accuracy study.
 
-![Real camera diagnostic view](docs-media/v41-openmv-RT1062-camera-view.png)
+![Real camera diagnostic view](docs-media/v41-screenshot-openmv-color-detection.png)
 
 *Camera diagnostic frame from the repository; evidence of one displayed observation, not a sign-height validation dataset.*
 
@@ -554,7 +557,7 @@ Different sensor faults have different effects. The table below distinguishes an
 | Several ToFs begin at factory `0x29` | LPn low at boot, then sequential enable/address assignment | Prevents normal I²C address collision when sensors initialize successfully |
 | ToF range invalid or older than 150 ms | `tof_zone_mm()` returns `-1` | Open turn requires two recent valid readings; some parking routines continue searching or driving on invalid data |
 | One front Open zone detects a close wall | Both zones required for a corner event | Reduces single-zone false corners, but a missing zone can also prevent the turn |
-| Repeated observation of the same Open wall | 600 mm trigger / 800 mm clear-rearm hysteresis | Avoids repeatedly counting one wall while it remains close |
+| Repeated observation of the same Open wall | Three fresh agreeing pairs below 700 mm; rearm after 600 ms and 25 cm | Avoids repeatedly counting one wall while it remains close |
 | Direction not yet determined | TCS first-marker polling; Open stops if a valid front-close condition is seen | Prevents using an arbitrary turning sign without a selected course |
 | Cube momentarily disappears | `FOLLOW_CUBE_DEAD_TIME = 350` ms | Falls back to heading control; too many missed camera messages can interrupt following |
 | Very close / top-cropped cube | No height-tracking or top-clip correction in the bundled camera script | Sign size may be ambiguous; the planned Surprise Rule must not be claimed as implemented |
@@ -587,7 +590,7 @@ The software depends on the mechanical setup described in [Chapter 02](02-mobili
 | Setting or check | Source value / method | Why it matters |
 |---|---|---|
 | Steering left/center/right | 30 / 85 / 140 servo commands | Center and travel limits depend on assembled linkage |
-| Parking steering extremes | 30 / 140 | Wider steering mapping used in parking |
+| Parking steering extremes | 30 / 140 | Separate parking mapping; current limits match normal steering |
 | Encoder | 0.858 mm per counted A-rising tick | Short distance and parking maneuvers |
 | BMI088 initialization | 10 s stationary bias; ±2000°/s, 400 Hz gyro | Reduces initial heading offset |
 | ToF addresses | Front `0x30`, left `0x31`, right `0x32`, rear `0x33` | Four independent devices on one bus |
@@ -618,7 +621,7 @@ The current World Final sketch includes [`Telemetry.ino`](../src/HLR_FE_World_Fi
 | PWM, encoder, turns | Motor command, encoder tick counter and course turn count; PWM is not a measured speed |
 | State, cube phase, parking stage | State-machine progress and maneuver phase |
 | Camera command, age, steering | Last decoded command, elapsed time and steering value; not raw camera video |
-| ToF | Selected front and side cells, not the full four matrices |
+| ToF | Complete four cached 4×4 range and status arrays, online flag and age; selected R2C3/R3C3 plus parking-specific distances |
 | Event and fault | Most recent reported event and fault/stop reason |
 
 The ring buffer holds 480 samples at a nominal 100 ms interval (approximately 48 seconds); actual timing depends on the controller loop. Browser polling waits 350 ms after each response. HTTP handling is throttled to 80 ms while moving or 55 ms while stationary. Large history downloads are suppressed while driving to reduce disruption of gyro integration. Data are volatile, not persistent run logs. A live dashboard does not establish that Wi-Fi has no impact on control timing; compare repeatable runs with and without a connected client.
@@ -627,6 +630,13 @@ The ring buffer holds 480 samples at a nominal 100 ms interval (approximately 48
 
 See [reproduction and screenshot procedure](06-reproducibility.md#connect-to-the-world-final-telemetry-dashboard) and [matrix evidence](03-power-sensors.md#world-final-tof-matrix-evidence).
 
+### Captured V4.1 dashboard and data interpretation
+
+<p align="center"><img src="docs-media/v41-screenshot-telemetry-yaw-history.png" width="350" alt="Saved yaw history graph"></p>
+<p align="center"><sub>Cyan actual integrated yaw, orange controller target, approximately 48 seconds of history. Both traces settle near the final target; the image alone cannot establish RMS error, success rate or latency.</sub></p>
+
+The dashboard captures [IMU overview](docs-media/v41-screenshot-telemetry-imu-overview.png) and [ToF/camera panels](docs-media/v41-screenshot-telemetry-tof-camera-panels.png) show the field layout while current values are unavailable. The plot remains visible from previously loaded history. These screenshots demonstrate interface structure and recorded heading feedback, not live parking completion. The separate [8×8 diagnostic view](03-power-sensors.md#world-final-tof-matrix-evidence) contains actual per-zone readings. For quantitative tracking evaluation export the underlying time series or serial log and calculate error from matched timestamps.
+
 ### Exporting parking evidence
 
-After the motor stops, download `/parking-log.csv` (up to 512 samples) and `/color-log.csv` (up to 400 samples). The parking CSV records time, travel, side, four column-3 distances, near mask, phase, wall count and four raw ST target-status codes. These are bounded volatile buffers. Save the original downloads before rebooting. Suggested evidence paths: `docs/docs-media/world-final/parking-side-log.csv` and `docs/docs-media/world-final/color-log.csv`.
+After the motor stops, download `/parking-log.csv` (up to 512 samples) and `/color-log.csv` (up to 400 samples). The parking CSV records time, travel, side, four column-3 distances, near mask, phase, wall count and four raw ST target-status codes. These are bounded volatile buffers. Save the original downloads before rebooting. Suggested evidence paths: `docs/validation/evidence/parking-side-log.csv` and `docs/validation/evidence/color-log.csv`.

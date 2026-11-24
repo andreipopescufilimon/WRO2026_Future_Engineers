@@ -29,7 +29,7 @@ The published files allow a reviewer to follow a decision from the robot to its 
 | Question | Engineering record | Direct artifact |
 |---|---|---|
 | Why use one driven axle and front steering? | [Drivetrain and turning geometry](02-mobility.md#3-the-driven-axle-and-differential) | [STEP assemblies](../3D-models/) |
-| How is electrical power distributed? | [Power calculations and risk](03-power-sensors.md#3-power-architecture-and-calculations) | [Fabrication outputs](../electrical-schematics/), [board images](docs-media/v41-schematic-design-export.png) |
+| How is electrical power distributed? | [Power calculations and risk](03-power-sensors.md#3-power-architecture-and-calculations) | [Fabrication outputs](../electrical-schematics/), [board images](docs-media/v41-pcb-schematic-export.png) |
 | How do camera, ToF, IMU and control interact? | [Perception and state flow](04-software.md#2-system-architecture-and-execution-flow) | [Controller implementation](../src/), [camera code](../src/camera.py) |
 | Which V4 changes were kept or rejected? | [Systems trade-offs](05-systems.md#3-engineering-decisions-and-rejected-alternatives) | Revision history and linked photos |
 | Can another team manufacture and configure the car? | [Fabrication and build](06-reproducibility.md#parts-and-manufacturing) | Gerber/BOM/CPL, assembly media, programming and calibration instructions |
@@ -44,7 +44,7 @@ The **Arduino Nano ESP32** handles navigation and motion control. The **OpenMV R
 
 ### V4.1 CAD model
 
-![CAD rendering of HyperLine Robotics V4.1 showing the PCB chassis, camera, wheels, drivetrain, battery and sensor mounts](docs-media/robot-v4-1-cad.png)
+![CAD rendering of HyperLine Robotics V4.1 showing the PCB chassis, camera, wheels, drivetrain, battery and sensor mounts](docs-media/v41-cad-complete-robot-render.png)
 
 *Figure 1. CAD view of the V4.1 vehicle*
 
@@ -138,7 +138,7 @@ WRO2026_Future_Engineers/
 | Mechanical CAD | [3D-models](../3D-models/) | Examine or manufacture the steering, wheel and mounting components |
 | Mechanical drawings | [docs/technical-drawings](technical-drawings/) | Check geometry and dimensions |
 | PCB and manufacturing files | [electrical-schematics](../electrical-schematics/) | Inspect schematics and reproduce boards |
-| Robot firmware | [src/HLR_FE_Separated](../src/HLR_FE_Separated/) | Study the controller and navigation implementation |
+| Robot firmware | [src/HLR_FE_World_Final](../src/HLR_FE_World_Final/) | Study the controller and navigation implementation |
 | Camera firmware | [src/camera.py](../src/camera.py) | Inspect colour-detection logic |
 | Component tests | [src/tests](../src/tests/) | Verify individual subsystems |
 | Vehicle photographs | [v-photos](../v-photos/) | Inspect the physical build |
