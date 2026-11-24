@@ -1,3 +1,10 @@
+// ============================================================================
+// HyperLine Robotics | WRO 2026 Future Engineers | World Final
+// Inertial estimation
+// BMI088 initialization, stationary bias calibration, yaw integration and acceleration diagnostics.
+// Source revision: 24 November 2026, rolling parking release.
+// ============================================================================
+
 #define DRIFT_TEST_TIME 10
 
 BMI088 imu(BMI088_ACC_ADDRESS, BMI088_GYRO_ADDRESS);

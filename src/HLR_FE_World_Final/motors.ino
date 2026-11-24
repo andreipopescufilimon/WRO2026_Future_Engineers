@@ -1,3 +1,10 @@
+// ============================================================================
+// HyperLine Robotics | WRO 2026 Future Engineers | World Final
+// Motion primitives
+// Signed PWM, steering mapping, encoder distance and gyro-assisted movement routines.
+// Source revision: 24 November 2026, rolling parking release.
+// ============================================================================
+
 float lastFrontDistanceErrorMM = 0;
 float lastFrontDistanceMM = -1;
 

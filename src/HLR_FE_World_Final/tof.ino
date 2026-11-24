@@ -1,3 +1,10 @@
+// ============================================================================
+// HyperLine Robotics | WRO 2026 Future Engineers | World Final
+// Spatial ranging
+// Four addressed VL53L5CX devices, fresh 4x4 frames, cell validity and parking-side rate switching.
+// Source revision: 24 November 2026, rolling parking release.
+// ============================================================================
+
 // HyperLine Robotics: four VL53L5CXV0GC/1 sensors
 // SparkFun VL53L5CX Arduino Library required.
 // The addresses below are 7-bit I2C addresses, set on every boot.
@@ -10,8 +17,8 @@
 #define TOF_FRAME_SIDE 4
 #define TOF_RANGING_HZ 30
 #define TOF_FRESH_MS 150UL
-#define TOF_TURN_MM 600
-#define TOF_SLOW_MM 800
+#define TOF_TURN_MM 700
+#define TOF_SLOW_MM 1000  // Open: decelerate below 1000 mm, turn below 700 mm
 
 SparkFun_VL53L5CX tofFront, tofLeft, tofRight, tofBack;
 
@@ -22,6 +29,7 @@ struct ToFUnit {
   bool online;
   uint16_t mm[16];
   uint32_t lastFrameMs;
+  uint8_t status[16]; // Unfiltered ST target status for invalid-cell diagnosis.
 };
 
 ToFUnit tofUnits[4] = {
@@ -75,6 +83,31 @@ void tof_setup() {
   }
 }
 
+
+// Only during FINAL parking, change the selected side module from 30Hz to
+// 60Hz at 4x4. Front/back continue at 30Hz. Restore 30Hz on failure.
+// The side will remain at 60Hz until reboot (parking ends in PARK state).
+bool tof_enable_fast_parking_side(DistanceDir dir) {
+  if ((uint8_t)dir >= 4) return false;
+  ToFUnit &u = tofUnits[(uint8_t)dir];
+  if (!u.online) return false;
+  if (u.sensor->getRangingFrequency() == 60) return true;
+  if (!u.sensor->stopRanging()) return false; // Still ranging at 30Hz
+  if (u.sensor->setRangingFrequency(60) && u.sensor->startRanging()) {
+    u.lastFrameMs = 0;
+    return true;
+  }
+  // Recover safely at the original frequency instead of leaving the
+  // configured side sensor stopped mid-parking.
+  u.sensor->stopRanging();
+  if (u.sensor->setRangingFrequency(30) && u.sensor->startRanging()) {
+    u.lastFrameMs = 0;
+    return false;
+  }
+  u.online = false;
+  return false;
+}
+
 // Read one zone in row-major order. Rows/columns are 1-based (1..4).
 // The SparkFun/ST zone buffer may appear mirrored or transposed depending
 // on the physical mounting orientation. Verify the intended zone once.
@@ -86,6 +119,34 @@ int tof_zone_mm(DistanceDir dir, uint8_t row, uint8_t col) {
   return v == 0 ? -1 : (int)v;
 }
 
+// Raw ST target status. -1 is NOT a negative distance: it means the
+// measured target failed the firmware validity gate (status not 5 or 9),
+// returned zero, or the cached frame became stale.
+int tof_zone_target_status(DistanceDir dir, uint8_t row, uint8_t col) {
+  if ((uint8_t)dir >= 4 || row < 1 || row > 4 || col < 1 || col > 4) return 0;
+  ToFUnit &u = tofUnits[(uint8_t)dir];
+  if (!u.online || !u.lastFrameMs) return 0;
+  return (int)u.status[(row-1)*4 + (col-1)];
+}
+
+// Telemetry-only snapshot access. Unlike navigation's tof_zone_mm(), these
+// preserve the last value when older than TOF_FRESH_MS and report their age.
+// The webpage must label old frames STALE; they are never used for driving.
+uint32_t tof_last_frame_ms(DistanceDir dir) {
+  if ((uint8_t)dir >= 4) return 0;
+  return tofUnits[(uint8_t)dir].lastFrameMs;
+}
+bool tof_sensor_online(DistanceDir dir) {
+  return (uint8_t)dir < 4 && tofUnits[(uint8_t)dir].online;
+}
+int tof_telemetry_zone_mm(DistanceDir dir, uint8_t row, uint8_t col) {
+  if ((uint8_t)dir >= 4 || row < 1 || row > 4 || col < 1 || col > 4) return -1;
+  const ToFUnit &u = tofUnits[(uint8_t)dir];
+  if (!u.online || !u.lastFrameMs) return -1;
+  const uint16_t v = u.mm[(row - 1) * 4 + (col - 1)];
+  return v ? (int)v : -1;
+}
+
 // Read a single module without delaying the cube PID on three unnecessary I2C transfers.
 void tof_poll_one(uint8_t index) {
   if (index >= 4) return;
@@ -95,6 +156,7 @@ void tof_poll_one(uint8_t index) {
   if (!u.sensor->getRangingData(&frame)) return;
   for (uint8_t z = 0; z < 16; z++) {
     uint8_t s = frame.target_status[z];
+    u.status[z] = s;
     u.mm[z] = ((s == 5 || s == 9) && frame.distance_mm[z] > 0)
               ? frame.distance_mm[z] : 0;
   }
@@ -199,6 +261,7 @@ void tof_poll() {
     for (uint8_t z = 0; z < 16; z++) {
       // 5: valid range; 9: valid but large pulse. Reject other statuses.
       uint8_t s = frame.target_status[z];
+      u.status[z] = s;
       u.mm[z] = ((s == 5 || s == 9) && frame.distance_mm[z] > 0)
                   ? frame.distance_mm[z]
                   : 0;
@@ -224,9 +287,13 @@ int tof_open_round_speed(int normalSpeed) {
   const int row3 = tof_zone_mm(FRONT_DIR, 3, 3);
   // Never race at full speed when a required wall-measurement cell is missing.
   if (row2 <= 0 || row3 <= 0) return normalSpeed < 85 ? normalSpeed : 85;
-  if (row2 < TOF_SLOW_MM || row3 < TOF_SLOW_MM)
-    return (normalSpeed * 40) / 100;
-  return normalSpeed;
+  if (abs(row2 - row3) > 220) return min(normalSpeed, 80);
+  const int closest = min(row2, row3);
+  if (closest >= TOF_SLOW_MM) return normalSpeed;
+  if (closest <= TOF_TURN_MM) return min(normalSpeed, 80);
+  const int slowPWM = min(normalSpeed, 80);
+  return slowPWM + (int)((long)(normalSpeed - slowPWM) *
+                          (closest - TOF_TURN_MM) / (TOF_SLOW_MM - TOF_TURN_MM));
 }
 
 // True only with a recent, valid pair of front center-column measurements.

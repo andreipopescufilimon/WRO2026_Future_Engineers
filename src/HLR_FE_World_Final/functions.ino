@@ -1,3 +1,10 @@
+// ============================================================================
+// HyperLine Robotics | WRO 2026 Future Engineers | World Final
+// Shared utilities
+// Floor-color sampling/classification, shared maneuver helpers and camera communication utilities.
+// Source revision: 24 November 2026, rolling parking release.
+// ============================================================================
+
 TwoWire TCSWire(1);
 
 void tcs_write8(uint8_t reg, uint8_t value) {
@@ -12,7 +19,7 @@ uint8_t tcs_read8(uint8_t reg) {
   TCSWire.write(TCS_CMD | reg);
   TCSWire.endTransmission(false);
 
-  TCSWire.requestFrom(TCS34725_ADDR, (uint8_t)1);
+  TCSWire.requestFrom((uint8_t)TCS34725_ADDR, (uint8_t)1);
 
   if (TCSWire.available()) {
     return TCSWire.read();
@@ -63,7 +70,7 @@ bool tcs_read_raw_fast() {
   TCSWire.write(TCS_CMD | TCS_AUTO_INC | TCS_CDATAL);
   TCSWire.endTransmission(false);
 
-  TCSWire.requestFrom(TCS34725_ADDR, (uint8_t)8);
+  TCSWire.requestFrom((uint8_t)TCS34725_ADDR, (uint8_t)8);
 
   if (TCSWire.available() < 8) {
     return false;

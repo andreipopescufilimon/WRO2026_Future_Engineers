@@ -1,9 +1,56 @@
-// Open round: one validated front-wall event per 90-degree corner.
+// ============================================================================
+// HyperLine Robotics | WRO 2026 Future Engineers | World Final
+// Open Challenge
+// Floor-marker direction lock, validated front-wall events, speed ramping, heading turns and the twelve-corner finish.
+// Source revision: 24 November 2026, rolling parking release.
+// ============================================================================
+
+// Original Open round: one validated FRONT wall event per 90-degree corner.
+// No side-wall or side-end logic is used.
 static const int OPEN_CONFIRM_FRAMES = 3;
-static const int OPEN_FRONT_TURN_MM = 600;
+static const int OPEN_FRONT_TURN_MM = 700;  // Start turning after 3 fresh valid frames below 700 mm.
 static const int OPEN_PAIR_MAX_DIFFERENCE_MM = 220;
 static const float OPEN_REARM_STRAIGHT_CM = 25.0f;
 static const uint32_t OPEN_REARM_MIN_MS = 600UL;
+// Open round speed control: brake only when the verified front wall is
+// under 1000 mm, otherwise accelerate toward normal straight speed.
+// If both cells are invalid or disagree, slow down conservatively.
+static const int OPEN_BRAKE_START_MM = 1000;
+static const int OPEN_BRAKE_FULL_MM = 700;
+static const int OPEN_APPROACH_PWM = 80;
+static const int OPEN_ACCEL_PWM_PER_SEC = 300;
+static const int OPEN_BRAKE_PWM_PER_SEC = 1900;
+static const uint32_t OPEN_DISTANCE_MAX_AGE_MS = 150UL;
+// Do not drive the old extra 10 cm after reaching the 700 mm trigger.
+static const int OPEN_PRETURN_ADVANCE_CM = 0;
+static int openRampedSpeed = OPEN_APPROACH_PWM;
+static int openVerifiedFrontMM = -1;
+static uint32_t openVerifiedFrontMs = 0;
+static uint32_t openSpeedLastMs = 0;
+
+static int open_speed_target(int maximumPWM, int frontMM) {
+  const int maxSpeed = constrain(maximumPWM, 0, 255);
+  const int slowSpeed = min(maxSpeed, OPEN_APPROACH_PWM);
+  if (frontMM <= 0) return slowSpeed;  // Sensor unavailable, do not accelerate blindly.
+  if (frontMM >= OPEN_BRAKE_START_MM) return maxSpeed;
+  if (frontMM <= OPEN_BRAKE_FULL_MM) return slowSpeed;
+  const int span = OPEN_BRAKE_START_MM - OPEN_BRAKE_FULL_MM;
+  return slowSpeed + (int)((long)(maxSpeed - slowSpeed) *
+                          (frontMM - OPEN_BRAKE_FULL_MM) / span);
+}
+
+static int open_ramp_speed(int targetPWM) {
+  const uint32_t now = millis();
+  if (!openSpeedLastMs) openSpeedLastMs = now;
+  const uint32_t dt = min((uint32_t)(now - openSpeedLastMs), (uint32_t)100UL);
+  if (!dt) return openRampedSpeed;
+  openSpeedLastMs = now;
+  const int rate = targetPWM < openRampedSpeed ? OPEN_BRAKE_PWM_PER_SEC : OPEN_ACCEL_PWM_PER_SEC;
+  const int step = max(1, (int)((long)rate * dt / 1000L));
+  if (targetPWM < openRampedSpeed) openRampedSpeed = max(targetPWM, openRampedSpeed - step);
+  else openRampedSpeed = min(targetPWM, openRampedSpeed + step);
+  return openRampedSpeed;
+}
 
 static uint8_t openFrontNearFrames = 0;
 static uint32_t openLastFrontFrameMs = 0;
@@ -21,6 +68,10 @@ void open_configure() {
   openWaitingForStraight = false;
   openFrontNearFrames = 0;
   openLastFrontFrameMs = 0;
+  openVerifiedFrontMM = -1;
+  openVerifiedFrontMs = 0;
+  openRampedSpeed = OPEN_APPROACH_PWM;
+  openSpeedLastMs = 0;
   turn_count = 0;
 }
 
@@ -49,6 +100,18 @@ void open_execute() {
   const uint32_t previousFrame = openLastFrontFrameMs;
   const bool valid = tof_read_new_pair(FRONT_DIR, openLastFrontFrameMs, a, b);
   const bool newFrame = openLastFrontFrameMs != previousFrame;
+  if (newFrame) {
+    if (valid && abs(a - b) <= OPEN_PAIR_MAX_DIFFERENCE_MM) {
+      // Use the closer of the two center-column zones to brake in time.
+      // The disagreement check rejects obvious one-cell reflections.
+      openVerifiedFrontMM = min(a, b);
+      openVerifiedFrontMs = millis();
+    } else {
+      // An inconsistent or invalid frame must not authorize acceleration.
+      openVerifiedFrontMM = -1;
+      openVerifiedFrontMs = 0;
+    }
+  }
 
   if (openWaitingForStraight && !openCornerActive) {
     if ((uint32_t)(millis() - openCornerFinishedMs) >= OPEN_REARM_MIN_MS &&
@@ -99,6 +162,8 @@ void open_execute() {
           openWaitingForStraight = true;
           openCornerFinishedMs = millis();
           openFrontNearFrames = 0;
+          openRampedSpeed = OPEN_CORNER_SPEED;
+          openSpeedLastMs = millis();
           noInterrupts(); encoder_ticks = 0; interrupts();
           pid_error = 0;
           pid_last_error = 0;
@@ -108,14 +173,30 @@ void open_execute() {
             Serial.print(" settled gyro error="); Serial.println(err, 1);
           }
         } else {
-          steeringCommand = constrain(0.055 * err, -1.0, 1.0);
+          // Full steering lock during the square-side change. Ease off only
+          // in the final few degrees to prevent overshoot of the gyro target.
+          steeringCommand = fabs(err) > 9.0 ? (err > 0.0 ? 1.0 : -1.0)
+                                             : constrain(0.10 * err, -1.0, 1.0);
           commandSpeed = OPEN_CORNER_SPEED;
         }
       }
 
-      if (!openCornerActive) commandSpeed = tof_open_round_speed(commandSpeed);
+      if (!openCornerActive) {
+        const uint32_t now = millis();
+        const bool distanceFresh = openVerifiedFrontMM > 0 && openVerifiedFrontMs != 0 &&
+          (uint32_t)(now - openVerifiedFrontMs) <= OPEN_DISTANCE_MAX_AGE_MS;
+        const int distanceMM = distanceFresh ? openVerifiedFrontMM : -1;
+        const int targetPWM = open_speed_target(commandSpeed, distanceMM);
+        commandSpeed = open_ramp_speed(targetPWM);
+      } else {
+        // Corners use their fixed controlled speed, never the straight ramp.
+        openRampedSpeed = OPEN_CORNER_SPEED;
+        openSpeedLastMs = millis();
+      }
       if (turn_direction == 0 && tof_front_wall_close()) {
         commandSpeed = 0;  // First marker has not established the turn direction.
+        openRampedSpeed = 0;
+        openSpeedLastMs = millis();
         steeringCommand = 0;
       }
       steer(steeringCommand);
@@ -138,8 +219,9 @@ void open_execute_command(String cmd) {
   Serial.print("OPEN: verified front ToF corner ");
   Serial.print(turn_count);
   Serial.print(" gyro="); Serial.println(gz, 1);
-  if (fabs(current_angle_gyro - gz) < 10.0 && currentState != AFTER_CUBE)
-    move_cm_gyro(10, OPEN_CORNER_SPEED, current_angle_gyro);
+  if (OPEN_PRETURN_ADVANCE_CM > 0 &&
+      fabs(current_angle_gyro - gz) < 10.0 && currentState != AFTER_CUBE)
+    move_cm_gyro(OPEN_PRETURN_ADVANCE_CM, OPEN_CORNER_SPEED, current_angle_gyro);
 
   read_gyro_data();
   current_angle_gyro += turn_direction * 90.0;

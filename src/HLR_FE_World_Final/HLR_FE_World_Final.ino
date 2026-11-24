@@ -1,3 +1,11 @@
+// ============================================================================
+// HyperLine Robotics | WRO 2026 Future Engineers | World Final
+// Controller entry point
+// Pin assignments, shared calibration, mode selection, initialization and main loop. Arduino builds every tab in this directory as one sketch.
+// Source revision: 24 November 2026, rolling parking release.
+// ============================================================================
+
+void final_exit_prestart_sample();
 #include <Wire.h>
 #include <math.h>
 #include <ESP32Encoder.h>
@@ -53,12 +61,24 @@ enum DistanceDir : uint8_t { FRONT_DIR,
                              RIGHT_DIR,
                              BACK_DIR };
 
+// Parking wall counts and on-robot side ToF history (read later over Wi-Fi).
+void telemetry_side_parking_reset();
+void telemetry_side_parking_active(uint8_t sensorIndex);
+int tof_zone_target_status(DistanceDir dir, uint8_t row, uint8_t col);
+void telemetry_side_parking_frame(uint8_t sensorIndex, uint8_t wallCount,
+                                  uint8_t phase, uint8_t nearMask,
+                                  float traveledMM, const int cells[4], const uint8_t statuses[4]);
+void telemetry_side_parking_finished(uint8_t sensorIndex);
+
+// Read-only sensor-status accessors for Wi-Fi diagnostics.
 uint32_t tof_last_frame_ms(DistanceDir sensor);
+bool tof_sensor_online(DistanceDir sensor);
+int tof_telemetry_zone_mm(DistanceDir sensor, uint8_t row, uint8_t col);
 
 // ================ Speed Control ================
 int robot_speed = 100;  // 100 - Cubes ; 250 - Open
 int exit_speed = 80;
-int park_speed = 45;
+int park_speed = 32; // Final three parking movements only
 int impeller_speed = 0;
 int cube_last = 1;
 
@@ -104,8 +124,7 @@ Servo steeringServo;
 #define STEERING_CENTER 85
 #define STEERING_RIGHT 140
 
-// Cube-round servo limits from the working HLR_FE.zip.
-// Open round keeps its current 39 / 85 / 131 values.
+// Unified physical servo limits for both rounds and parking: 30 left, 85 center, 140 right.
 #define FINAL_STEERING_LEFT 30
 #define FINAL_STEERING_CENTER 85
 #define FINAL_STEERING_RIGHT 140
@@ -259,8 +278,8 @@ void setup() {
 
   Serial.begin(115200);
   Serial0.begin(19200);
-  while (!Serial0)
-    ;
+  // Hardware UART requires no host handshake; never block startup.
+  telemetry_setup();
   blink_led(DEBUG_LED1, 200);
 
   gyro_setup();
@@ -271,20 +290,21 @@ void setup() {
   }
   tcs_setup_fast();
   tof_setup();
-  telemetry_setup();
   
   blink_led(DEBUG_LED2, 200);
   digitalWrite(DEBUG_LED2, HIGH);
   pinMode(START_BTN, INPUT_PULLUP);
   while (digitalRead(START_BTN) == 1) {
     move(0);
+    if (activeMode == MODE_FINAL) final_exit_prestart_sample();
     flush_messages();
     telemetry_tick();
     delay(2);
   }
   digitalWrite(DEBUG_LED1, HIGH);
-  custom_delay(500);
+  // Side ToFs were sampled BEFORE Start: do not waste 500ms here.
   if (activeMode == MODE_FINAL) final_exit_parking();
+  else custom_delay(500);
 }
 
 void loop() {
