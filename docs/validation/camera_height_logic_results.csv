@@ -1,0 +1,33 @@
+case_id,input_ratio,visible_color,expected_height_mm,expected_effective_color,returned_height_mm,returned_effective_color,result,evidence_type,notes,camera_sha256
+LOGIC-50-R-01,0.65,R,50,G,50,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-R-02,0.8,R,50,G,50,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-R-03,1.0,R,50,G,50,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-R-04,1.1,R,50,G,50,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-R-05,1.19,R,50,G,50,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-G-01,0.65,G,50,R,50,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-G-02,0.8,G,50,R,50,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-G-03,1.0,G,50,R,50,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-G-04,1.1,G,50,R,50,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-50-G-05,1.19,G,50,R,50,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-R-01,1.2,R,100,R,100,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-R-02,1.4,R,100,R,100,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-R-03,1.6,R,100,R,100,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-R-04,1.8,R,100,R,100,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-R-05,1.99,R,100,R,100,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-G-01,1.2,G,100,G,100,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-G-02,1.4,G,100,G,100,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-G-03,1.6,G,100,G,100,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-G-04,1.8,G,100,G,100,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-100-G-05,1.99,G,100,G,100,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-R-01,2.0,R,150,G,150,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-R-02,2.2,R,150,G,150,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-R-03,2.5,R,150,G,150,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-R-04,2.92,R,150,G,150,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-R-05,3.5,R,150,G,150,G,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-G-01,2.0,G,150,R,150,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-G-02,2.2,G,150,R,150,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-G-03,2.5,G,150,R,150,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-G-04,2.92,G,150,R,150,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+LOGIC-150-G-05,3.5,G,150,R,150,R,PASS,SOFTWARE_UNIT_TEST,Synthetic ratio input; actual executed function output,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+COMMENT-100-R,2.05,R,100,R,150,G,FAIL,SOFTWARE_UNIT_TEST,Ratio described as typical for 100 mm in source comment; not a new physical measurement,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
+COMMENT-100-G,2.05,G,100,G,150,R,FAIL,SOFTWARE_UNIT_TEST,Ratio described as typical for 100 mm in source comment; not a new physical measurement,50cadd1fe66e90bc750cc3da8d4f9f88f17e03d0815a8e846909be4f3de721aa
