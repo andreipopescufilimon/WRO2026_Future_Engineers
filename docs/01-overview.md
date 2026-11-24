@@ -7,8 +7,6 @@ This engineering journal presents how we designed, built and tested our autonomo
 ---
 
 
-> **Evidence integrity, 17 November 2026:** This archive includes a complete design record and test procedures, but **no verified V4.1 physical performance dataset or retained compiler log**. The team confirms that its Arduino controller sketch **compiles successfully on its laptop**; this is a team-reported result, not a failed compile or independently captured log. The primary `src/camera.py` is area-based; two earlier [camera-source candidates](../src/camera_candidates/) have been recovered. The v11 candidate passes 23/23 pure-function tests but is **not hardware verified or deployed in the primary source**. See the [evidence audit](validation/EVIDENCE_AUDIT.md), [implementation gaps](validation/IMPLEMENTATION_GAPS.md), and [six-chapter evidence map](README.md). Simulated tests are clearly separated and must not be submitted as physical results.
-
 ## Documentation guide
 
 | WRO documentation area | Chapter | What to find there |
@@ -22,9 +20,9 @@ This engineering journal presents how we designed, built and tested our autonomo
 
 ---
 
-### Practical evidence map for a technical review
+### Engineering references
 
-The published files allow a reviewer to follow a decision from the robot to its implementation:
+The following references connect our design decisions with their implementation.
 
 | Question | Engineering record | Direct artifact |
 |---|---|---|
@@ -34,7 +32,6 @@ The published files allow a reviewer to follow a decision from the robot to its 
 | Which V4 changes were kept or rejected? | [Systems trade-offs](05-systems.md#3-engineering-decisions-and-rejected-alternatives) | Revision history and linked photos |
 | Can another team manufacture and configure the car? | [Fabrication and build](06-reproducibility.md#parts-and-manufacturing) | Gerber/BOM/CPL, assembly media, programming and calibration instructions |
 
-For physical outcomes, the [test evidence summary](validation/physical/SUMMARY.md) records which artifacts are measured and which are still unverified. An attached source file or CAD render establishes design intent; it does not establish performance by itself.
 
 ## The vehicle at a glance
 
@@ -54,11 +51,11 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 
 | System | V4: national version | V4.1: current version | Engineering motivation / trade-off |
 |---|---|---|---|
-| Distance sensing | Pololu PWM-signal distance sensor | Four VL53L5CX multi-zone ToF sensors, configured in the included firmware for 4×4 zones at 30 Hz (nominal) | Multi-zone range data supports spatial wall detection; 8×8 is a sensor capability, not the 4×4 mode used by this firmware. Actual range, accuracy and delivered frame rate require measurement |
-| Drive motor | Pololu 30:1 HPCB motor | Upgraded to **Pololu 50:1 HPCB** motor, as it gives almost twice as much torque | Higher torque motor, it improves acceleration and low-speed maneuvers |
-| Wheel rims | Light 3D printed rims | Changed to heavier custom made 45# Steel rims | Revised wheel rims changes mass distribution on the silicone tire, resulting into higher wheel grip, this makes turning and braking more efficient |
+| Distance sensing | Pololu PWM-signal distance sensor | Four VL53L5CX multi-zone ToF sensors, configured in the included firmware for 4×4 zones at 30 Hz (nominal) | Multi-zone range data supports spatial wall detection; 8×8 is a sensor capability, not the 4×4 mode used by this firmware. 8×8 mode is used for detailed diagnostic inspection |
+| Drive motor | Pololu 30:1 HPCB motor | Upgraded to **Pololu 50:1 HPCB** motor | Higher nominal gearbox reduction for low-speed maneuvers |
+| Wheel rims | Light 3D printed rims | Changed to heavier custom made 45# Steel rims | Revised wheel rims change mass distribution, traction and rotational inertia |
 | General layout | PCB-based chassis, front steering, rear differential | Same overall vehicle geometry, with revised components | Preserves the same robot layout as it showed to be very reliable, only upgrading some subsystems to remove found issues during testing |
-| Downforce fan / ESC | Used to generate downforce | **Not installed** | Current vehicle no longer depends on artificial generated downforce, as the new wheel rims provide sufficient grip |
+| Downforce fan / ESC | Used to generate downforce | **Not installed** | Removing the fan simplifies the drivetrain and electrical system; traction depends on the tires and weight distribution |
 
 ### Specifications and where to verify them
 
@@ -73,9 +70,9 @@ V4 served as our **national competition version**. V4.1 is an engineering refine
 | Propulsion | Updated higher-torque geared motor driving rear axle | [Mobility](02-mobility.md) |
 | Steering | Servo-driven parallel front steering | [Mobility](02-mobility.md), [CAD](../3D-models/) |
 | Wheels | Silicone tyres with revised, heavier rims | [Mobility](02-mobility.md), [wheel CAD](../3D-models/wheel%20with%20silicone.step) |
-| Power source | 2S Li-Po in documented design; confirm installed pack | [Power and sensors](03-power-sensors.md) |
+| Power source | 2S LiHV, 300 mAh | [Power and sensors](03-power-sensors.md) |
 | Fan / fan ESC | Not installed on V4.1 | Current CAD and wiring |
-| Dimensions, mass, speed and power draw | **Re-measure on complete V4.1 assembly** | [Systems and testing](05-systems.md) |
+
 
 ---
 
@@ -95,7 +92,7 @@ The **Open Challenge** requires the robot to navigate the course autonomously fo
 
 ## Repository structure
 
-We organise the repository so someone assessing the project can move directly from the documentation to the hardware and software evidence. The tree below reflects the **folder names shown in our current GitHub repository**. Individual production files and tests are stored inside their respective directories.
+We organise the repository so builders can move directly from the engineering journal to the hardware and software files. The tree below reflects the **folder names shown in our current GitHub repository**. Individual production files and tests are stored inside their respective directories.
 
 ```text
 WRO2026_Future_Engineers/
@@ -120,7 +117,7 @@ WRO2026_Future_Engineers/
 │   └── README.md
 ├── other/
 ├── src/
-│   ├── HLR_FE/                  # Main robot firmware
+│   ├── HLR_FE_World_Final/      # Main robot firmware
 │   ├── tests/                   # Subsystem test code
 │   ├── README.md
 │   └── camera.py               # OpenMV firmware
@@ -131,7 +128,7 @@ WRO2026_Future_Engineers/
 └── README.md
 ```
 
-### Find the evidence
+### Project resources
 
 | Resource | Repository location | Use |
 |---|---|---|

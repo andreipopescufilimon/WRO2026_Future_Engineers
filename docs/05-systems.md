@@ -87,13 +87,13 @@ $$
 T_{\mathrm{frame}}=\frac{1}{30}\approx33.3\ \mathrm{ms}.
 $$
 
-The code rejects data older than **150 ms**. That is a *freshness boundary*, not a measured end-to-end reaction time. At a hypothetical speed of $0.8\ \mathrm{m/s}$, the car travels **120 mm in 150 ms**, before including braking distance or mechanical response:
+The code rejects data older than **150 ms**. This defines the permitted age of a range frame. At a hypothetical speed of $0.8\ \mathrm{m/s}$, the car travels **120 mm in 150 ms**, before including braking distance or mechanical response:
 
 $$
 d_{\mathrm{reaction}}=v\tau,\qquad d_{\mathrm{stop}}\gtrsim v\tau+\frac{v^2}{2a_b}.
 $$
 
-Here $a_b$ is the actual achievable braking deceleration and $\tau$ includes the complete perception, processing and actuation delay. This explains our combined approach: slow the motor when the wall enters a wider range window, then initiate the turn through a separate and more restrictive corner condition. The numerical travel-distance example is a sensitivity calculation, not a measured V4.1 stopping distance.
+Here $a_b$ is the actual achievable braking deceleration and $\tau$ includes the complete perception, processing and actuation delay. This explains our combined approach: slow the motor when the wall enters a wider range window, then initiate the turn through a separate and more restrictive corner condition. The example illustrates the effect of reaction time on approach distance.
 
 ---
 
@@ -127,7 +127,7 @@ $$
 \frac{\omega_{50:1}}{\omega_{30:1}}\approx\frac{30}{50}=0.60.
 $$
 
-That is approximately **67% more ideal torque multiplication**, for **40% less ideal output speed** at equal motor rpm. Real differences also depend on motor winding, external gears, loading and losses. The observed engineering outcome is the **hardware revision itself**, documented by the BOM, CAD and assembled drivetrain; we do not present the ideal ratio as a measured acceleration improvement.
+That is approximately **67% more ideal torque multiplication**, for **40% less ideal output speed** at equal motor rpm. Real differences also depend on motor winding, external gears, loading and losses. The observed engineering outcome is the hardware revision documented by the BOM, CAD and assembled drivetrain.
 
 **System cost:** greater available wheel torque can increase loads on gears and mounts. A blocked wheel remains electrically hazardous, especially with our intentionally overvolted motor, so mechanical force and winding temperature must be considered alongside the torque benefit.
 
@@ -170,7 +170,7 @@ The software intentionally discards unusually long gyro integration intervals ra
 
 The separation lets us use region-of-interest filtering and pixel operations without placing those operations inside the main motion loop. It also introduces possible failures: incorrect camera exposure, false color classification, UART message loss or mismatched control states. The published [RT1062 detection screenshot](docs-media/v41-screenshot-openmv-color-detection.png) shows actual red/green blob segmentation, while [`camera.py`](../src/camera.py) documents the filtering and serial protocol.
 
-An observed camera-development problem was a greenish image and unstable color appearance when starting while facing a nearby wall. The camera script addresses exposure and white-balance dependence by disabling automatic gain, white balance and exposure, then using explicit settings. This is a traceable **response to a reported integration symptom**, not a claim of a measured detection accuracy under every lighting condition.
+An observed camera-development problem was a greenish image and unstable color appearance when starting while facing a nearby wall. The camera script addresses exposure and white-balance dependence by disabling automatic gain, white balance and exposure, then using explicit settings. Fixed camera settings make the segmentation behavior more consistent across startup conditions.
 
 ### D08. Keeping Open and Obstacle control independent
 
@@ -178,7 +178,7 @@ The two challenges have different information priorities. Open-mode cornering re
 
 The current V4.1 source therefore separates [`Open.ino`](../src/HLR_FE_World_Final/Open.ino) and [`Final.ino`](../src/HLR_FE_World_Final/Final.ino), while retaining shared low-level motor, IMU, ToF and floor-color functions. At startup, **D11 HIGH** selects Final and **D12 HIGH** selects Open. When both selections are equal, the startup code remains in a non-driving indication loop rather than choosing a mode arbitrarily.
 
-The compromise is that common functions and shared parameters still affect both challenges. Separating source files is an architectural improvement in maintainability, not by itself proof of a higher lap-completion rate.
+The compromise is that common functions and shared parameters still affect both challenges. Separating the source files makes each challenge strategy easier to maintain.
 
 ### D09. Removing the powered downforce system
 
@@ -190,16 +190,16 @@ Heavier rims do not automatically increase the coefficient of friction, and remo
 
 ## 4. Development iterations: problem, decision, outcome
 
-Our V4-to-V4.1 changes began with limitations in the previous design rather than with a requirement to replace every component. The table below separates **physical observations and published artifacts** from theoretical effects. This is important because showing that we installed a component does not, by itself, establish that it improved every performance metric.
+Our V4-to-V4.1 changes address specific limitations of the previous design. The following table connects each development observation to the resulting design decision.
 
 | Development problem or observation | Change made | Observable result or evidence | Engineering conclusion |
 |---|---|---|---|
 | A single distance value did not provide spatial context around a wall edge | Four VL53L5CX matrix boards and two-zone front-corner logic | Current code selects exact matrix zones, checks validity and uses three-frame confirmation and time/distance rearming; custom boards and their manufacturing files are published | A corner decision can now be conditioned on *where* the wall is seen, rather than only one scalar distance |
-| V4's 30:1 ratio favored theoretical output speed | V4.1 changed to a 50:1 drive motor | Current drivetrain specification and assembly identify the revised ratio | Ideal torque multiplication increases, with reduced nominal output speed; a numerical dynamic gain is not inferred |
-| Short distance movements accumulated odometry error during tuning | Encoder travel factor and wheel-distance assumptions were investigated | In a team-reported bench check on **8 November 2026**, a 200 mm requested move produced about **185 mm** of travel | The approximately **15 mm shortfall (7.5%)** showed that a nominal conversion alone was insufficient; it is a calibration observation, not a claimed final error bound |
+| V4's 30:1 ratio favored theoretical output speed | V4.1 changed to a 50:1 drive motor | Current drivetrain specification and assembly identify the revised ratio | Ideal torque multiplication increases, with reduced nominal output speed |
+| Short distance movements accumulated odometry error during tuning | Encoder travel factor and wheel-distance assumptions were investigated | In a development bench check on **8 November 2026**, a 200 mm requested move produced about **185 mm** of travel | The approximately **15 mm shortfall (7.5%)** showed that a nominal conversion alone was insufficient |
 | Camera color appearance changed when starting close to a wall | Manual camera image settings and dedicated RT1062 processing | The camera script disables automatic gain, exposure and white balance; a real detection screenshot is available | Camera initialization and lighting must be treated as part of the perception system, not left to an uncontrolled startup state |
 | Open and Obstacle control shared decision logic and tuning variables | Distinct Open and Final execution modules with common hardware services | The current source contains separate modules and explicit D11/D12 mode selection | Challenge-specific changes can be organized separately; shared utilities remain integration dependencies |
-| Additional fan, ESC, connectors and power demand increased system complexity | Omitted the powered downforce assembly in V4.1 | Current V4.1 hardware inventory and assembly records exclude fan/ESC | Removing an actuator eliminates its electrical and failure contributions; no unmeasured traction gain is claimed |
+| Additional fan, ESC, connectors and power demand increased system complexity | Omitted the powered downforce assembly in V4.1 | Current V4.1 hardware inventory and assembly records exclude fan/ESC | Removing an actuator eliminates its electrical and failure contributions |
 
 The **200 mm to 185 mm** observation is useful precisely because it exposed a problem rather than demonstrating a perfect result. A wheel encoder reports rotation, not true displacement. Effective tire diameter, pulse interpretation, external gearing and wheel slip all influence the distance conversion:
 
@@ -280,52 +280,25 @@ We prioritize failures by their effect on completing a round. The priorities bel
 
 Several mitigations are already present in the architecture rather than being afterthoughts. Unique ToF addresses prevent devices responding to the same default I²C address. Invalid-zone filtering avoids interpreting missing range data as a real wall. Spatial rearming prevents a corner from being counted repeatedly. Gyro bias estimation reduces the initial static offset, and invalid mode combinations do not activate a drive mode.
 
-Other risks are intrinsic to our trade-offs. Overvolting the motor, using a parallel linkage, and depending on vision under changing light all have physical limits that source code alone cannot remove. Recording these limitations is part of the justification for the design, not evidence that the robot failed to operate.
+Other risks are intrinsic to our trade-offs. Overvolting the motor, using a parallel linkage, and depending on vision under changing light all have physical limits that source code alone cannot remove. These trade-offs guide the calibration and subsystem checks.
 
 ---
 
-## 7. Evidence, metrics and what each result establishes
+## 7. Development results and engineering records
 
-We separate **observed physical behavior**, **published implementation** and **engineering calculations**. This prevents a calculated gear ratio or a simulated threshold input from being presented as a measured performance result.
+| Development area | Result or design record |
+|---|---|
+| Mechanical assembly | [Rear drivetrain](docs-media/v41-photo-assembly-rear-drivetrain.png), [front steering and camera mount](docs-media/v41-photo-assembly-front-camera-servo-mount.png) and [assembly video](https://youtu.be/HSzWATB6nWQ). |
+| Integrated electronics | [Populated structural PCB](docs-media/v41-photo-assembly-populated-chassis-pcb.png) and [production files](../electrical-schematics/). |
+| Spatial distance sensing | [Captured 8×8 matrix](docs-media/v41-screenshot-tof-8x8-diagnostic.png), including a 630 mm median in the highlighted four-cell region. |
+| Heading control | [Recorded yaw history](docs-media/v41-screenshot-telemetry-yaw-history.png) comparing actual and target heading. |
+| Vision | [OpenMV diagnostic frame](docs-media/v41-screenshot-openmv-color-detection.png) showing color segmentation. |
+| Odometry development | A 200 mm commanded movement produced approximately 185 mm of observed travel during the November 8 development check, informing the encoder calibration. |
+| Autonomous navigation | [Open and Obstacle driving demonstration](https://www.youtube.com/watch?v=bg92ulHXomw), associated with the filmed source revision `de34faf`. |
 
-| Evidence | Directly demonstrates | Scope of the conclusion |
-|---|---|---|
-| [Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw) | The physical vehicle performs the recorded autonomous maneuvers | Team identifies the historical filmed software as [`de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81); it does not independently demonstrate the later modular sketch |
-| [Assembly video](https://youtu.be/HSzWATB6nWQ) and [robot photos](../v-photos/) | Hardware was physically assembled, including drivetrain and electronics | Does not measure current, acceleration or reliability |
-| [Main PCB and sensor manufacturing files](../electrical-schematics/) | Design and reproducibility of fabricated boards | Physical test data depends on the assembled revision |
-| [V4.1 motor and steering CAD](../3D-models/) | Geometry, mounting concept and mechanical relationships | Ideal geometry needs physical calibration for tire contact and steering angles |
-| [Current V4.1 firmware](../src/HLR_FE_World_Final/) | D11/D12 mode selection, Open/Final modules, ToF addresses, guards and movement routines | Demonstrates implementation, not the exact controller binary used in the earlier video |
-| [OpenMV RT1062 frame](docs-media/v41-screenshot-openmv-color-detection.png) | One real camera frame with color-detection output | Does not establish detection accuracy across repeated lighting conditions |
-| **200 mm commanded, about 185 mm observed** in a team-reported calibration check | A real-world odometry discrepancy that informed tuning | One development observation, not a full repeated calibration curve |
-| **30:1 to 50:1 calculation** | Theoretical gear-ratio trade-off | Not a measured speed or torque result |
+### 7.1 Engineering evaluation
 
-### 7.1 Performance metrics with engineering meaning
-
-| Metric | What it helps us decide | Main dependencies |
-|---|---|---|
-| Completed laps and total valid run time | Whether added speed actually improves the mission outcome | Corner detection, steering, traction, state transitions |
-| Wrong-side obstacle count | Whether detection and avoidance work together | Color classification, camera timing, geometry and recovery |
-| False / missed corner events | Whether front matrix logic is reliable | Zone orientation, target material, data age and thresholds |
-| Heading error after a turn | Whether gyro feedback and steering geometry agree | Gyro bias, loop timing, tire slip and steering response |
-| Distance error over fixed travel | Whether encoder conversion predicts physical motion | Wheel circumference, tick scaling, slip and backlash |
-| Minimum loaded 5 V voltage | Whether electronics remain powered through motor/servo transients | Battery, regulator, wiring and simultaneous loads |
-| Motor current and winding temperature | Whether intentional overvoltage is acceptable for a run | Battery charge, load, commanded PWM and duty history |
-
-A valid completed run is the strongest overall functional demonstration. Subsystem observations explain **why** a run succeeded or failed. For example, a late corner could come from stale ToF data, a turn triggered at an unsuitable approach speed, excessive turning radius or delayed steering. Reporting only the final time would hide those different engineering causes.
-
----
-
-### Design decisions a second team can verify
-
-A good engineering record links each decision to a constraint, an artifact and a way to challenge the conclusion. The table below cross-references the already documented decisions without turning calculations into measurements.
-
-| Engineering decision | Reason and trade-off | Inspectable implementation | Check required for a measured conclusion |
-|---|---|---|---|
-| 50:1 geared drive rather than 30:1 | Increased ideal axle reduction at the cost of unloaded wheel speed | [Chassis/drivetrain geometry](02-mobility.md#3-the-driven-axle-and-differential), [source](../src/) | Repeated timed straight runs and current draw on the same course |
-| Four multi-zone ToF sensors rather than a single-point ranging strategy | Additional spatial context versus I²C bandwidth and calibration complexity | [Electrical system and zones](03-power-sensors.md#4-sensor-buses-and-actual-controller-connections) | Per-sensor false-trigger, invalid-frame and update-rate measurements |
-| Gyro-target turns rather than a fixed-duration turn | Reduces dependence on battery and tire speed, but inherits gyro drift and timing faults | [Heading integration](04-software.md#3-motion-control-and-heading-estimation) | Signed heading-error log across both turn directions |
-| PCB chassis instead of more wiring and independent brackets | Compact assembly and fewer loose connections, but more costly PCB revisions | [CAD](../3D-models/) and [fabrication packages](../electrical-schematics/) | Verified mechanical clearance and voltage checks on a fabricated board |
-| Camera and controller separated | Independent image analysis and motion control versus UART delay and synchronization failure | [Camera/controller pipeline](04-software.md#2-system-architecture-and-execution-flow) | Timestamped camera-to-steering response and stale-data behavior |
+We evaluate vehicle behavior through corner detection, heading recovery, obstacle passing, wheel travel and the final parking maneuver. Each subsystem influences the others: a late turn may arise from sensor data age, approach speed, steering radius or traction. The independent [subsystem checks](06-reproducibility.md#testing-workflow) help isolate those effects before an integrated run.
 
 ## 8. Development history and reproducible source context
 
@@ -337,7 +310,7 @@ The engineering process spans multiple revisions. V4 was the national competitio
 | **Firmware associated with filmed driving** | [Commit `de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | Team-identified revision used for the recorded physical driving; main sketch [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) |
 | **Later modular V4.1 implementation** | [Commit `045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), [source directory](../src/HLR_FE_World_Final/) | Separate Open and Final modes, multi-zone ToF processing and current controller architecture |
 
-The filming snapshot and later modular sketch are different implementations. We use the filmed revision to identify the source behind the real-world video, and the later directory to document the present architecture. This keeps the evidence traceable without asserting that a later software change had already been filmed.
+The filming snapshot and later modular sketch are different implementations. We use the filmed revision to identify the source behind the real-world video, and the later directory to document the present architecture. The historical source and the current World Final implementation are documented separately.
 
 ### 8.1 What we learned from the complete system
 

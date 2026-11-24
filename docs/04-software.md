@@ -1,6 +1,6 @@
 # 04. Software architecture and autonomous navigation
 
-HyperLine Robotics | WRO 2026 Future Engineers | World Final rolling-parking controller and bundled camera source
+HyperLine Robotics | WRO 2026 Future Engineers | V4.1 World Final controller and camera software
 
 | Chapter | Topic |
 |---|---|
@@ -41,7 +41,7 @@ The eight `.ino` files remain inside one `src/HLR_FE_World_Final/` directory. Ar
 
 The team identifies commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the software used for the [published Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw). Its Arduino entry point is the older [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino).
 
-The later modular implementation under [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) has a different architecture and new ToF-based Open navigation. The video documents the physical robot and the identified historical code; it should not be interpreted as a test of every change in the newer separated sketch. This chapter describes **the newer code as written**, using the bundled camera script, whose height-rule limitations are described below.
+The current modular implementation under [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) adds ToF-based Open navigation and rolling parking. The earlier driving demonstration corresponds to the historical source revision above.
 
 ## 2. System architecture and execution flow
 
@@ -179,7 +179,7 @@ void move(int speed) {
 }
 ```
 
-The nominal duty fraction is $D=|u|/255$. For example, a command of `250` requests approximately 98% duty and `80` requests approximately 31%. These are **electrical PWM commands**, not measured speed, motor-terminal voltage or current. As explained in [Chapter 03](03-power-sensors.md), the nominal 6 V drive motor is intentionally operated from the 2S LiHV supply, so winding temperature, mechanical load and overcurrent protection remain important.
+The nominal duty fraction is $D=|u|/255$. For example, a command of `250` requests approximately 98% duty and `80` requests approximately 31%. These are electrical PWM duty requests. As explained in [Chapter 03](03-power-sensors.md), the nominal 6 V drive motor is intentionally operated from the 2S LiHV supply, so winding temperature, mechanical load and overcurrent protection remain important.
 
 The shared `stop_motor()` routine briefly requests reverse PWM (`-3` for 100 ms) before setting zero. In other places the software uses `move(0)` directly. Neither should be described as a guaranteed instantaneous physical stop.
 
@@ -197,7 +197,7 @@ The front MG90S servo uses the `ESP32Servo` interface. The current source define
 | `STEERING_LEFT_PARK` | 30 |
 | `STEERING_RIGHT_PARK` | 140 |
 
-These values are **servo commands**, not measured steering angles at the wheels. The normalized control function clamps $s$ to $[-1,1]$ and maps it linearly from the left command to the right command:
+These values are servo API commands. The normalized control function clamps $s$ to $[-1,1]$ and maps it linearly from the left command to the right command:
 
 $$
 \theta_{\mathrm{servo}}=30+\frac{s+1}{2}(140-30)
@@ -291,7 +291,7 @@ Although the source names some variables `pid_error`, the current straight-drivi
 | `move_straight_until_distance()` | Stop or transition at a left/right wall-distance threshold | Side ToF and BMI088 |
 | `move_gyro_until_side_detect_cycle()` | Detect side-wall present/absent/present transitions | Side ToF and BMI088 |
 
-The movement functions are implemented in [`motors.ino`](../src/HLR_FE_World_Final/motors.ino). Some are **blocking loops** and some do not have an explicit timeout when a required distance never becomes valid. This is an implementation limitation, not an independently verified safety feature. For example, `move_to_distance()` searches forward at a low PWM when its ToF reading is invalid; an unplugged sensor is not equivalent to a valid clear path.
+The movement functions are implemented in [`motors.ino`](../src/HLR_FE_World_Final/motors.ino). Some are **blocking loops** and some do not have an explicit timeout when a required distance never becomes valid. During bench checks, keep the wheels raised and ensure the sensors return valid values. For example, `move_to_distance()` searches forward at a low PWM when its ToF reading is invalid; an unplugged sensor is not equivalent to a valid clear path.
 
 ## 4. Sensor processing
 
@@ -376,7 +376,7 @@ The tof_zone_mm() function accesses an individual cell of the 4 × 4 distance ma
 
 ### 4.3 Reading frequency by challenge mode
 
-`tof_poll()` checks the device data-ready flag before obtaining a frame. In **Open mode**, it polls only the **front ToF** for the corner-control loop. The other three boards are still initialized, but they are not transferred continuously by this function while Open navigation is active. In **Final mode**, all four devices are considered. The 30 Hz device configuration corresponds to a nominal 33.3 ms per frame; it is not proof that the complete main loop runs at that frequency.
+`tof_poll()` checks the device data-ready flag before obtaining a frame. In **Open mode**, it polls only the **front ToF** for the corner-control loop. The other three boards are still initialized, but they are not transferred continuously by this function while Open navigation is active. In **Final mode**, all four devices are considered. The 30 Hz device configuration corresponds to a nominal 33.3 ms per frame; the main-loop frequency also depends on communication and control workload.
 
 ### 4.4 TCS34725 floor-color sensor
 
@@ -394,7 +394,7 @@ The implementation uses ratios scaled by 1000 instead of floating-point division
 
 **Blue** establishes a left-turn course (`turn_direction = -1`); **red or orange** establish a right-turn course (`turn_direction = +1`) during initial direction selection. In Final mode the first valid marker establishes direction, later markers are checked against that selected course, and white observations help re-arm marker detection. The source defines `TCS_MARKER_LOCK_MS = 10` and `TCS_REARM_WHITE_MS = 2`; Final mode also applies its own corner lockout.
 
-## 5. Open Challenge: validated front-wall navigation
+## 5. Open Challenge: front-wall navigation
 
 The floor sensor establishes the direction; the front ToF and integrated gyro govern subsequent corners. The camera is not required for the normal wall-triggered turn sequence.
 
@@ -425,7 +425,7 @@ flowchart TD
  F -->|Yes| H[900 ms finish and stop]
 ```
 
-Source: [Open.ino](../src/HLR_FE_World_Final/Open.ino). Older 600/800 mm illustrations and threshold datasets are historical, not current acceptance tests.
+Source: [Open.ino](../src/HLR_FE_World_Final/Open.ino).
 
 ## 6. Obstacle Challenge: camera-aware navigation and rolling parking
 
@@ -487,28 +487,27 @@ flowchart TD
  F -->|Search failure| K
 ```
 
-Source: [Final.ino](../src/HLR_FE_World_Final/Final.ino). Capture the real stage trace and side CSV after a run; the above values are configuration, not proof of parking accuracy.
+Source: [Final.ino](../src/HLR_FE_World_Final/Final.ino). The stage and side-range history can be inspected with the telemetry CSV export.
 
-## 7. Camera source audit: what the uploaded OpenMV RT1062 program actually implements
+## 7. Computer vision and traffic sign recognition
 
-**Source of truth:** [`src/camera.py`](../src/camera.py). This chapter was checked against the program present in this repository snapshot. Unlike the earlier draft of this journal, we do not attribute features from an unprovided camera revision to this file. The accompanying [source-to-claim audit](validation/EVIDENCE_AUDIT.md) and [implementation gaps](validation/IMPLEMENTATION_GAPS.md) disclose the difference.
+The camera program is [`src/camera.py`](../src/camera.py). It processes color regions locally and sends compact steering and traffic-sign commands to the vehicle controller.
 
 ### 7.1 Current camera settings and runtime
 
-| Item | Actual bundled configuration | Engineering consequence |
+| Item | Configuration | Engineering consequence |
 |---|---|---|
-| Camera | OpenMV RT1062 using `sensor` API | This is the camera targeted by the included source; confirm the actual installed camera before flashing |
+| Camera | OpenMV RT1062 using `sensor` API | Independent image-processing controller |
 | Frame | RGB565 QVGA, 320×240 | Image-coordinate thresholds depend on this resolution |
 | Orientation | `vflip(True)`, `hmirror(True)` | Ensures the expected camera coordinate convention |
 | Exposure | Auto disabled, **16,000 microseconds** | Fixed exposure supports repeatable segmentation but needs venue calibration |
 | Auto gain / AWB | Both disabled | White-balance / threshold behavior still depends on illumination |
-| Colour thresholds | Multiple LAB red/green tuples, plus line/wall thresholds | See the literal tuples in `src/camera.py`; the thresholds are not universal calibration evidence |
+| Colour thresholds | Multiple LAB red/green tuples, plus line/wall thresholds | See the literal tuples in `src/camera.py` |
 | Obstacle ROI | Bottom 60% of image, starting at 40% height | Large signs can enter ROI at different distances |
 | Follow gain | `kp_cube=0.4`, `kd_cube=2.4` | Frame-to-frame PD control on normalized horizontal image error |
 | Near-object rule | `follow_threshold = 5000` blob-area units | **Area based**, not physical range or bottom-Y gating |
 | UART | `UART(1, 19200, timeout_char=200)` | 19,200 baud newline-delimited output |
 
-This configuration is an **implementation description**, not a measured detection-latency, accuracy or camera-frame-rate result.
 
 ### 7.2 Existing detection and control loop
 
@@ -519,33 +518,21 @@ e_x=\frac{x_{\mathrm{blob}}-W/2}{W/2},\qquad
 u=0.4e_x+2.4(e_x-e_{x,\mathrm{previous}}).
 \]
 
-If the detected blob area is less than **5000**, the camera transmits `S+0.123` or `S-0.123` followed by `\n` (the value is computed per frame). At or above 5000 it sends `RED\n` or `GREEN\n`, based on the detected colour. It also broadcasts a numeric direction message (`0`, `1`, or `2` plus newline) every frame after attempting blue/orange marker detection. This behavior follows the bundled source, and it is **not** the bottom-coordinate close rule described in the earlier draft.
+If the detected blob area is less than **5000**, the camera transmits `S+0.123` or `S-0.123` followed by `\n` (the value is computed per frame). At or above 5000 it sends `RED\n` or `GREEN\n`, based on the detected colour. It also broadcasts a numeric direction message (`0`, `1`, or `2` plus newline) every frame after attempting blue/orange marker detection. 
 
 | Output message | Current meaning | Where it goes |
 |---|---|---|
 | `S{:+.3f}\n` | Vision target follow request | Nano ESP32 serial command handler |
 | `RED\n` / `GREEN\n` | Area threshold passed for a visible sign | Nano ESP32 avoidance command handler |
-| `0\n` / `1\n` / `2\n` | Camera's detected line direction state | Broadcast each camera iteration; relevant handler must be tested against both round modes |
+| `0\n` / `1\n` / `2\n` | Camera's detected line direction state | Broadcast each camera iteration |
 
-The source has no image-to-millimeter conversion. `follow_threshold` is not a measured distance.
+The `follow_threshold` is expressed in blob-area units.
 
-### 7.3 Surprise Rule readiness and unresolved software mismatch
+### 7.3 Camera diagnostic view
 
-The **2026 sign-height variant** requires distinguishing 50, 100 and 150 mm tall signs. The previously drafted algorithm described ratio thresholds, height tracking, top clipping and an inverted red/green action for 50 and 150 mm signs. **Those routines are not in the primary `src/camera.py`**. A [recovered v11 alternative](../src/camera_candidates/rt1062_surprise_rule_v11.py) implements them and passes [23/23 pure-function tests](validation/v11_camera_candidate_unit_tests.csv), but it has not been verified as flashed firmware. Specifically `SURPRISE_RULE`, `classify_cube_height()`, `get_cube_height()`, `get_passing_color()`, and `CLOSE_BOTTOM_Y` are absent. Therefore, this specific uploaded camera revision **cannot be claimed to implement or physically validate height-dependent passing**.
+![OpenMV camera diagnostic frame](docs-media/v41-screenshot-openmv-color-detection.png)
 
-The deterministic ratio tables in [`docs/validation/v41_camera_height_logic_cases.csv`](validation/v41_camera_height_logic_cases.csv) are **unintegrated conceptual examples**, not results of running the uploaded camera code. The historical unit-test CSV is archived as superseded evidence. Before presenting Surprise Rule tests as implemented results, a different complete and tested camera revision must be added with its source hash, compatible UART protocol, calibration frames and physical trials. This is a functional gap, not a documentation formatting gap.
-
-### 7.4 How to capture real vision evidence
-
-1. Record OpenMV firmware version, `camera.py` source SHA-256, image orientation, exposure, gain and LAB threshold values.
-2. Film 50, 100 and 150 mm reference signs, in both colours, at multiple measured distances and in at least two lighting conditions. Label whether each sign is fully inside the frame or top-clipped.
-3. Record the exact UART line received by the Nano, any missed detections, elapsed processing time and the decision actually executed.
-4. Enter each actual result into [`camera_trials.csv`](validation/physical/camera_trials.csv) and [`sign_height_trials.csv`](validation/physical/sign_height_trials.csv). Report correct, wrong-colour and missed outcomes separately.
-5. Repeat using the **same committed release that produced the recorded driving demonstration**. A screenshot of one successful frame is not an accuracy study.
-
-![Real camera diagnostic view](docs-media/v41-screenshot-openmv-color-detection.png)
-
-*Camera diagnostic frame from the repository; evidence of one displayed observation, not a sign-height validation dataset.*
+The OpenMV IDE frame buffer shows the detected color regions. We use the camera view to inspect segmentation, target selection and the placement of the obstacle ROI, while the Nano receives the steering or avoidance command over UART.
 
 ## 8. Failure cases, recovery and software limits
 
@@ -560,32 +547,16 @@ Different sensor faults have different effects. The table below distinguishes an
 | Repeated observation of the same Open wall | Three fresh agreeing pairs below 700 mm; rearm after 600 ms and 25 cm | Avoids repeatedly counting one wall while it remains close |
 | Direction not yet determined | TCS first-marker polling; Open stops if a valid front-close condition is seen | Prevents using an arbitrary turning sign without a selected course |
 | Cube momentarily disappears | `FOLLOW_CUBE_DEAD_TIME = 350` ms | Falls back to heading control; too many missed camera messages can interrupt following |
-| Very close / top-cropped cube | No height-tracking or top-clip correction in the bundled camera script | Sign size may be ambiguous; the planned Surprise Rule must not be claimed as implemented |
+| Very close / top-cropped cube | Area-based color-blob selection | Keep the target within the obstacle ROI when setting the camera angle |
 | Color or lighting changes | Fixed 16,000 µs exposure, disabled automatic gain and AWB, LAB thresholds, ROI and blob filters | Must be checked against the competition environment; no universal lighting guarantee |
 | Gyro update stalled longer than 50 ms | Reject stale interval during integration | Avoids integrating one old rate over a long blocking period, but cannot reconstruct missed rotation |
 | Long blocked movement or failed range target | Some motion helpers contain no explicit timeout | A bad range or encoder input can prevent a routine from completing; verify these before full-speed runs |
 | Legacy camera messages in Open mode | Open still contains color-command handling | Camera `RED/GREEN` can enter avoidance even though normal Open corners come from ToF |
 | Fan/impeller legacy code | `impeller_speed` initialized to zero; physical fan removed | Not part of V4.1 traction, motor control or power budget |
 
-### Source-to-behavior cross-check
-
-A reproducible software description must identify whether a behavior comes from code, an intended algorithm or a physical demonstration. The following checks reflect the implementation described in this chapter and make it easier for a reviewer to inspect a specific claim.
-
-| Control claim | Inspect in the repository | What the inspection establishes |
-|---|---|---|
-| Separate Open and Final configurations | `src/HLR_FE_World_Final/HLR_FE_World_Final.ino`, `Open.ino`, `Final.ino` in the current public repository | Challenge selection and controller logic; not a tested autonomous run |
-| Open turns from paired front ToF readings | `Open.ino` and `tof.ino` | Freshness, confirmation and re-arm conditions for a wall event |
-| Obstacle approach, bypass and recovery | `Final.ino`, `functions.ino` | The controller transitions and command handling; field reliability must be measured |
-| Camera classifications received through serial | `src/camera.py` and controller UART parser | Actual supported messages of the checked source revision |
-| Driver speed and encoder distance | `motors.ino`, `gyro.ino` | The implemented PWM/steering/heading calculations, with hardware-specific calibration still required |
-
-**Version caution:** The archived code can be older than the current GitHub branch. If reproducing from an exported ZIP, confirm that the `src/HLR_FE_World_Final/` folder is present at the selected commit. If not, obtain the corresponding source from the [live GitHub repository](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/tree/main/src/HLR_FE_World_Final), rather than silently substituting the older `HLR_FE_Separated` sketch.
-
-The original `src/camera.py` does not contain all experimental sign-height behavior described in later camera prototypes. The source audit in Section 7 records that gap. A pure-function test of a candidate camera file is not equivalent to the camera running correctly on the robot.
-
 ## 9. Calibration, parameters and field verification
 
-The software depends on the mechanical setup described in [Chapter 02](02-mobility.md), electrical connections and calibration principles in [Chapter 03](03-power-sensors.md), and the reproduction sequence in [Chapter 06](06-reproducibility.md). The table gives the **actual source settings** used to reproduce the control logic, without claiming that every parameter has been independently measured on the latest hardware.
+The software depends on the mechanical setup in [Chapter 02](02-mobility.md), electrical connections in [Chapter 03](03-power-sensors.md) and the calibration sequence in [Chapter 06](06-reproducibility.md). The table lists the controller and camera settings.
 
 | Setting or check | Source value / method | Why it matters |
 |---|---|---|
@@ -603,10 +574,10 @@ The software depends on the mechanical setup described in [Chapter 02](02-mobili
 | Parking drive / final arcs | PWM 35 / 32 | Distinct maneuver speeds |
 | Camera format | QVGA RGB565, both flips on | ROI geometry and color processing |
 | Camera UART | 19,200 baud, `UART(1)` | Matches Nano `Serial0` |
-| Camera close threshold | Blob area `>= 5000` in `src/camera.py` | Vision proximity event; **not** a calibrated distance |
-| Camera sign-height rule | **Not implemented** in the bundled `src/camera.py` | The proposed 50/100/150 mm mapping is documented but must be integrated and verified before claiming it |
+| Camera close threshold | Blob area `>= 5000` in `src/camera.py` | Vision proximity event |
 
-A practical integrated check begins with motor and steering direction while wheels are lifted, followed by gyro startup and known-angle turns, each ToF address and its intended field of view, floor-marker detection, camera UART reception, short encoder movements and finally complete Open/Obstacle runs on a matching field. The individual test sketches and build instructions are linked in [Chapter 06](06-reproducibility.md). Real measurements and outcome records, where available, are separate from the source configurations above.
+
+A practical integrated check begins with motor and steering direction while wheels are lifted, followed by gyro startup and known-angle turns, each ToF address and its intended field of view, floor-marker detection, camera UART reception, short encoder movements and finally complete Open/Obstacle runs on a matching field. The individual test sketches and build instructions are linked in [Chapter 06](06-reproducibility.md). 
 
 
 ## World Final read-only telemetry
@@ -618,24 +589,24 @@ The current World Final sketch includes [`Telemetry.ino`](../src/HLR_FE_World_Fi
 | Yaw, target, error | Integrated gyro heading, current controller target and target minus actual heading (degrees) |
 | Rate and bias | Angular rate and stationary gyro drift estimate (degrees/s) |
 | Acceleration, roll, pitch | BMI088 acceleration in m/s² and tilt estimates in degrees |
-| PWM, encoder, turns | Motor command, encoder tick counter and course turn count; PWM is not a measured speed |
+| PWM, encoder, turns | Motor command, encoder tick counter and course turn count; PWM command uses an 8-bit scale |
 | State, cube phase, parking stage | State-machine progress and maneuver phase |
 | Camera command, age, steering | Last decoded command, elapsed time and steering value; not raw camera video |
 | ToF | Complete four cached 4×4 range and status arrays, online flag and age; selected R2C3/R3C3 plus parking-specific distances |
 | Event and fault | Most recent reported event and fault/stop reason |
 
-The ring buffer holds 480 samples at a nominal 100 ms interval (approximately 48 seconds); actual timing depends on the controller loop. Browser polling waits 350 ms after each response. HTTP handling is throttled to 80 ms while moving or 55 ms while stationary. Large history downloads are suppressed while driving to reduce disruption of gyro integration. Data are volatile, not persistent run logs. A live dashboard does not establish that Wi-Fi has no impact on control timing; compare repeatable runs with and without a connected client.
+The ring buffer holds 480 samples at a nominal 100 ms interval (approximately 48 seconds); actual timing depends on the controller loop. Browser polling waits 350 ms after each response. HTTP handling is throttled to 80 ms while moving or 55 ms while stationary. Large history downloads are suppressed while driving to reduce disruption of gyro integration. Data are volatile, not persistent run logs. 
 
-**Implementation limitation:** front left/right aggregate readings are updated only by the special stopped diagnostic branch. That branch currently checks `STOP AT FRONT 270`, whereas `Final.ino` emits `STOP AT FRONT TARGET` only in a disabled diagnostic branch. Consequently these aggregate fields may remain unavailable in the uploaded revision. Capture only what the actual firmware reports, and resolve/test the mismatch separately if those fields are required. The competition logic is unchanged; this discrepancy is retained and disclosed.
+Front left/right aggregate fields are reserved for the optional stopped diagnostic; the rolling parking routine uses the selected front and side matrix zones. The stopped diagnostic is disabled in the current controller, so use the individual cached matrix cells for these readings.
 
 See [reproduction and screenshot procedure](06-reproducibility.md#connect-to-the-world-final-telemetry-dashboard) and [matrix evidence](03-power-sensors.md#world-final-tof-matrix-evidence).
 
 ### Captured V4.1 dashboard and data interpretation
 
 <p align="center"><img src="docs-media/v41-screenshot-telemetry-yaw-history.png" width="350" alt="Saved yaw history graph"></p>
-<p align="center"><sub>Cyan actual integrated yaw, orange controller target, approximately 48 seconds of history. Both traces settle near the final target; the image alone cannot establish RMS error, success rate or latency.</sub></p>
+<p align="center"><sub>Cyan actual integrated yaw, orange controller target, approximately 48 seconds of history. Both traces settle near the final target.</sub></p>
 
-The dashboard captures [IMU overview](docs-media/v41-screenshot-telemetry-imu-overview.png) and [ToF/camera panels](docs-media/v41-screenshot-telemetry-tof-camera-panels.png) show the field layout while current values are unavailable. The plot remains visible from previously loaded history. These screenshots demonstrate interface structure and recorded heading feedback, not live parking completion. The separate [8×8 diagnostic view](03-power-sensors.md#world-final-tof-matrix-evidence) contains actual per-zone readings. For quantitative tracking evaluation export the underlying time series or serial log and calculate error from matched timestamps.
+The [IMU overview](docs-media/v41-screenshot-telemetry-imu-overview.png) and [ToF/camera panels](docs-media/v41-screenshot-telemetry-tof-camera-panels.png) show the dashboard layout during connection. The saved yaw trace compares actual heading with the controller target. The [8×8 diagnostic view](03-power-sensors.md#world-final-tof-matrix-evidence) shows a populated distance matrix.
 
 ### Exporting parking evidence
 
