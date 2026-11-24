@@ -15,8 +15,8 @@ This checklist is tied to the **current modular V4.1 controller** under [`src/HL
 | V41-MOTOR-FWD | Drive forward | Lift driven wheels; send a conservative forward command | Rear wheel movement agrees with the intended forward direction; no reset |
 | V41-MOTOR-REV | Drive reverse | Lift driven wheels; send a reverse command | Rear wheels reverse; no binding or controller reset |
 | V41-SERVO-CENTER | Steering center | Apply servo command `85` | Wheels align with mechanical neutral |
-| V41-SERVO-LEFT | Left steering | Apply servo command `39` | Linkage moves left with no hard-stop interference |
-| V41-SERVO-RIGHT | Right steering | Apply servo command `131` | Linkage moves right with no hard-stop interference |
+| V41-SERVO-LEFT | Left steering | Apply servo command `30` | Linkage moves left with no hard-stop interference |
+| V41-SERVO-RIGHT | Right steering | Apply servo command `140` | Linkage moves right with no hard-stop interference |
 | V41-TOF-FRONT | Front ToF | Inspect startup output; move flat target | Sensor initialized at `0x30`; distance responds |
 | V41-TOF-LEFT | Left ToF | Same, left module | Sensor initialized at `0x31`; distance responds |
 | V41-TOF-RIGHT | Right ToF | Same, right module | Sensor initialized at `0x32`; distance responds |
@@ -25,7 +25,7 @@ This checklist is tied to the **current modular V4.1 controller** under [`src/HL
 | V41-OPENMV-UART | Camera UART | RT1062 P4 TX to controller UART RX, common GND; present targets | Messages arrive at **19,200 baud** with expected syntax (`RED`, `GREEN`, `S...`) |
 | V41-ENCODER-200 | Encoder distance | Mark start/end on floor, command 200 mm movement and measure with ruler | Record measured travel in mm, tick count when accessible, and signed error; determine PASS against an explicitly chosen tolerance |
 
-The firmware constants are **commands and configuration**, not evidence that a motor, servo, camera, IMU or range sensor passed a bench test. The encoder's `1.831` mm/tick is a *software setting*, not a substitute for measuring traveled distance.
+The firmware constants are **commands and configuration**, not evidence that a motor, servo, camera, IMU or range sensor passed a bench test. The encoder's `0.858` mm/tick is a *software setting*, not a substitute for measuring traveled distance.
 
 ### Useful observed-result examples
 

@@ -355,7 +355,7 @@ The Arduino Nano ESP32 runs the vehicle controller; the OpenMV RT1062 runs the s
 
 `Wire` is supplied by the Arduino board platform. The TCS34725 is accessed directly over its separate I²C bus, rather than through an additional Arduino color-sensor library.
 
-**Included Arduino libraries.** To make the software environment easier to reproduce, we have included the library versions used during development in [`src/libraries/`](../src/libraries/). The folder contains **Seeed Studio BMI088 v1.0.0**, **ESP32Encoder v5.0.0** by Kevin Harrington, and **Adafruit TCS34725 v1.4.4**. These copies preserve the library implementations alongside our source code, particularly the BMI088 interface used by the robot's gyroscope routines. To install them, copy each library directory into the Arduino sketchbook's `libraries` folder, restart Arduino IDE, and verify that the compiler selects these copies. The Arduino Nano ESP32 board package, `ESP32Servo` and SparkFun VL53L5CX library are installed separately through Arduino IDE.
+**Included Arduino libraries.** To make the software environment easier to reproduce, we have included the library versions used during development in [`src/libraries/`](../src/libraries/). The folder contains **Seeed Studio BMI088 v1.0.0**, **ESP32Encoder v5.0.0**, **ESP32Servo v3.0.3**, **SparkFun VL53L5CX v1.0.3**, **Adafruit TCS34725 v1.4.4** and **EspSoftwareSerial v8.1.0**. These version numbers come directly from the included `library.properties` files. These copies preserve the library implementations alongside our source code, particularly the BMI088 interface used by the robot's gyroscope routines. To install them, copy each library directory into the Arduino sketchbook's `libraries` folder, restart Arduino IDE, and verify that the compiler selects these copies. The board package is installed separately. The checked-in [build workflow](../.github/workflows/verify-v41.yml) selects `arduino:esp32@2.0.18-arduino.5` and board FQBN `arduino:esp32:nano_nora`. The actual IDE and OpenMV firmware versions are recorded with the build environment.
 
 Use Arduino IDE Boards Manager and Library Manager to select and record the installed dependencies. Arduino CLI provides the same information:
 
@@ -533,12 +533,20 @@ The filmed robot used the earlier `src/HLR_FE/` sketch. The later V4.1 source se
 
 The team identifies [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the code revision running in the [real Open and Obstacle Challenge footage](https://www.youtube.com/watch?v=bg92ulHXomw). That snapshot contains `src/HLR_FE/HLR_FE.ino`. Its source, camera program and mechanical/electrical documentation are accessible as a fixed historical Git state.
 
-The historical source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_Separated/`, which moves Open and Final behavior into their respective files and uses the four-matrix ToF interface. It is the basis of the modular configuration and calibration references in this chapter. This distinction keeps the historical demonstration and newer implementation individually traceable.
+The historical source snapshot [`045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) contains `src/HLR_FE_Separated/`, which moves Open and Final behavior into their respective files and uses the four-matrix ToF interface. The current configuration and calibration references in this chapter come from `src/HLR_FE_World_Final/`. This distinction keeps the historical demonstration and newer implementation individually traceable.
 
 | Release resource | Reference |
 | --- | --- |
 | Filmed source and matching historical files | [Commit `de34faf`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) |
-| Modular V4.1 controller and project snapshot | [Commit `045c57e`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
+| Current modular controller | [World Final sketch](../src/HLR_FE_World_Final/) · [Source and dependency manifest](validation/v41_release_manifest.csv) |
+| Earlier modular development checkpoint | [Commit `045c57e`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df) |
 | Assembled vehicle | [Assembly video](https://youtu.be/HSzWATB6nWQ) and [robot photographs](../v-photos/) |
 | Real-world autonomous operation | [Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw) |
 | Physical sensor and control references | [Power and sensors](03-power-sensors.md), [mobility](02-mobility.md) and [systems](05-systems.md) |
+
+
+### Reproducing a fixed firmware revision
+
+Build the eight-file sketch and camera program from the same repository revision. The [source manifest](validation/v41_release_manifest.csv) identifies the file hashes and bundled dependency versions. Record the actual commit, installed board package, camera firmware and compiler outcome in [build_verification.csv](validation/physical/build_verification.csv). The GitHub workflow stores the build log and selected versions as a downloadable artifact. When recording a driving run, use the flashed revision in [challenge_runs.csv](validation/physical/challenge_runs.csv).
+
+The [video index](../video/video.md) distinguishes Open Challenge, Obstacle Challenge and assembly recordings. [Recorded engineering observations](validation/physical/SUMMARY.md) link the original diagnostic captures.

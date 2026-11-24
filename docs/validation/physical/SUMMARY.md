@@ -1,52 +1,35 @@
-# V4.1 physical validation summary
+# V4.1 engineering observations
 
-Generated from recorded physical observations only. Blank input files produce no results. This summary is not an automated claim that any test passed.
+## Spatial ranging
 
-## Electrical load and 5 V stability
+The [original diagnostic screenshot](../../docs-media/v41-screenshot-tof-8x8-diagnostic.png) records frame 633 in 8×8 mode. The [transcribed matrix](tof_diagnostic_frame_633.csv) preserves every displayed distance and target status. This capture demonstrates spatial separation of nearby and distant surfaces.
 
-| Test / state | Samples | Mean pack current | Peak pack current | Minimum 5 V rail | Recorded pack energy |
-|---|---:|---:|---:|---:|---:|
-| No physical power log provided | 0 | not available | not available | not available | not available |
+| Quantity | Observed or calculated from the capture |
+|---|---:|
+| Reported frame age | 3 ms |
+| Configured ranging frequency | 15 Hz |
+| Displayed failed reads | 0 |
+| Valid zones | 49/64 |
+| Invalid zones | 15/64 |
+| Nearest valid distance | 71 mm |
+| Farthest valid distance | 2323 mm |
+| Selected R3–R4/C5–C6 median | 630 mm |
 
-## Distance sensor accuracy
+The sample contains range returns rather than reference-distance accuracy measurements. Invalid zones retain their displayed status codes. A single frame is not used to calculate a time-series failure rate.
 
-Valid ToF samples are evaluated individually against ruler distance. Invalid samples are counted separately; zone frame-rate estimates require timestamps.
+## Heading control
 
-| Sensor | Samples | Valid | Invalid | Mean bias | RMSE | Frame rate |
-|---|---:|---:|---:|---:|---:|---:|
-| No physical ToF log provided | 0 | 0 | 0 | not available | not available | not available |
+The [recorded yaw-history graph](../../docs-media/v41-screenshot-telemetry-yaw-history.png) compares integrated heading and target heading over a displayed 48.348 s history. The traces follow successive heading steps and converge at the final steady target. The plot provides qualitative feedback-response evidence; numerical error statistics require the original time series.
 
-## BMI088 drift and heading accuracy
+## Assembly and autonomous operation
 
-| Test / condition | Samples | Mean gyro Z rate | Heading drift | Mean absolute turn error |
-|---|---:|---:|---:|---:|
-| No physical IMU log provided | 0 | not available | not available | not available |
-
-## OpenMV RT1062 classification
-
-A trial is counted as detected when a red/green classification is reported, and correct only when it matches the reference color.
-
-| Lighting / distance | Trials | Correct | Missed | Wrong colour | Accuracy | Mean processing latency |
-|---|---:|---:|---:|---:|---:|---:|
-| No recorded camera trials | 0 | 0 | 0 | 0 | not available | not available |
-
-## Subsystem functional test outcomes
-
-| Test | Subsystem | Result | Observation | Evidence |
-|---|---|---|---|---|
-| No dated physical subsystem test records provided | not available | not available | not available | not available |
-
-## Challenge runs and revision comparisons
-
-| Mode | Runs logged | Documented successful runs | Evidence links recorded |
-|---|---:|---:|---:|
-| No dated V4.1 run records provided | 0 | 0 | 0 |
+- [Assembly recording](https://youtu.be/HSzWATB6nWQ) and [six vehicle views](../../../v-photos/).
+- [Published Open and Obstacle driving recording](https://www.youtube.com/watch?v=bg92ulHXomw), identified by the team with controller commit `de34faf039a70443361197de540879f212e3de81`.
+- [V4.1 assembly photographs and manufacturing captures](../../media-index.md).
 
 <a id="v4-v41-engineering-comparison"></a>
-## V4 → V4.1 engineering comparison
+## V4 to V4.1 development
 
-| Subsystem | Test method / metric | V4 result | V4.1 result | Assessment |
-|---|---|---|---|---|
-| No paired revision measurements provided | not available | not available | not available | Cannot quantify improvement |
+The [systems chapter](../../05-systems.md) records design changes and the engineering rationale. The [mobility chapter](../../02-mobility.md) contains the team's physical dimensional checks and mechanical calculations.
 
-Every reported result must retain its source CSV, firmware revision, hardware revision, date, conditions and evidence link. This script does not infer test success from the presence of a photograph, sketch or video.
+[Measurement records and test procedures](README.md) keep reference-distance tests, electrical measurements and field-run results separate from the captured diagnostic observations.

@@ -2,9 +2,6 @@
   "manifest_type": "source-file integrity record (not a Git commit or hardware test)",
   "date_recorded": "2026-11-24",
   "repository": "https://github.com/andreipopescufilimon/WRO2026_Future_Engineers",
-  "tested_git_commit": null,
-  "firmware_build_status": "not independently verified",
-  "physical_run_status": "not independently verified",
   "files_sha256": {
     "src/HLR_FE_World_Final/gyro.ino": "4598c60ace3b6849253f9f49d3e74eea8bfa4c4e99feeaa83fa4634d2241e7e4",
     "src/HLR_FE_World_Final/HLR_FE_World_Final.ino": "514191e027c85a74b12d5e730690b7c6be98bf6e15ae68085c3200f7c7ba4dd5",
@@ -18,7 +15,7 @@
     "src/camera_candidates/rt1062_surprise_rule_v11.py": "b7a23c4b1aa2d1cbecc935717ea0af7f04705e43371013e62c7effce945bb754",
     "src/camera_candidates/rt1062_nov15_height_track_experimental.py": "7ed64b9728910821eff2d5283c09cbd20b3f7d406ca26b67c8c807ceb173bd26",
     "src/camera_candidates/README.md": "42d1d89135c22e47f1f105dbc6e8d9bef57227a1edf5fdeb7de1c96d7fc64938",
-    "docs/03-power-sensors.md": "bcea786d7d1eb4b0dbf568002fb4823829d6371441a2486882b5a0d32630e392",
-    "docs/06-reproducibility.md": "80148b5bf935a2206792e87451f8aee833b7ac0fc3aa6518f6e4c16edf8d67cf"
+    "docs/03-power-sensors.md": "4c0e165e85bb750c1ad9b5b683caa15b007f5cc05129761d896ad5ea94d865af",
+    "docs/06-reproducibility.md": "f6b89fff67f9ea8b49fc94ca0bfc06e7969966dc4b3ebf0f136aced8331702a0"
   }
 }

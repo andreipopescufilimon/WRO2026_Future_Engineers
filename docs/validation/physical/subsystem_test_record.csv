@@ -1,13 +1,13 @@
 test_id,hardware_revision,firmware_source,expected_behavior,observed_behavior,test_date_utc,actual_firmware_commit,result,evidence_to_capture
-SYNTH-CHECK-DRIVE_FORWARD,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Forward output turns wheels forward,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Forward output turns wheels forward; physical video or log and full firmware SHA needed
-SYNTH-CHECK-DRIVE_REVERSE,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Reverse output turns wheels backward,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Reverse output turns wheels backward; physical video or log and full firmware SHA needed
-SYNTH-CHECK-STEERING_CENTER,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Steering returns to neutral,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Steering returns to neutral; physical video or log and full firmware SHA needed
-SYNTH-CHECK-STEERING_LEFT,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Steering reaches left command,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Steering reaches left command; physical video or log and full firmware SHA needed
-SYNTH-CHECK-STEERING_RIGHT,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Steering reaches right command,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Steering reaches right command; physical video or log and full firmware SHA needed
-SYNTH-CHECK-TOF_FRONT,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Front distance changes with ruler position,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Front distance changes with ruler position; physical video or log and full firmware SHA needed
-SYNTH-CHECK-TOF_LEFT,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Left distance changes with ruler position,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Left distance changes with ruler position; physical video or log and full firmware SHA needed
-SYNTH-CHECK-TOF_RIGHT,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Right distance changes with ruler position,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Right distance changes with ruler position; physical video or log and full firmware SHA needed
-SYNTH-CHECK-TOF_BACK,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Back distance changes with ruler position,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Back distance changes with ruler position; physical video or log and full firmware SHA needed
-SYNTH-CHECK-IMU,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Yaw changes with reference turn,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Yaw changes with reference turn; physical video or log and full firmware SHA needed
-SYNTH-CHECK-CAMERA_UART,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Camera messages are received,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Camera messages are received; physical video or log and full firmware SHA needed
-SYNTH-CHECK-POWER_INTEGRITY,EXAMPLE_CONFIGURATION,src/HLR_FE_World_Final/,Controller stays powered under drive load,NOT OBSERVED (synthetic example),,,NOT_VERIFIED,Controller stays powered under drive load; physical video or log and full firmware SHA needed
+V41-MOTOR-FWD,V4.1,src/HLR_FE_World_Final/,Forward command rotates rear wheels forward,,,,NOT_RUN,
+V41-MOTOR-REV,V4.1,src/HLR_FE_World_Final/,Reverse command rotates rear wheels backward,,,,NOT_RUN,
+V41-SERVO-CENTER,V4.1,src/HLR_FE_World_Final/,Servo 85 aligns wheels,,,,NOT_RUN,
+V41-SERVO-LEFT,V4.1,src/HLR_FE_World_Final/,Servo 30 moves left freely,,,,NOT_RUN,
+V41-SERVO-RIGHT,V4.1,src/HLR_FE_World_Final/,Servo 140 moves right freely,,,,NOT_RUN,
+V41-TOF-FRONT,V4.1,src/HLR_FE_World_Final/,Address 0x30 and range responds,,,,NOT_RUN,
+V41-TOF-LEFT,V4.1,src/HLR_FE_World_Final/,Address 0x31 and range responds,,,,NOT_RUN,
+V41-TOF-RIGHT,V4.1,src/HLR_FE_World_Final/,Address 0x32 and range responds,,,,NOT_RUN,
+V41-TOF-BACK,V4.1,src/HLR_FE_World_Final/,Address 0x33 and range responds,,,,NOT_RUN,
+V41-BMI088-YAW,V4.1,src/HLR_FE_World_Final/,Heading agrees with known rotation,,,,NOT_RUN,
+V41-OPENMV-UART,V4.1,src/HLR_FE_World_Final/,"19,200 baud messages decoded",,,,NOT_RUN,
+V41-ENCODER-200,V4.1,src/HLR_FE_World_Final/,Record actual displacement for 200 mm command,,,,NOT_RUN,

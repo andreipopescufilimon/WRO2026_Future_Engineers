@@ -33,7 +33,7 @@ The World Final Arduino sketch is split into tabs that compile together as one p
 | [`motors.ino`](../src/HLR_FE_World_Final/motors.ino) | IFX9201SG PWM/direction output, MG90S steering, encoder, movement and positioning routines |
 | [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) | TCS34725 I²C acquisition/classification, shared cube-avoidance movement and communication helpers |
 | [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino) | Read-only dashboard, yaw history and parking/color CSV diagnostics |
-| [`camera.py`](../src/camera.py) | OpenMV RT1062 red/green detection, object following, optional sign-height classification and UART messages |
+| [`camera.py`](../src/camera.py) | OpenMV RT1062 red/green detection, object following, area-based proximity detection and UART messages |
 
 The eight `.ino` files remain inside one `src/HLR_FE_World_Final/` directory. Arduino IDE compiles these tabs together. The OpenMV Python code is flashed separately to the camera; it is **not** executed on the Arduino.
 
@@ -528,7 +528,18 @@ If the detected blob area is less than **5000**, the camera transmits `S+0.123` 
 
 The `follow_threshold` is expressed in blob-area units.
 
-### 7.3 Camera diagnostic view
+### 7.3 Height-dependent traffic-sign strategy
+
+The height-dependent strategy is developed in the [separate RT1062 algorithm](../src/camera_candidates/rt1062_surprise_rule_v11.py). It uses the same UART passing interface as the vehicle controller, allowing perception changes without rewriting motion control. The strategy classifies a 50 mm-wide sign from its visible shape, using a narrow center color strip, aspect-ratio bands and a tracked height decision. A close trigger based on the lower image edge initiates the passing command. Reliable height estimates can be retained across clipped frames; ambiguous detections are handled by the configured fallback. In this development implementation, 50 mm and 150 mm signs invert the visible-color command, while 100 mm signs retain it. The source under `src/camera.py` is the area-based camera program described in Sections 7.1 and 7.2.
+
+| Visible color | 50 mm algorithm | 100 mm algorithm | 150 mm algorithm |
+|---|---|---|---|
+| Red | `GREEN` | `RED` | `GREEN` |
+| Green | `RED` | `GREEN` | `RED` |
+
+This table describes the development algorithm's command mapping. The [function-level regression results](validation/v41_camera_height_function_regression.csv) cover numerical ratio boundaries, clipping and command mapping. Camera image trials use the [height-trial worksheet](validation/physical/sign_height_trials.csv), which records reference height, predicted height, image shape and actual command. The firmware running on the camera determines which algorithm is active.
+
+### 7.4 Camera diagnostic view
 
 ![OpenMV camera diagnostic frame](docs-media/v41-screenshot-openmv-color-detection.png)
 
@@ -606,7 +617,7 @@ See [reproduction and screenshot procedure](06-reproducibility.md#connect-to-the
 <p align="center"><img src="docs-media/v41-screenshot-telemetry-yaw-history.png" width="350" alt="Saved yaw history graph"></p>
 <p align="center"><sub>Cyan actual integrated yaw, orange controller target, approximately 48 seconds of history. Both traces settle near the final target.</sub></p>
 
-The [IMU overview](docs-media/v41-screenshot-telemetry-imu-overview.png) and [ToF/camera panels](docs-media/v41-screenshot-telemetry-tof-camera-panels.png) show the dashboard layout during connection. The saved yaw trace compares actual heading with the controller target. The [8×8 diagnostic view](03-power-sensors.md#world-final-tof-matrix-evidence) shows a populated distance matrix.
+The [IMU overview](docs-media/v41-screenshot-telemetry-imu-overview.png) and [ToF/camera panels](docs-media/v41-screenshot-telemetry-tof-camera-panels.png) show the dashboard layout during connection. The saved yaw trace compares actual heading with the controller target over 48.348 s of displayed history. Successive target steps are followed by the actual yaw, including transient overshoot and convergence to a final steady target. See the [recorded observations](validation/physical/SUMMARY.md#heading-control). The [8×8 diagnostic view](03-power-sensors.md#world-final-tof-matrix-evidence) shows a populated distance matrix.
 
 ### Exporting parking evidence
 

@@ -57,7 +57,7 @@ We describe longitudinal dimensions along the vehicle's $x$ axis and lateral dim
 | Approximate underbody clearance | $h_c$ | **5.8 mm** | **6.1 mm** |
 | Ready-to-run mass | $m$ | **226 g** | **226 g**|
 
-**The CAD model accounts for the camera and all external components. However, silicone compression and minor 3D printing tolerances may affect the final dimensions, so the official competition measurement determines the robot's actual size.*
+The CAD model includes the camera and external components. Silicone compression and printing tolerances explain differences between the CAD and physical dimensional checks.
 
 The wheelbase and track are calculated from the wheel-center coordinates:
 

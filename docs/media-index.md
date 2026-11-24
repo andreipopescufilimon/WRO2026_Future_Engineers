@@ -49,3 +49,4 @@ Photographs, diagnostic captures, mechanical drawings and engineering illustrati
 | [v41-screenshot-telemetry-yaw-history.png](docs-media/v41-screenshot-telemetry-yaw-history.png) | V4.1 screenshot telemetry yaw history |
 | [v41-screenshot-tof-8x8-diagnostic.png](docs-media/v41-screenshot-tof-8x8-diagnostic.png) | V4.1 screenshot tof 8x8 diagnostic |
 | [v41-diagram-current-tof-zones.svg](docs-media/v41-diagram-current-tof-zones.svg) | V4.1 diagram current tof zones |
+| [v41-diagram-sensor-axis-layout.svg](docs-media/v41-diagram-sensor-axis-layout.svg) | CAD dimensions and schematic optical-axis directions |

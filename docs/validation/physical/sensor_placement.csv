@@ -1,0 +1,6 @@
+sensor,datum,x_mm_forward,y_mm_left,z_mm_above_floor,yaw_deg,pitch_deg,horizontal_fov_deg,vertical_fov_deg,method,evidence_path
+front ToF,rear axle midpoint / floor plane,,,,,,,,,
+left ToF,rear axle midpoint / floor plane,,,,,,,,,
+right ToF,rear axle midpoint / floor plane,,,,,,,,,
+rear ToF,rear axle midpoint / floor plane,,,,,,,,,
+OpenMV RT1062,rear axle midpoint / floor plane,,,,,,,,,

@@ -315,3 +315,8 @@ The filming snapshot and later modular sketch are different implementations. We 
 ### 8.1 What we learned from the complete system
 
 The largest changes were not independent upgrades. More detailed distance sensing only became useful after we selected specific zones, filtered invalid readings and defined rearm behavior. Higher motor reduction only makes sense when considered alongside intentional overvoltage, tire grip and short-distance maneuvers. A separate vision processor only helps when its messages are interpreted by a stable state machine with consistent steering response. Removing the fan simplifies the electrical system, but shifts greater importance onto passive traction and chassis geometry.
+
+
+### Observed development behavior
+
+The [8×8 distance capture](validation/physical/SUMMARY.md#spatial-ranging) demonstrates spatial separation of nearby and distant returns, which motivates the four-matrix sensing architecture. The [recorded heading trace](validation/physical/SUMMARY.md#heading-control) shows target following during successive turns. These observations complement the [V4.1 assembly photographs](media-index.md) and the earlier [autonomous driving recording](../video/video.md). Numerical comparisons between revisions use the same test conditions and the [revision comparison record](validation/physical/revision_comparisons.csv).

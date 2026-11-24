@@ -20,18 +20,18 @@ measurement_templates/steering_calibration.csv,MEASUREMENT_TEMPLATE,5,"Review ro
 measurement_templates/tof_corners.csv,MEASUREMENT_TEMPLATE,6,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 odometry.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,13,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 parking.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,4,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/build_verification.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,1,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/camera_trials.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,8,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/challenge_runs.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,4,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/functional_checks.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,12,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/imu_samples.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,4,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/power_runs.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,5,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/published_demonstrations.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,3,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/revision_comparisons.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,8,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/sign_height_trials.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,18,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/source_configuration.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,16,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/subsystem_test_record.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,12,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
-physical/tof_samples.csv,PHYSICAL_LEDGER_OR_TEST_PLAN_UNVERIFIED,16,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
+physical/build_verification.csv,MEASUREMENT_LEDGER,1,Physical test record or unfilled test worksheet
+physical/camera_trials.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
+physical/challenge_runs.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
+physical/functional_checks.csv,MEASUREMENT_LEDGER,12,Physical test record or unfilled test worksheet
+physical/imu_samples.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
+physical/power_runs.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
+physical/published_demonstrations.csv,PUBLISHED_RECORDING,3,Published recordings
+physical/revision_comparisons.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
+physical/sign_height_trials.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
+physical/source_configuration.csv,SOURCE_CONFIGURATION,16,Source settings
+physical/subsystem_test_record.csv,MEASUREMENT_LEDGER,12,Physical test record or unfilled test worksheet
+physical/tof_samples.csv,MEASUREMENT_LEDGER,0,Physical test record or unfilled test worksheet
 power_budget.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,11,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 power_component_ratings.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,10,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 power_model_assumptions.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,6,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
@@ -57,3 +57,6 @@ v41_release_verification_matrix.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,9,"Review 
 v41_software_source_consistency.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,15,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 v41_source_configuration_verified.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,43,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
 v41_tof_corner_logic_cases.csv,SOURCE_OR_CALCULATED_NOT_PHYSICAL,12,"Review row-level status and source file. No physical test accepted without date, source SHA, observation and evidence."
+physical/tof_diagnostic_frame_633.csv,RECORDED_DIAGNOSTIC_CAPTURE,64,Transcribed from original V4.1 screenshot
+physical/sensor_placement.csv,MEASUREMENT_WORKSHEET,5,Optical center position and orientation
+v41_camera_height_function_regression.csv,SOURCE_FUNCTION_TEST,23,Development algorithm regression cases

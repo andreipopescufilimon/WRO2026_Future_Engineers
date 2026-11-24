@@ -450,6 +450,8 @@ The VL53L5CX measures range independently across a spatial array. Row and column
 | Invalid returns | `--`, including status 255 and status 10; invalid range |
 | Capture counters | Frame 633, 3 ms age, zero failed reads displayed |
 
+The [64-zone observation file](validation/physical/tof_diagnostic_frame_633.csv) records 49 valid and 15 invalid zones. It preserves the individual target status values and selected navigation region.
+
 A 4×4 cell R2C3 corresponds spatially to the 8×8 block R3–R4/C5–C6; R3C3 corresponds to R5–R6/C5–C6. The highlighted block is the first of those regions. The median above is calculated from the four visible valid values, using the displayed frame. Different zone widths and ranging settings can yield different readings, so do not assume that averaging 8×8 cells reproduces the actual 4×4 sensor output.
 
 In the current [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino), each module's JSON contains `online`, `age`, `r2c3`, `r3c3`, `matrix` and `status`. All sixteen cached distances and statuses are displayed as a 4×4 grid; selected cells are outlined, and stale grids are visually dimmed. Navigation rejects data older than 150 ms. The telemetry cache may retain the last range so the age must be checked before interpreting a display. Status 5 or 9 and positive distance are required by the range filter. See [software telemetry](04-software.md#world-final-read-only-telemetry) for the capture and export process.
@@ -474,7 +476,7 @@ where $a_b$ is the measured deceleration magnitude and $d_{\mathrm{geometry}}$ c
 
 #### Physical mounting and optical clearance
 
-The front, left, right and rear VL53L5CX boards are mounted to face their corresponding field boundaries. The image below and the [mechanical CAD](../3D-models/) show the installation context. **Mounting height cannot be read reliably from a schematic illustration**, and the supplied chapter does not specify numeric optical-center heights.
+The front, left, right and rear VL53L5CX boards face their corresponding field boundaries. Their optical axes are illustrated alongside the measured vehicle envelope and CAD wheelbase in the placement drawing below.
 
 | Sensor | Optical-axis orientation | Installed optical-center height | View clearance relevant to operation |
 |---|---|---|---|
@@ -483,7 +485,11 @@ The front, left, right and rear VL53L5CX boards are mounted to face their corres
 | Right | Right, toward the side wall | Refer to CAD sensor mount | Wheel and side bodywork must clear the wall-facing view |
 | Rear | Backward, toward the rear boundary | Refer to CAD sensor mount | Rear bodywork, axle and wiring must clear the rear field of view |
 
-The table records direction and installation constraints without inventing millimetre values. A dimensioned drawing or measurements from the assembled chassis are needed to specify the four optical-center heights numerically.
+![Sensor-axis layout and CAD dimensions](docs-media/v41-diagram-sensor-axis-layout.svg)
+
+*Figure: CAD envelope and wheelbase with schematic sensor axes. Optical center locations and mounting heights are recorded using the [placement measurement worksheet](validation/physical/sensor_placement.csv). The drawing uses a rear-axle midpoint datum.*
+
+Front sensing controls corner approach and braking. The lateral modules provide independent clearance measurements and allow the parking routine to distinguish two side boundaries. Rear ranging supports reverse clearance checks. This arrangement avoids treating a single scalar reading as a complete description of the field.
 
 ### 4.3 BMI088 inertial measurement
 
