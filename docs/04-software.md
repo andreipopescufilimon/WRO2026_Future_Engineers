@@ -1,6 +1,6 @@
 # 04. Software architecture and autonomous navigation
 
-HyperLine Robotics | WRO 2026 Future Engineers | V4.1 controller and OpenMV RT1062
+HyperLine Robotics | WRO 2026 Future Engineers | World Final rolling-parking controller and bundled camera source
 
 | Chapter | Topic |
 |---|---|
@@ -21,26 +21,27 @@ The earlier vehicle used a camera-driven corner/line interpretation and single-v
 
 ### 1.1 Controller organization
 
-The V4.1 Arduino sketch is split into tabs that compile together as one program. This arrangement separates the two challenge strategies without duplicating the low-level hardware drivers.
+The World Final Arduino sketch is split into tabs that compile together as one program. This arrangement separates the two challenge strategies without duplicating the low-level hardware drivers.
 
 | File | Main responsibility |
 |---|---|
-| [`HLR_FE_Separated.ino`](../src/HLR_FE_Separated/HLR_FE_Separated.ino) | Pin definitions, shared constants, robot states, mode selection, initialization and main dispatch |
-| [`Open.ino`](../src/HLR_FE_Separated/Open.ino) | First-marker direction lock, ToF corner events, Open-round heading control and finish |
-| [`Final.ino`](../src/HLR_FE_Separated/Final.ino) | Obstacle Challenge states, floor-marker events, parking exit and final parking |
-| [`tof.ino`](../src/HLR_FE_Separated/tof.ino) | Four VL53L5CX devices, unique I²C addresses, 4 × 4 frame acquisition, range filtering and front-corner logic |
-| [`gyro.ino`](../src/HLR_FE_Separated/gyro.ino) | BMI088 setup, stationary-rate calibration and integrated yaw |
-| [`motors.ino`](../src/HLR_FE_Separated/motors.ino) | IFX9201SG PWM/direction output, MG90S steering, encoder, movement and positioning routines |
-| [`functions.ino`](../src/HLR_FE_Separated/functions.ino) | TCS34725 I²C acquisition/classification, shared cube-avoidance movement and communication helpers |
+| [`HLR_FE_World_Final.ino`](../src/HLR_FE_World_Final/HLR_FE_World_Final.ino) | Pin definitions, shared constants, robot states, mode selection, initialization and main dispatch |
+| [`Open.ino`](../src/HLR_FE_World_Final/Open.ino) | First-marker direction lock, ToF corner events, Open-round heading control and finish |
+| [`Final.ino`](../src/HLR_FE_World_Final/Final.ino) | Obstacle Challenge states, floor-marker events, parking exit and final parking |
+| [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) | Four VL53L5CX devices, unique I²C addresses, 4 × 4 frame acquisition, range filtering and front-corner logic |
+| [`gyro.ino`](../src/HLR_FE_World_Final/gyro.ino) | BMI088 setup, stationary-rate calibration and integrated yaw |
+| [`motors.ino`](../src/HLR_FE_World_Final/motors.ino) | IFX9201SG PWM/direction output, MG90S steering, encoder, movement and positioning routines |
+| [`functions.ino`](../src/HLR_FE_World_Final/functions.ino) | TCS34725 I²C acquisition/classification, shared cube-avoidance movement and communication helpers |
+| [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino) | Read-only dashboard, yaw history and parking/color CSV diagnostics |
 | [`camera.py`](../src/camera.py) | OpenMV RT1062 red/green detection, object following, optional sign-height classification and UART messages |
 
-The seven `.ino` files remain inside one `src/HLR_FE_Separated/` directory. Arduino IDE compiles these tabs together. The OpenMV Python code is flashed separately to the camera; it is **not** executed on the Arduino.
+The eight `.ino` files remain inside one `src/HLR_FE_World_Final/` directory. Arduino IDE compiles these tabs together. The OpenMV Python code is flashed separately to the camera; it is **not** executed on the Arduino.
 
 ### 1.2 Historical source and the recorded driving demonstration
 
 The team identifies commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the software used for the [published Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw). Its Arduino entry point is the older [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino).
 
-The later V4.1 implementation under [`src/HLR_FE_Separated/`](../src/HLR_FE_Separated/) has a different architecture and new ToF-based Open navigation. The video documents the physical robot and the identified historical code; it should not be interpreted as a test of every change in the newer separated sketch. This chapter describes **the newer code as written**, using the supplied camera script with height-detection logic.
+The later modular implementation under [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) has a different architecture and new ToF-based Open navigation. The video documents the physical robot and the identified historical code; it should not be interpreted as a test of every change in the newer separated sketch. This chapter describes **the newer code as written**, using the bundled camera script, whose height-rule limitations are described below.
 
 ## 2. System architecture and execution flow
 
@@ -99,7 +100,7 @@ A challenge is selected **before the board starts**:
 Both inputs are configured as `INPUT_PULLDOWN`. A valid selection calls exactly one of `open_configure()` or `final_configure()`. The sketch then initializes the servo and motor driver, encoder, both serial ports, BMI088, TCS34725 and ToF sensors. The BMI088 calibrates while stationary for **10 seconds**. The start button on D10 keeps the motor at zero until pressed. After the start delay, Final mode performs `final_exit_parking()` before entering normal navigation; Open mode enters `open_execute()`.
 
 ```cpp
-// HLR_FE_Separated.ino, simplified directly from the mode dispatch
+// HLR_FE_World_Final.ino, simplified directly from the mode dispatch
 bool finalSelected = digitalRead(MODE_FINAL_PIN) == HIGH;
 bool openSelected  = digitalRead(MODE_OPEN_PIN) == HIGH;
 if (finalSelected == openSelected) {
@@ -290,13 +291,13 @@ Although the source names some variables `pid_error`, the current straight-drivi
 | `move_straight_until_distance()` | Stop or transition at a left/right wall-distance threshold | Side ToF and BMI088 |
 | `move_gyro_until_side_detect_cycle()` | Detect side-wall present/absent/present transitions | Side ToF and BMI088 |
 
-The movement functions are implemented in [`motors.ino`](../src/HLR_FE_Separated/motors.ino). Some are **blocking loops** and some do not have an explicit timeout when a required distance never becomes valid. This is an implementation limitation, not an independently verified safety feature. For example, `move_to_distance()` searches forward at a low PWM when its ToF reading is invalid; an unplugged sensor is not equivalent to a valid clear path.
+The movement functions are implemented in [`motors.ino`](../src/HLR_FE_World_Final/motors.ino). Some are **blocking loops** and some do not have an explicit timeout when a required distance never becomes valid. This is an implementation limitation, not an independently verified safety feature. For example, `move_to_distance()` searches forward at a low PWM when its ToF reading is invalid; an unplugged sensor is not equivalent to a valid clear path.
 
 ## 4. Sensor processing
 
 ### 4.1 Replacing PWM ranging with four VL53L5CX matrices
 
-The older software used Pololu PWM distance outputs and converted pulse width into millimeters using `pulseIn()`. That logic is not the V4.1 ranging implementation. The new [`tof.ino`](../src/HLR_FE_Separated/tof.ino) uses **I²C matrix frames**, and all movement routines consume distances through the same `readDistanceMM(DistanceDir)` interface. This reduces the number of changes needed in the obstacle and parking code when the sensor hardware changes.
+The older software used Pololu PWM distance outputs and converted pulse width into millimeters using `pulseIn()`. That logic is not the V4.1 ranging implementation. The new [`tof.ino`](../src/HLR_FE_World_Final/tof.ino) uses **I²C matrix frames**, and all movement routines consume distances through the same `readDistanceMM(DistanceDir)` interface. This reduces the number of changes needed in the obstacle and parking code when the sensor hardware changes.
 
 | ToF unit | LPn pin | Assigned 7-bit address | Navigation use |
 |---|---|---|---|
@@ -390,335 +391,100 @@ The implementation uses ratios scaled by 1000 instead of floating-point division
 
 **Blue** establishes a left-turn course (`turn_direction = -1`); **red or orange** establish a right-turn course (`turn_direction = +1`) during initial direction selection. In Final mode the first valid marker establishes direction, later markers are checked against that selected course, and white observations help re-arm marker detection. The source defines `TCS_MARKER_LOCK_MS = 10` and `TCS_REARM_WHITE_MS = 2`; Final mode also applies its own corner lockout.
 
-## 5. Open Challenge: new floor-marker and front-ToF navigation
+## 5. Open Challenge: validated front-wall navigation
 
-This is the largest change from the earlier Open software. **The camera does not need to recognize black walls or blue/orange image blobs for normal Open corners.** Instead, the floor sensor establishes the course direction once, and the front VL53L5CX matrix supplies the subsequent wall-approach events. The gyro controls the actual heading.
+The floor sensor establishes the direction; the front ToF and integrated gyro govern subsequent corners. The camera is not required for the normal wall-triggered turn sequence.
 
-### 5.1 Open configuration
-
-`open_configure()` sets the following operating values:
-
-| Parameter | Source value | Use |
-|---|---:|---|
-| `max_turns` | 12 | Three-lap corner count |
-| Initial `robot_speed` | 250 | Configuration value before per-loop speed assignment |
-| `kp` | 0.034 | Heading proportional gain |
-| `ki` | 0 | Integral action disabled |
-| `kd` | 0.082 | Heading difference gain |
-| `delayTurns` | 1000 ms | Retained round setting; **not** the ToF re-arm mechanism |
-| `OPEN_CORNER_SPEED` | 80 PWM | Drive during heading change |
-| `OPEN_CORNER_DONE_ANGLE_DEG` | 1.0° | Heading-completion threshold |
-| `OPEN_FINISH_SPEED` | 80 PWM | End-of-run straight movement |
-| `OPEN_FINISH_DURATION_MS` | 1200 ms | End-of-run timed movement |
-
-In `open_execute()`, the source explicitly sets **PWM 80 before the first corner** (`turn_count == 0`) and **PWM 250 afterward** in straight-driving phases. This takes precedence over any older comment stating 200 PWM after the first turn.
-
-### 5.2 Direction detection on the first colored marker
-
-Until `turn_direction` is known, `open_color_poll()` reads the TCS34725 and locks the first valid floor marker:
-
-```cpp
-void open_color_poll() {
-  if (turn_direction != 0) return;
-  if (!tcs_read_raw_fast()) return;
-  tcsCurrentColor = tcs_detect_color_fast();
-
-  if (tcsCurrentColor == TCS_BLUE) {
-    turn_direction = -1;
-  } else if (tcsCurrentColor == TCS_ORANGE ||
-             tcsCurrentColor == TCS_RED) {
-    turn_direction = 1;
-  }
-}
-```
-
-The direction is then kept for the round; Open does not reselect it from every later colored marker. This avoids changes in turning direction caused by transient detections later in the course.
-
-### 5.3 How two front ToF zones detect a corner
-
-The Open code uses the readings at **(row 2, column 3)** and **(row 3, column 3)** from the front matrix, with row and column numbered 1 through 4. The corner event is generated only when **both** are valid and **both are below 600 mm**. To arm the next corner, both must be valid and return to at least **800 mm**.
-
-| Condition | Effect |
+| Parameter | Current source value |
 |---|---|
-| Both zones valid and below 600 mm | Generate one pending corner event if armed |
-| Both zones valid and at least 800 mm | Re-arm; clear an unconsumed prior event |
-| One zone below 800 mm, both valid | Reduce normal straight speed to 40% |
-| Any required zone missing or older than 150 ms | No new valid corner decision; do not change speed from that reading |
-| No floor-marker direction yet and front wall is close | Request zero drive in the normal Open `PID` branch |
+| Corners | 12 |
+| Initial / straight cruise / corner PWM | 80 / 250 / 80 |
+| Heading gains | Kp 0.028, Ki 0, Kd 0.080 |
+| Front cells | R2C3 and R3C3 |
+| Corner confirmation | 3 fresh valid pairs, both below 700 mm, difference at most 220 mm |
+| Re-arm | At least 600 ms and 25 cm of straight travel after corner |
+| Speed ramp | 300 PWM/s acceleration; 1900 PWM/s braking |
+| Braking band | 1000 to 700 mm, interpolated to PWM 80 |
+| Finish | 900 ms at PWM 80, then stop |
 
-```cpp
-// tof.ino: event trigger and hysteresis
-const int row2 = tof_zone_mm(FRONT_DIR, 2, 3);
-const int row3 = tof_zone_mm(FRONT_DIR, 3, 3);
-const bool bothValid = row2 > 0 && row3 > 0;
-const bool close = bothValid && row2 < 600 && row3 < 600;
-const bool clear = bothValid && row2 >= 800 && row3 >= 800;
-
-if (clear) {
-  tofTurnArmed = true;
-  tofTurnPending = false;
-}
-if (close && tofTurnArmed) {
-  tofTurnPending = true;
-  tofTurnArmed = false;
-}
-```
-
-This **600/800 mm hysteresis** means that the same close wall should not generate several corner counts while the robot is still alongside it. `tof_consume_front_turn()` also waits until the initial floor-marker direction has been established. No fixed time delay is required to re-arm the front-ToF event.
-
-<p align="center"><img src="docs-media/data-tof-threshold-cases.png" width="760" alt="Software-derived two-zone distance cases for Open turns and slowing"></p>
-<p align="center"><sub>Figure 4.2. Deterministic software input cases illustrating the front-zone corner and slowing thresholds; these are not measurements of physical ToF accuracy.</sub></p>
-
-### 5.4 The 90-degree turn as a heading target
-
-When the ToF event is consumed, `open_execute_command("TOF_FRONT")` increments the turn counter. With the current heading already reasonably aligned, it first advances **10 cm at the corner speed** using `move_cm_gyro()`. In the `AFTER_CUBE` branch it uses the existing recovery-dependent maneuver instead. It then updates the expected heading:
-
-$$
-\psi_{\mathrm{target,new}}=\psi_{\mathrm{target,old}}+
-\mathrm{turn\_direction}\times90^\circ.
-$$
-
-The variable `openCornerActive` activates a stronger heading-correction phase. While the turn is active, steering is requested as
-
-$$
- s=\mathrm{clip}\bigl(0.055(\psi_{\mathrm{target}}-\psi_{\mathrm{gyro}}),-1,1\bigr)
-$$
-
-and motor command is held at **PWM 80**. The corner phase finishes when the remaining heading error is at most **1°**, or its sign indicates the target was crossed relative to the chosen turning direction. Normal heading PD and ToF-based speed adaptation then resume.
-
-The source's `PID` straight-driving branch is maintained from the previous Open control approach; the key change is **what generates and re-arms the corner event**.
-
-### 5.5 Open navigation sequence
+A missing or inconsistent pair cannot authorize acceleration. The controller falls back to a cautious speed if its verified front distance is unavailable or older than 150 ms. The pre-turn advance is zero; the corner updates the heading by 90 degrees rather than executing an extra 10 cm approach.
 
 ```mermaid
 flowchart TD
-    START[Boot into Open mode] --> CAL[Initialize gyro, TCS and ToF]
-    CAL --> WAIT[Wait for start button]
-    WAIT --> DIR{First floor marker found?}
-    DIR -->|No| SAMPLE[Read TCS / front ToF, cautious drive]
-    SAMPLE --> DIR
-    DIR -->|Blue| LEFT[Lock left course]
-    DIR -->|Red or orange| RIGHT[Lock right course]
-    LEFT --> GO[Gyro heading PD]
-    RIGHT --> GO
-    GO --> FRONT[Read front ToF zones 2,3 and 3,3]
-    FRONT -->|Either zone below 800 mm| SLOW[Reduce straight PWM to 40 percent]
-    FRONT -->|Both below 600 mm and armed| TURN[Count corner and target plus/minus 90 degrees]
-    FRONT -->|No corner event| GO
-    SLOW --> GO
-    TURN --> AIM[Gyro correction at PWM 80]
-    AIM --> COUNT{12 turns complete and corner finished?}
-    COUNT -->|No| GO
-    COUNT -->|Yes| FINISH[Timed straight finish, motor off]
+ A[Start and floor direction lock] --> B[Read fresh front pair]
+ B --> C{Three agreeing close frames?}
+ C -->|No| D[Distance-based speed ramp and gyro PD]
+ D --> B
+ C -->|Yes| E[90 degree heading turn]
+ E --> F{12 corners complete?}
+ F -->|No| G[600 ms and 25 cm straight re-arm]
+ G --> B
+ F -->|Yes| H[900 ms finish and stop]
 ```
 
-### 5.6 Completing three laps and stopping
+Source: [Open.ino](../src/HLR_FE_World_Final/Open.ino). Older 600/800 mm illustrations and threshold datasets are historical, not current acceptance tests.
 
-`max_turns = 12` represents 12 corners. After the last active corner finishes, the robot drives straight for `OPEN_FINISH_DURATION_MS = 1200` at `OPEN_FINISH_SPEED = 80`, sets motor PWM to zero and centers the steering servo. The source then remains in a deliberate stopped loop.
+## 6. Obstacle Challenge: camera-aware navigation and rolling parking
 
-**Important source detail:** `Open.ino` retains older `FOLLOW_CUBE`, `AVOID_CUBE` and `AFTER_CUBE` handlers and a UART color parser. Those paths are **not the source of normal Open turns**. However, an actual incoming `RED` or `GREEN` camera command can still enter the avoidance state; the current code does not completely disable those handlers in Open mode. For an Open-only reproduction, ensure the chosen camera behavior does not unintentionally trigger obstacle avoidance.
+### 6.1 Startup and exit
 
-## 6. Obstacle Challenge: cube navigation and parking
+Final mode selects 13 turns, PWM 50 cruise, PWM 60 exit, Kp 0.038, Ki 0, Kd 0.070 and a 1500 ms marker interval. Side ToF frames are cached before Start, with no motor commands during the cache operation. The exit decision uses fresh confirmed readings, with a 350 ms age limit and a bounded 220 ms retry if the cache is inconclusive. An ambiguous decision stops the robot instead of guessing.
 
-### 6.1 Final configuration and startup from parking
+| Exit direction | Initial heading | Forward | Return heading | Reverse |
+|---|---:|---:|---:|---:|
+| Right | +100 degrees | 10 cm | 0 degrees | 25 cm |
+| Left | -100 degrees | 10 cm | 0 degrees | 60 cm |
 
-With **D11 HIGH and D12 LOW**, the controller selects `final_configure()`, setting `max_turns = 13`, `robot_speed = 100`, `kp = 0.044`, `kd = 0.082` and `delayTurns = 1500` ms. Final mode runs `final_exit_parking()` as part of startup before normal `final_execute()` processing.
+### 6.2 Cube navigation and recovery
 
-**Actual configuration in `Final.ino`:**
+The Final controller uses `FC_TURN_OUT`, `FC_DRIVE_OUT`, `FC_RECOVER_TURN` and `FC_RECOVER_FORWARD` rather than relying on the legacy blocking `pass_cube()` helper. UART follow commands supply steering; RED and GREEN select avoidance direction. The outward target is 50 degrees from the current yaw, followed by a 13 cm bypass. The recovery target is offset by 35 degrees from the nominal lane heading, followed by 19 cm of forward travel. Turning phases accept a 9-degree error. A confirmed second cube can take over during recovery; repeated close commands are filtered. Gyro loss, phase timeout (12 s), lack of yaw progress (2.7 s) or lack of encoder progress (2.5 s) stops the maneuver.
 
-```cpp
-void final_configure() {
-  max_turns = 13;
-  robot_speed = 100;
-  kp = 0.044;
-  ki = 0;
-  kd = 0.082;
-  delayTurns = 1500;
-}
-```
+### 6.3 Post-cube dead reckoning
 
-The parking-exit algorithm compares left and right distances through the new ToF interface, not PWM pulse widths. It chooses the side with more clearance and performs a side-dependent maneuver:
+Encoder increments and the difference between measured yaw and nominal lane heading estimate lateral displacement:
 
-| Initial comparison | Exit direction | Initial target heading | Initial travel | Further alignment |
-|---|---|---:|---|---|
-| Left range less than right range | Right (`turn_direction = +1`) | +75° | Forward 25 cm | Return to 0°, center steering, reverse 35 cm |
-| Otherwise | Left (`turn_direction = -1`) | -70° | Forward 25 cm | Return to 0°, center steering, reverse 60 cm |
+`lateral_mm += abs(delta_ticks) * 0.858 * sin((yaw - lane_heading) * pi / 180)`
 
-```cpp
-void final_exit_parking() {
-  // Start from parking
-    if (readDistanceMM(LEFT_DIR) < readDistanceMM(RIGHT_DIR)) {  // exit right/.
-      move_until_angle_max(100, 75);
+Positive displacement means left of the lane reference. The return controller requests the opposite yaw bias, limited to +/-12 degrees with a maximum change of 0.75 degrees per update. The estimate is not absolute localization: slip, encoder calibration and gyro drift affect accuracy. The post-cube return does not require side ToF measurements. It terminates after five settled updates (estimated lateral error below 25 mm, heading error below 2.5 degrees and bias below 2 degrees), or the 8 s / 1000 mm budget. Floor markers and confirmed new cubes retain priority. Ordinary corner centering uses side ToF instead.
 
-      move_cm_gyro(25, 100, 75);
+### 6.4 Markers and the final turn
 
-      turn_direction = 1;
-      move_until_angle_max(exit_speed, 0);
-      steeringServo.write(STEERING_CENTER);
+Floor-marker events update the lane heading and turn count. The controller distinguishes navigation corners from the parking entry and defers a marker when necessary during a cube maneuver. See `final_execute_command()` and `final_execute()` for exact arbitration.
 
-      move_cm_gyro(35, -100, current_angle_gyro);
-      current_angle_gyro = 0.0;
-    } else {  // exit left
-      move_until_angle_max(100, -70);
+### 6.5 Rolling parking with front and side ToF measurements
 
-      move_cm_gyro(25, 100, -70);
+The parking sequence uses fixed absolute heading targets derived from the twelve navigation corners, not from the measured arrival yaw. Successful intermediate stages hand off while rolling; safety stops and reversal pauses remain possible.
 
-      turn_direction = -1;
-
-      move_until_angle_max(exit_speed, 0);
-      steeringServo.write(STEERING_CENTER);
-
-      move_cm_gyro(60, -100, current_angle_gyro);
-      current_angle_gyro = -0.0;
-    }
-}
-```
-
-The sequence is based on [`final_exit_parking()`](../src/HLR_FE_Separated/Final.ino). It is a **programmed movement sequence**, not a path-planning solver. The distance comparison assumes that the central-zone ToF readings are valid and oriented toward the relevant clearance.
-
-### 6.2 Driving and navigation states
-
-`final_execute()` processes the floor sensor, integrates gyro heading, polls the four ToFs and dispatches the current state. The main states follow the original obstacle strategy, now separated from Open mode:
-
-```mermaid
-flowchart TD
-    PID[PID heading control] -->|UART S-value| FOLLOW[FOLLOW_CUBE]
-    FOLLOW -->|No fresh S command for 350 ms| PID
-    PID -->|RED or GREEN| AVOID[AVOID_CUBE]
-    FOLLOW -->|RED or GREEN| AVOID
-    AVOID --> PASS[50-degree deviation and 12 cm advance]
-    PASS --> AFTER[AFTER_CUBE heading recovery]
-    AFTER -->|Heading and travel conditions reached| PID
-    PID -->|Accepted floor marker| CORNER[Increase target heading by 90 degrees]
-    CORNER --> PID
-    PID -->|13th marker| PARK[Parallel parking]
-    PARK --> STOP[Stop and center steering]
-```
-
-The **`PID` state** maintains a requested heading using gyro PD while moving at `robot_speed`. A camera message beginning with `S`, such as `S+0.120`, sets `FOLLOW_CUBE` and updates the requested normalized steering. If no new following message arrives for **350 ms** (`FOLLOW_CUBE_DEAD_TIME`), it returns to `PID`.
-
-A close-object message `RED` is mapped to avoiding to the **left** and `GREEN` to avoiding to the **right**. This mapping is applied to the **effective passing color** transmitted by the camera. In the optional height-based rule, that effective color can be inverted from the visible color.
-
-**State execution excerpt from `Final.ino`:**
-
-```cpp
-case PID: {
-  double err = current_angle_gyro - gz;
-  pid_error = (err)*kp + (err - pid_last_error) * kd;
-  pid_last_error = err;
-  int commandSpeed = robot_speed;
-  double steeringCommand = pid_error;
-  steer(steeringCommand);
-  move(commandSpeed);
-  break;
-}
-case FOLLOW_CUBE: {
-  if (millis() - last_follow_cube > FOLLOW_CUBE_DEAD_TIME) currentState = PID;
-  steer(follow_cube_angle);
-  move(robot_speed);
-  break;
-}
-case AVOID_CUBE: {
-  pass_cube(cube_avoid_direction);
-  break;
-}
-```
-
-These cases are taken from the `switch (currentState)` block in `final_execute()`.
-
-### 6.3 Passing a cube and recovering the lane
-
-The avoidance routine `pass_cube()` in `functions.ino` keeps the original basic maneuver structure. It reads the current gyro angle, converts the avoidance direction into a sign, turns away by **50°** (`AVOIDANCE_ANGLE = 50`), advances **12 cm** while holding that heading, sets `currentState = AFTER_CUBE` and flushes old camera messages.
-
-After avoidance, the `AFTER_CUBE` state uses a **35° correction offset** (`CORRECTION_ANGLE`) relative to the navigation target. When its heading error is within **10°**, the source performs a further **19 cm** gyro-assisted movement and returns to `PID`. Otherwise it applies steering correction while moving. These are the values in the current separated firmware, replacing the older README's historical 37° and 8 cm explanation.
-
-**Actual avoidance function from `functions.ino`:**
-
-```cpp
-void pass_cube(char cube_direction) {
-  double angle_addition = (cube_direction == 'R') ? 0 : 0;
-
-  read_gyro_data();
-  // translate 'R' → +1, 'L' → -1
-  cube_last = (cube_direction == 'R') ? 1 : -1;
-
-  double start_angle = gz;
-  move_until_angle(robot_speed, start_angle - cube_last * (AVOIDANCE_ANGLE + angle_addition));
-  move_cm_gyro(12, robot_speed, start_angle - cube_last * (AVOIDANCE_ANGLE + angle_addition));
-
-  last_cube_time = millis();
-  currentState = AFTER_CUBE;
-  flush_messages();
-}
-```
-
-### 6.4 Floor-marker handling and the 13th turn
-
-The TCS34725 reads colored floor regions independently of the camera. Final mode uses `tcs_update_fast()` and `tcs_process_marker()` for this purpose. A first blue or red/orange marker determines the course direction if it was not already set during parking exit. Further markers are constrained to the selected direction, with re-arming on white and a **1500 ms** Final turn lockout. In the current Final implementation, an orange reading can establish rightward direction, but the later expected-marker check accepts `TCS_RED` for that direction. This distinction matters when configuring floor-color thresholds.
-
-On an accepted marker, `final_execute_command("TCS_MARKER")` increments the turn count and normally updates the target gyro heading by $\pm90^\circ$. When the count reaches **13**, the code calls `final_park()` rather than beginning another standard lap segment. This gives the software a distinct parking trigger after the normal sequence of track corners.
-
-The current code still contains older debug strings referring to a `BLACK` command, but **the Final marker event is sourced from the TCS34725**, not from a new camera black-wall classification.
-
-**Floor-marker acceptance in `Final.ino`:**
-
-```cpp
-bool tcs_is_expected_marker_detected() {
-  // Unknown direction: accept first BLUE or ORANGE
-  if (turn_direction == 0) {
-    return tcsCurrentColor == TCS_BLUE || tcsCurrentColor == TCS_RED;
-  }
-
-  // Direction already known
-  if (turn_direction == -1) {
-    return tcsCurrentColor == TCS_BLUE;
-  }
-
-  if (turn_direction == 1) {
-    return tcsCurrentColor == TCS_RED;
-  }
-
-  return false;
-}
-```
-
-This is the current function as written, including the difference between its comment and the actual initial color condition.
-
-### 6.5 Final parking with front and side ToF measurements
-
-The parking routine operates differently for the two course directions. It combines gyro-targeted turns, encoder movements and thresholds obtained through `readDistanceMM()`. A short stop and steering center precede the approach, and parking temporarily uses gains `kp = 0.087`, `kd = 0.130`.
-
-| Maneuver element | Left course (`turn_direction = -1`) | Right course (`turn_direction = +1`) |
+| Stage | Direction -1 | Direction +1 |
 |---|---|---|
-| Initial forward gyro-straight time | 230 ms | 250 ms |
-| First course-specific heading turn | +90° | -90° |
-| Short encoder alignment movements | 9 cm forward, 9 cm reverse, 9 cm forward | 7 cm forward, 9 cm reverse, 7 cm forward |
-| Front ToF positioning target | 275 mm, 5 mm tolerance | 280 mm, 5 mm tolerance |
-| Next gyro heading adjustment | +88° | -91.5° |
-| Side wall used for staged movement | Left | Right |
-| Side ToF threshold | 175 mm | 175 mm |
-| Final reverse arcs | +75° and +2° target offsets | -75° and -2° target offsets |
-| Finish | Center, stop, 20 s delay | Center, stop, 20 s delay |
+| Entry target | -1080 degrees | +1080 degrees |
+| Entry travel | 25 cm | 15 cm |
+| First turn target | -990 degrees | +990 degrees |
+| Front alignment | R2C3, 400 mm target, 8 mm tolerance | Same |
+| Second turn target | -900 degrees | +900 degrees |
+| Side post nominal encoder separation | 220 +/-145 mm | 255 +/-80 mm |
+| Advance after second post | 45 mm | 45 mm |
+| Final reverse entry arc | +80 degrees | -80 degrees |
+| Final two targets relative to lane | +5, -5 degrees | -5, +5 degrees |
 
-The underlying code includes several additional short encoder advances between these stages. For the complete order and movement parameters, see [`final_park()` in `Final.ino`](../src/HLR_FE_Separated/Final.ino), and for the distance-control implementation see [`motors.ino`](../src/HLR_FE_Separated/motors.ino). The table is a readable summary, not a replacement for the source.
+Parking entry, front alignment, turns and post search use PWM 35; the final three movements use PWM 32. Front alignment uses a rolling median of three fresh valid R2C3 readings, with bounded recovery for invalid data, overshoot or reversal. The second turn follows the verified target without a deliberate stationary settle. Both side sensors are assessed before choosing the post-search side; the selected 4x4 sensor attempts 60 Hz and falls back to 30 Hz if necessary. The detector observes column 3 (all four rows), validates two distinct close pulses using encoder travel and then advances 45 mm before the final reverse/reverse/forward sequence. Completion stops the motor and centers steering. The initial 150 ms settle and fault stops are intentional.
 
-Older README figures describing 470/460 mm wall targets, PWM pulse sensors and the earlier three-arc sequence belong to the historical firmware and are **not the V4.1 parking implementation**.
-
-**Front and side ToF stages from the left-course branch of `final_park()` in `Final.ino`:**
-
-```cpp
-move_to_front_distance(275.0f, 5.0f, 45, current_angle_gyro, false);
-move_until_angle_no_flush(47, (current_angle_gyro) + 88);
-
-current_angle_gyro = current_angle_gyro + 88;
-move_cm_gyro(5, 37, current_angle_gyro);
-move_straight_until_distance('L', 37, 175, false, false);
-move_cm_gyro(10, 30, current_angle_gyro);
-move_straight_until_distance('L', 30, 175, false, true);
+```mermaid
+flowchart TD
+ A[Absolute lap-12 heading] --> B[Measured entry travel]
+ B --> C[First 90 degree turn]
+ C --> D[Fresh R2C3 median: 400 mm]
+ D --> E[Rolling second 90 degree turn]
+ E --> F[Select side ToF and scan column 3]
+ F --> G[Confirm two separated posts]
+ G --> H[Advance 45 mm]
+ H --> I[Three final movements]
+ I --> J[Stop and center]
+ D -->|Invalid or timeout| K[Fault stop]
+ F -->|Search failure| K
 ```
 
-The calls use the VL53L5CX-backed distance routines, rather than the old PWM range sensor interface.
-
+Source: [Final.ino](../src/HLR_FE_World_Final/Final.ino). Capture the real stage trace and side CSV after a run; the above values are configuration, not proof of parking accuracy.
 
 ## 7. Camera source audit: what the uploaded OpenMV RT1062 program actually implements
 
@@ -820,21 +586,47 @@ The software depends on the mechanical setup described in [Chapter 02](02-mobili
 
 | Setting or check | Source value / method | Why it matters |
 |---|---|---|
-| Steering left/center/right | 39 / 85 / 131 servo commands | Center and travel limits depend on assembled linkage |
-| Parking steering extremes | 40 / 138 | Wider steering mapping used in parking |
-| Encoder | 1.831 mm per counted A-rising tick | Short distance and parking maneuvers |
+| Steering left/center/right | 30 / 85 / 140 servo commands | Center and travel limits depend on assembled linkage |
+| Parking steering extremes | 30 / 140 | Wider steering mapping used in parking |
+| Encoder | 0.858 mm per counted A-rising tick | Short distance and parking maneuvers |
 | BMI088 initialization | 10 s stationary bias; ±2000°/s, 400 Hz gyro | Reduces initial heading offset |
 | ToF addresses | Front `0x30`, left `0x31`, right `0x32`, rear `0x33` | Four independent devices on one bus |
 | ToF resolution / target rate | 4 × 4 / 30 Hz | Spatial ranging and corner timing |
 | ToF data freshness | 150 ms | Rejects stale zone data |
-| Open turn / rearm | Both selected cells below 600 / at least 800 mm | Counts a wall once and arms next one |
+| Open turn / rearm | 3 agreeing pairs below 700 mm / 600 ms and 25 cm | Counts a wall once and arms next one |
 | Open initial / cruise / corner PWM | 80 / 250 / 80 | Speed profile used by `Open.ino` |
-| Open heading gains | `kp=0.034`, `kd=0.082` | Gyro straight-driving correction |
-| Final heading gains | `kp=0.044`, `kd=0.082` | Obstacle-mode heading correction |
-| Final parking gains | `kp=0.087`, `kd=0.130` | Precision parking control |
+| Open heading gains | `kp=0.028`, `kd=0.080` | Gyro straight-driving correction |
+| Final heading gains | `kp=0.038`, `kd=0.070` | Obstacle-mode heading correction |
+| Parking drive / final arcs | PWM 35 / 32 | Distinct maneuver speeds |
 | Camera format | QVGA RGB565, both flips on | ROI geometry and color processing |
 | Camera UART | 19,200 baud, `UART(1)` | Matches Nano `Serial0` |
 | Camera close threshold | Blob area `>= 5000` in `src/camera.py` | Vision proximity event; **not** a calibrated distance |
 | Camera sign-height rule | **Not implemented** in the bundled `src/camera.py` | The proposed 50/100/150 mm mapping is documented but must be integrated and verified before claiming it |
 
 A practical integrated check begins with motor and steering direction while wheels are lifted, followed by gyro startup and known-angle turns, each ToF address and its intended field of view, floor-marker detection, camera UART reception, short encoder movements and finally complete Open/Obstacle runs on a matching field. The individual test sketches and build instructions are linked in [Chapter 06](06-reproducibility.md). Real measurements and outcome records, where available, are separate from the source configurations above.
+
+
+## World Final read-only telemetry
+
+The current World Final sketch includes [`Telemetry.ino`](../src/HLR_FE_World_Final/Telemetry.ino), initialized only for `MODE_FINAL`. The ESP32 hosts its own local access point and five HTTP GET endpoints: `/` serves the dashboard, `/api` returns current JSON fields, and `/history` returns the recorded yaw history when the motor is stopped; `/parking-log.csv` exports side-post measurements and `/color-log.csv` exports floor-color samples. There are no remote actuation or configuration endpoints. The controller retains autonomous decision authority.
+
+| Signal group | Meaning |
+|---|---|
+| Yaw, target, error | Integrated gyro heading, current controller target and target minus actual heading (degrees) |
+| Rate and bias | Angular rate and stationary gyro drift estimate (degrees/s) |
+| Acceleration, roll, pitch | BMI088 acceleration in m/s² and tilt estimates in degrees |
+| PWM, encoder, turns | Motor command, encoder tick counter and course turn count; PWM is not a measured speed |
+| State, cube phase, parking stage | State-machine progress and maneuver phase |
+| Camera command, age, steering | Last decoded command, elapsed time and steering value; not raw camera video |
+| ToF | Selected front and side cells, not the full four matrices |
+| Event and fault | Most recent reported event and fault/stop reason |
+
+The ring buffer holds 480 samples at a nominal 100 ms interval (approximately 48 seconds); actual timing depends on the controller loop. Browser polling waits 350 ms after each response. HTTP handling is throttled to 80 ms while moving or 55 ms while stationary. Large history downloads are suppressed while driving to reduce disruption of gyro integration. Data are volatile, not persistent run logs. A live dashboard does not establish that Wi-Fi has no impact on control timing; compare repeatable runs with and without a connected client.
+
+**Implementation limitation:** front left/right aggregate readings are updated only by the special stopped diagnostic branch. That branch currently checks `STOP AT FRONT 270`, whereas `Final.ino` emits `STOP AT FRONT TARGET` only in a disabled diagnostic branch. Consequently these aggregate fields may remain unavailable in the uploaded revision. Capture only what the actual firmware reports, and resolve/test the mismatch separately if those fields are required. The competition logic is unchanged; this discrepancy is retained and disclosed.
+
+See [reproduction and screenshot procedure](06-reproducibility.md#connect-to-the-world-final-telemetry-dashboard) and [matrix evidence](03-power-sensors.md#world-final-tof-matrix-evidence).
+
+### Exporting parking evidence
+
+After the motor stops, download `/parking-log.csv` (up to 512 samples) and `/color-log.csv` (up to 400 samples). The parking CSV records time, travel, side, four column-3 distances, near mask, phase, wall count and four raw ST target-status codes. These are bounded volatile buffers. Save the original downloads before rebooting. Suggested evidence paths: `docs/docs-media/world-final/parking-side-log.csv` and `docs/docs-media/world-final/color-log.csv`.
