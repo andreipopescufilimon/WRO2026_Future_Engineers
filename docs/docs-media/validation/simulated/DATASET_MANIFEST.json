@@ -1,0 +1,24 @@
+{
+  "source_type": "SYNTHETIC_SIMULATION_NOT_PHYSICAL_DATA",
+  "random_seed": 20261110,
+  "firmware_commit_field": "SIMULATED_NO_REAL_FIRMWARE_COMMIT",
+  "source_csv_schemas": "/mnt/data/repro_final_audit/docs/validation/physical",
+  "model": {
+    "power": "illustrative 2S LiHV + 5V electronic-load time series",
+    "ToF": "illustrative bias/noise/failure rate with 30Hz frame timestamps",
+    "IMU": "illustrative stationary bias and repeated 90-degree turns",
+    "camera": "illustrative red/green/no-target trials with variable lighting",
+    "challenge_runs": "hypothetical scenario outcomes, not real field observations",
+    "functional_checks": "model-level exercise records, not hardware testing",
+    "revision_comparisons": "hypothetical before/after outcomes, not observed results"
+  },
+  "counts": {
+    "power_runs.csv": 1446,
+    "tof_samples.csv": 1280,
+    "imu_samples.csv": 854,
+    "camera_trials.csv": 648,
+    "challenge_runs.csv": 24,
+    "functional_checks.csv": 14,
+    "revision_comparisons.csv": 200
+  }
+}
