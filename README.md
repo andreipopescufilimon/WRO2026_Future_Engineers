@@ -59,7 +59,7 @@ The **Arduino Nano ESP32** handles navigation and motion control. The **OpenMV R
 
 ### V4.1 CAD model
 
-![CAD rendering of HyperLine Robotics V4.1 showing the PCB chassis, camera, wheels, drivetrain, battery and sensor mounts](/docs/docs-media/robot-v4-1-cad.png)
+![CAD rendering of HyperLine Robotics V4.1 showing the PCB chassis, camera, wheels, drivetrain, battery and sensor mounts](/docs/docs-media/v41-cad-complete-robot-render.png)
 
 *Figure 1. CAD view of the V4.1 vehicle*
 
@@ -228,3 +228,6 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 Beyond developing our autonomous vehicle, we wanted to contribute something useful to the wider WRO Future Engineers community. We created the **[WRO Future Engineers Randomizer](https://wro-fe-randomizer.hyperlinerobotics.com/)**, a publicly available web tool designed to help teams prepare for the unpredictable conditions of the 2026 competition. The platform generates randomized field configurations, including starting positions, red and green traffic sign placements, based on the competition format. We developed it to make testing more diverse and efficient, allowing teams to challenge their navigation algorithms with different layouts instead of repeatedly practicing on the same field configuration. By making this tool available to other competitors, we hope to help more teams improve their robots, identify weaknesses in their algorithms, and prepare for international competitions.
 
 **Try the tool:** https://wro-fe-randomizer.hyperlinerobotics.com/
+
+
+[Media and evidence index](docs/media-index.md) · V4.1 assembly, captured print settings, telemetry and ToF diagnostics.
