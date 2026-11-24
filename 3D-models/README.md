@@ -28,7 +28,7 @@ STEP files are neutral solid-geometry exchanges. They are not printer profiles o
 
 1. Open the eight current STEP files using a millimeter-based CAD project and inspect mating faces and clearances.
 2. Inspect the PCB chassis and electrical board outline under [`electrical-schematics/`](../electrical-schematics/). The PCB chassis is not replaced by a generic printed plate.
-3. Fit and test the front steering linkage with the drive motor switched off. Do not assume that servo **commands** 39/85/131 degrees equal measured wheel **angles**.
+3. Fit and test the front steering linkage with the drive motor switched off. Do not assume that servo **commands** 30/85/140 degrees equal measured wheel **angles**.
 4. Check rear differential freedom, wheel runout, actual tyre contact diameter, wiring strain relief and sensor occlusion.
 5. Record the actual printed/machined process, material, layer height (if printed), fasteners, tolerances and observed test measurements in the [physical evidence record](../docs/validation/physical/).
 6. Repeat dimensional checks after any wheel, steering or gear revision.
@@ -36,3 +36,7 @@ STEP files are neutral solid-geometry exchanges. They are not printer profiles o
 ### Evidence boundaries
 
 The geometry supplied here is reproducible as a collection of parts. A strong independent reproduction is supported by the **assembled-revision description**, final BOM/fasteners, assembly order, compilation instructions, calibration and field results. The team reports successful local Arduino compilation; extra captured evidence would make that easier to review, but a compiler log is not an explicit 6/6 rubric requirement. See [reproducibility guide](../docs/06-reproducibility.md) for the current status.
+
+## Captured V4.1 print profile
+
+See [quality settings](../docs/docs-media/v41-screenshot-slicer-quality.png) and [support settings](../docs/docs-media/v41-screenshot-slicer-support.png). The actual capture shows 0.08 mm layer height, 0.20 mm first layer and automatic Tree Slim supports. The complete transcribed profile and assembly photos are in [Chapter 06](../docs/06-reproducibility.md#21-prepare-and-3d-print-the-parts). Material, speeds and temperatures still require the actual slicer preset.
