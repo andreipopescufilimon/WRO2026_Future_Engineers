@@ -1,0 +1,11 @@
+component,operating_point,nominal_rail,published_current_or_output,value_w_or_wh,evidence_class,source,qualification
+OpenMV RT1062,idle,5 V,0.100 A,0.5,device_product_spec,https://openmv.io/products/openmv-cam-rt,Vendor published typical idle at 5 V
+OpenMV RT1062,active,5 V,0.130 A,0.65,device_product_spec,https://openmv.io/products/openmv-cam-rt,Vendor published active at 5 V
+VL53L5CX (one sensor),continuous 4x4 or 8x8,3V3 / 3V3,0.313 W,0.313,device_datasheet,https://www.st.com/resource/en/datasheet/vl53l5cx.pdf,Device silicon; custom-board overhead excluded
+VL53L5CX (four sensors),continuous 4x4 or 8x8,3V3 / 3V3,4 x 0.313 W,1.252,arithmetic_of_device_datasheet,https://www.st.com/resource/en/datasheet/vl53l5cx.pdf,Four sensor silicon subtotal
+BMI088 silicon,full operation,3.3 V,0.00515 A,0.016995,device_product_spec,https://www.bosch-sensortec.com/en/products/motion-sensors/imus/bmi088/,Custom-board overhead excluded
+Pololu 50:1 HPCB 6 V,typical no load,6 V,0.15 A,0.9,device_product_spec,https://www.pololu.com/product/5187/specs,Not loaded robot current
+Pololu 50:1 HPCB 6 V,max efficiency point,6 V,0.42 A,2.52,device_product_spec,https://www.pololu.com/product/5187/specs,Published maximum efficiency point
+Pololu 50:1 HPCB 6 V,extrapolated stall,6 V,1.50 A,9.0,extrapolated_device_spec,https://www.pololu.com/product/5187/faqs,Not safe for continuous use
+D24V50F5 regulator,maximum rated output capacity,5 V,5 A,25.0,regulator_output_capacity,https://www.pololu.com/product/2851,Not a robot power demand
+2S LiHV battery,nominal stored energy,7.6 V,0.300 Ah,2.28,battery_label_energy_Wh,,Value is Wh not W

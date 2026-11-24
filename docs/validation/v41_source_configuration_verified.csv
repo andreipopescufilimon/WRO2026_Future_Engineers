@@ -1,0 +1,44 @@
+subsystem,parameter,source_value,source_path,source_revision,evidence_class
+hardware,Robot revision,V4.1,docs/06-reproducibility.md,SOURCE_BUNDLED_WITH_PATCH,HARDWARE_DESIGN
+hardware,Main controller,Arduino Nano ESP32,docs/06-reproducibility.md,SOURCE_BUNDLED_WITH_PATCH,HARDWARE_DESIGN
+hardware,Camera hardware,OpenMV RT1062,docs/06-reproducibility.md,SOURCE_BUNDLED_WITH_PATCH,HARDWARE_DESIGN
+motor,Motor PWM pin,D7,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+motor,Motor direction pin,D8,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+steering,Servo signal pin,D2,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+encoder,Encoder A pin,D5,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+encoder,Encoder B pin,D4,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+mode,Final select pin,D11,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+mode,Open select pin,D12,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+mode,Start button pin,D10,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+steering,Left servo command,39,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+steering,Center servo command,85,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+steering,Right servo command,131,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+steering,Left parking servo command,40,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+steering,Right parking servo command,138,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+encoder,Calibrated distance mm/count,1.831f,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+encoder,Nominal wheel diameter mm,29.0f,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+camera_link,Camera-follow watchdog ms,350,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+open,Corner PWM,80,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+open,Finish PWM,80,src/HLR_FE_Separated/HLR_FE_Separated.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Matrix width and height cells,4,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Nominal ranging frequency Hz,30,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Maximum frame age ms,150UL,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Open trigger below mm,600,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Open clear/rearm at least mm,800,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Front 7-bit I2C address,0x30,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Left 7-bit I2C address,0x31,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Right 7-bit I2C address,0x32,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+tof,Rear 7-bit I2C address,0x33,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+open,Corner zone A,row 2 column 3,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+open,Corner zone B,row 3 column 3,src/HLR_FE_Separated/tof.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+camera,Exposure microseconds,16000,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,UART baud,19200,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,Camera image size,320x240,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+open,Required turns,12,src/HLR_FE_Separated/Open.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+final,Parking activation turn,13,src/HLR_FE_Separated/Final.ino,SOURCE_BUNDLED_WITH_PATCH,FIRMWARE_SOURCE
+camera,Blob area close threshold,5000,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,PD proportional gain,0.4,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,PD derivative gain,2.4,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,Auto gain,False,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,Auto white balance,False,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE
+camera,Direction messages,0/1/2 per frame,src/camera.py,SOURCE_IN_UPLOADED_ARCHIVE,FIRMWARE_SOURCE

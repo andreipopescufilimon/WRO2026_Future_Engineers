@@ -1,0 +1,3 @@
+source_path,sha256,origin_date,implementation_role,verification_status
+src/camera_candidates/rt1062_surprise_rule_v11.py,b7a23c4b1aa2d1cbecc935717ea0af7f04705e43371013e62c7effce945bb754,2026-11-10,RECOVERED_CAMERA_CANDIDATE,23/23 pure function tests pass; no physical evidence
+src/camera_candidates/rt1062_nov15_height_track_experimental.py,7ed64b9728910821eff2d5283c09cbd20b3f7d406ca26b67c8c807ceb173bd26,2026-11-15,RECOVERED_CAMERA_EXPERIMENT,Syntax parses; no physical evidence
