@@ -33,3 +33,7 @@ The [recorded yaw-history graph](../../docs-media/v41-screenshot-telemetry-yaw-h
 The [systems chapter](../../05-systems.md) records design changes and the engineering rationale. The [mobility chapter](../../02-mobility.md) contains the team's physical dimensional checks and mechanical calculations.
 
 [Measurement records and test procedures](README.md) keep reference-distance tests, electrical measurements and field-run results separate from the captured diagnostic observations.
+
+## Firmware compilation
+
+The [24 November World Final build results](../evidence/ci-build-summary.md) record successful GitHub Actions compilation of the competition revision `728dc45`. For autonomous recordings, see [Open Round](../../../video/video.md#open-round-open-challenge) and [Final Round](../../../video/video.md#final-round-obstacle-challenge). Camera height trials and full-field runs are recorded in [sign_height_trials.csv](sign_height_trials.csv) and [challenge_runs.csv](challenge_runs.csv), separately from software checks.

@@ -310,7 +310,7 @@ The engineering process spans multiple revisions. V4 was the national competitio
 | **Firmware associated with filmed driving** | [Commit `de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) | Team-identified revision used for the recorded physical driving; main sketch [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino) |
 | **Later modular V4.1 implementation** | [Commit `045c57e7388c08f9281642a864de0ba3b099c0df`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/045c57e7388c08f9281642a864de0ba3b099c0df), [source directory](../src/HLR_FE_World_Final/) | Separate Open and Final modes, multi-zone ToF processing and current controller architecture |
 
-The filming snapshot and later modular sketch are different implementations. We use the filmed revision to identify the source behind the real-world video, and the later directory to document the present architecture. The historical source and the current World Final implementation are documented separately.
+The filming snapshot and later modular sketch are different implementations. We use the filmed revision to identify the source behind the real-world video, and the later directory to document the present architecture. The historical source and the current World Final implementation are documented separately. The [Open Round](../video/video.md#open-round-open-challenge) and [Final Round](../video/video.md#final-round-obstacle-challenge) demonstration entries are maintained in the central video index.
 
 ### 8.1 What we learned from the complete system
 

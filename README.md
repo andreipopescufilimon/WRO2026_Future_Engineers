@@ -217,8 +217,8 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 
 | Demonstration | Link |
 |---|---|
-| Open Round | [Open Round video](video/video.md#open-round-open-challenge) |
-| Final Round | [Final Round video](video/video.md#final-round-obstacle-challenge) |
+| Open Round | [Open Round (Open Challenge)](video/video.md#open-round-open-challenge) |
+| Final Round | [Final Round (Obstacle Challenge)](video/video.md#final-round-obstacle-challenge) |
 | Earlier combined recording | [Open and Obstacle driving](https://www.youtube.com/watch?v=bg92ulHXomw) |
 | Assembly demonstration | [Watch the assembly](https://youtu.be/HSzWATB6nWQ) |
 
@@ -231,4 +231,4 @@ Beyond developing our autonomous vehicle, we wanted to contribute something usef
 **Try the tool:** https://wro-fe-randomizer.hyperlinerobotics.com/
 
 
-[Media and evidence index](docs/media-index.md) · [Recorded observations](docs/validation/physical/SUMMARY.md) · [World Final source and dependency manifest](docs/validation/v41_release_manifest.csv).
+[Successful World Final build #7](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/actions/runs/45399234569/attempts/1) · [Build results](docs/validation/evidence/ci-build-summary.md) · [Media and evidence index](docs/media-index.md) · [Recorded observations](docs/validation/physical/SUMMARY.md) · [World Final source and dependency manifest](docs/validation/v41_release_manifest.csv).

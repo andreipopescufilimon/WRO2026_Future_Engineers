@@ -16,6 +16,9 @@
     "src/camera_candidates/rt1062_nov15_height_track_experimental.py": "7ed64b9728910821eff2d5283c09cbd20b3f7d406ca26b67c8c807ceb173bd26",
     "src/camera_candidates/README.md": "9b10aeabff9654a57eef8655810b7e9efa7cf2863d4694345ab8b031631670d8",
     "docs/03-power-sensors.md": "14d8a08b71fb042abc6431183a916e293ac711d69d21a397c73eb6a09294aebc",
-    "docs/06-reproducibility.md": "8ac45982d9eb99aa7e7d18fa1341b39ad3d627689cbd4e42fd6a16d35a6dea57"
-  }
+    "docs/06-reproducibility.md": "ba8a0cac897ad2ace6471e3571a8ed270a4e1930f5977ed9f93b7cffa1f361de"
+  },
+  "compiled_source_commit": "728dc45495136473042b53fa7e8e6e1ccd665093",
+  "public_ci_run": "https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/actions/runs/45399234569/attempts/1",
+  "manifest_comparison": "9 competition source hashes calculated locally and compared with published manifest at compiled commit"
 }

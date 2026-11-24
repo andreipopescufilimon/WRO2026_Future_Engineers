@@ -9,8 +9,9 @@
     "tof_samples.csv": 0,
     "revision_comparisons.csv": 0,
     "camera_trials.csv": 0,
-    "build_verification.csv": 0
+    "build_verification.csv": 3
   },
   "diagnostic_frame_zones": 64,
-  "published_demonstrations": 3
+  "published_demonstrations": 3,
+  "ci_build_records": 3
 }

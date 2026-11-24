@@ -41,7 +41,7 @@ The eight `.ino` files remain inside one `src/HLR_FE_World_Final/` directory. Ar
 
 The team identifies commit [`de34faf039a70443361197de540879f212e3de81`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/de34faf039a70443361197de540879f212e3de81) as the software used for the [published Open and Obstacle driving video](https://www.youtube.com/watch?v=bg92ulHXomw). Its Arduino entry point is the older [`src/HLR_FE/HLR_FE.ino`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/blob/de34faf039a70443361197de540879f212e3de81/src/HLR_FE/HLR_FE.ino).
 
-The current modular implementation under [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) adds ToF-based Open navigation and rolling parking. The earlier driving demonstration corresponds to the historical source revision above.
+The current modular implementation under [`src/HLR_FE_World_Final/`](../src/HLR_FE_World_Final/) adds ToF-based Open navigation and rolling parking. The earlier driving demonstration corresponds to the historical source revision above. The current competition source was compiled successfully in [GitHub Actions build #7](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/actions/runs/45399234569/attempts/1) at commit [`728dc45`](https://github.com/andreipopescufilimon/WRO2026_Future_Engineers/commit/728dc45495136473042b53fa7e8e6e1ccd665093). For the individual demonstrations, see [Open Round](../video/video.md#open-round-open-challenge) and [Final Round](../video/video.md#final-round-obstacle-challenge).
 
 ## 2. System architecture and execution flow
 

@@ -13,7 +13,8 @@ The physical ledgers collect the original measurements, run results and test con
 | Camera color and height | [camera_trials.csv](camera_trials.csv), [sign_height_trials.csv](sign_height_trials.csv) |
 | Autonomous runs and parking | [challenge_runs.csv](challenge_runs.csv) |
 | Development comparison | [revision_comparisons.csv](revision_comparisons.csv) |
-| Hardware checks and build environment | [functional_checks.csv](functional_checks.csv), [build_verification.csv](build_verification.csv) |
+| Hardware checks | [functional_checks.csv](functional_checks.csv) |
+| Firmware compilation (CI) | [build_verification.csv](build_verification.csv), [public build results](../evidence/ci-build-summary.md) |
 | Published driving and assembly recordings | [published_demonstrations.csv](published_demonstrations.csv) |
 
 Run `python scripts/summarize_validation.py --output docs/validation/physical/MEASUREMENTS.md` to aggregate dated numerical measurements after recording them.

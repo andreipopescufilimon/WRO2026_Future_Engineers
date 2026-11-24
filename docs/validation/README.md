@@ -4,7 +4,7 @@ This directory preserves the controller configuration, analytical models, develo
 
 - [Power model assumptions](power_model_assumptions.csv) and [calculated power scenarios](power_model_scenarios.csv).
 - [Controller configuration](v41_source_configuration_verified.csv).
-- [Source manifest](evidence/source-sha256.json).
+- [Source manifest](evidence/source-sha256.json) and [successful firmware compilation](evidence/ci-build-summary.md).
 - [Measurement worksheets](measurement_templates/) and [physical observation ledgers](physical/).
 - [Recorded observations](physical/SUMMARY.md), [actual diagnostic matrix](physical/tof_diagnostic_frame_633.csv) and [source and dependency manifest](v41_release_manifest.csv).
 - [Camera source checks](camera_source_contract.csv) and [earlier height development function regression](v41_camera_height_function_regression.csv).
