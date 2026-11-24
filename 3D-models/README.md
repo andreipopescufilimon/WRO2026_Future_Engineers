@@ -32,7 +32,3 @@ STEP files are neutral solid-geometry exchanges. They are not printer profiles o
 4. Check rear differential freedom, wheel runout, actual tyre contact diameter, wiring strain relief and sensor occlusion.
 5. Record the actual printed/machined process, material, layer height (if printed), fasteners, tolerances and observed test measurements during assembly.
 6. Repeat dimensional checks after any wheel, steering or gear revision.
-
-## Captured V4.1 print profile
-
-See [quality settings](../docs/docs-media/v41-screenshot-slicer-quality.png) and [support settings](../docs/docs-media/v41-screenshot-slicer-support.png). The actual capture shows 0.08 mm layer height, 0.20 mm first layer and automatic Tree Slim supports. The complete transcribed profile and assembly photos are in [Chapter 06](../docs/06-reproducibility.md#21-prepare-and-3d-print-the-parts).

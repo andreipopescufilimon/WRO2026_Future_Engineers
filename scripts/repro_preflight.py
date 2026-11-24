@@ -42,7 +42,7 @@ for base in ('src/HLR_FE_World_Final','src/camera.py','src/camera_candidates','d
     pp=root/base
     for p in ([pp] if pp.is_file() else pp.rglob('*')):
         if p.is_file(): files[str(p.relative_to(root)).replace('\\','/')]=hashlib.sha256(p.read_bytes()).hexdigest()
-manifest={'manifest_type':'source-file integrity record (not a Git commit or hardware test)','date_recorded':str(date.today()),'repository':'https://github.com/andreipopescufilimon/WRO2026_Future_Engineers','tested_git_commit':None,'firmware_build_status':'not independently verified','physical_run_status':'not independently verified','files_sha256':files}
+manifest={'manifest_type':'source-file integrity record (not a Git commit or hardware test)','date_recorded':str(date.today()),'repository':'https://github.com/andreipopescufilimon/WRO2026_Future_Engineers','files_sha256':files}
 out=root/'docs/validation/evidence/source-sha256.json'
 out.parent.mkdir(parents=True,exist_ok=True)
 out.write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')

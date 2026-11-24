@@ -22,7 +22,9 @@ def readrows(p):
     with p.open(newline='', encoding='utf-8-sig') as f:
         rows = [r for r in csv.DictReader(f) if any(str(v or '').strip() for v in r.values())]
         # Only rows containing actual observations enter the physical summary.
-        rows = [r for r in rows if not str(r.get('notes', '')).startswith('TEST_PLAN')]
+        rows = [r for r in rows if r.get('date_utc') and r.get('firmware_commit')
+                and not any(token in ' '.join(str(v or '') for v in r.values()).upper()
+                            for token in ('SYNTHETIC', 'SYNTH-', 'EXAMPLE_ONLY', 'TEST_PLAN'))]
         if p.name == 'functional_checks.csv':
             rows = [r for r in rows if r.get('date_utc') and r.get('observed') and
                     str(r.get('status', '')).strip().upper() in ('PASS', 'FAIL')]
@@ -126,7 +128,7 @@ def summarize(base):
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--input',default='docs/validation/physical')
-    p.add_argument('--output',default='docs/validation/physical/SUMMARY.md')
+    p.add_argument('--output',default='docs/validation/physical/MEASUREMENTS.md')
     args=p.parse_args()
     md, datasets=summarize(Path(args.input))
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
