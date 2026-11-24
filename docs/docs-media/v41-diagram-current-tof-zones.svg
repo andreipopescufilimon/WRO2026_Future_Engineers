@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="405" viewBox="0 0 920 405">
+<rect width="920" height="405" fill="#f8fafc"/>
+<g font-family="Arial, sans-serif" fill="#172e47">
+<text x="32" y="38" font-size="24" font-weight="bold">V4.1 | World Final 4 × 4 front ranging</text>
+<text x="32" y="65" font-size="15">Source-derived zone map, not measured distances</text>
+<rect x="32" y="88" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="66" y="112" font-size="15" text-anchor="middle" font-weight="bold">R1C1</text>
+<text x="66" y="132" font-size="12" text-anchor="middle">idx 0</text>
+<rect x="108" y="88" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="142" y="112" font-size="15" text-anchor="middle" font-weight="bold">R1C2</text>
+<text x="142" y="132" font-size="12" text-anchor="middle">idx 1</text>
+<rect x="184" y="88" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="218" y="112" font-size="15" text-anchor="middle" font-weight="bold">R1C3</text>
+<text x="218" y="132" font-size="12" text-anchor="middle">idx 2</text>
+<rect x="260" y="88" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="294" y="112" font-size="15" text-anchor="middle" font-weight="bold">R1C4</text>
+<text x="294" y="132" font-size="12" text-anchor="middle">idx 3</text>
+<rect x="32" y="156" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="66" y="180" font-size="15" text-anchor="middle" font-weight="bold">R2C1</text>
+<text x="66" y="200" font-size="12" text-anchor="middle">idx 4</text>
+<rect x="108" y="156" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="142" y="180" font-size="15" text-anchor="middle" font-weight="bold">R2C2</text>
+<text x="142" y="200" font-size="12" text-anchor="middle">idx 5</text>
+<rect x="184" y="156" width="68" height="60" rx="7" fill="#c5eaf8" stroke="#0879a6" stroke-width="3"/>
+<text x="218" y="180" font-size="15" text-anchor="middle" font-weight="bold">R2C3</text>
+<text x="218" y="200" font-size="12" text-anchor="middle">idx 6</text>
+<rect x="260" y="156" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="294" y="180" font-size="15" text-anchor="middle" font-weight="bold">R2C4</text>
+<text x="294" y="200" font-size="12" text-anchor="middle">idx 7</text>
+<rect x="32" y="224" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="66" y="248" font-size="15" text-anchor="middle" font-weight="bold">R3C1</text>
+<text x="66" y="268" font-size="12" text-anchor="middle">idx 8</text>
+<rect x="108" y="224" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="142" y="248" font-size="15" text-anchor="middle" font-weight="bold">R3C2</text>
+<text x="142" y="268" font-size="12" text-anchor="middle">idx 9</text>
+<rect x="184" y="224" width="68" height="60" rx="7" fill="#c5eaf8" stroke="#0879a6" stroke-width="3"/>
+<text x="218" y="248" font-size="15" text-anchor="middle" font-weight="bold">R3C3</text>
+<text x="218" y="268" font-size="12" text-anchor="middle">idx 10</text>
+<rect x="260" y="224" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="294" y="248" font-size="15" text-anchor="middle" font-weight="bold">R3C4</text>
+<text x="294" y="268" font-size="12" text-anchor="middle">idx 11</text>
+<rect x="32" y="292" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="66" y="316" font-size="15" text-anchor="middle" font-weight="bold">R4C1</text>
+<text x="66" y="336" font-size="12" text-anchor="middle">idx 12</text>
+<rect x="108" y="292" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="142" y="316" font-size="15" text-anchor="middle" font-weight="bold">R4C2</text>
+<text x="142" y="336" font-size="12" text-anchor="middle">idx 13</text>
+<rect x="184" y="292" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="218" y="316" font-size="15" text-anchor="middle" font-weight="bold">R4C3</text>
+<text x="218" y="336" font-size="12" text-anchor="middle">idx 14</text>
+<rect x="260" y="292" width="68" height="60" rx="7" fill="#ffffff" stroke="#9caec0" stroke-width="1"/>
+<text x="294" y="316" font-size="15" text-anchor="middle" font-weight="bold">R4C4</text>
+<text x="294" y="336" font-size="12" text-anchor="middle">idx 15</text>
+<text x="378" y="103" font-size="18">Selected cells: R2C3 / R3C3</text>
+<text x="378" y="138" font-size="18">3 fresh valid pairs, each &lt; 700 mm</text>
+<text x="378" y="167" font-size="18">Maximum pair difference: 220 mm</text>
+<text x="378" y="205" font-size="18">Brake band: 1000 → 700 mm</text>
+<text x="378" y="234" font-size="18">Approach target: PWM 80</text>
+<text x="378" y="272" font-size="18">Rearm: ≥ 600 ms and ≥ 25 cm</text>
+<text x="378" y="301" font-size="18">Reject stale data: age &gt; 150 ms</text>
+<text x="378" y="339" font-size="18">4 × 4 at nominal 30 Hz</text>
+<text x="32" y="383" font-size="13">Derived from Open.ino and tof.ino. Optical orientation must be verified on the mounted sensor.</text>
+</g></svg>
