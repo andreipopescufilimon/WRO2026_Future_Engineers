@@ -2,13 +2,11 @@
 
 ## Open Round (Open Challenge)
 
-<!-- Replace the placeholder below with the Open Round video URL. -->
-Video link: **ADD OPEN ROUND VIDEO URL HERE**
+Video link: [https://www.youtube.com/watch?v=65OOCZVhrC8](https://www.youtube.com/watch?v=65OOCZVhrC8)
 
 ## Final Round (Obstacle Challenge)
 
-<!-- Replace the placeholder below with the Final Round video URL. -->
-Video link: **ADD FINAL ROUND VIDEO URL HERE**
+Video link: [https://www.youtube.com/watch?v=PWxk6zCI5zk](https://www.youtube.com/watch?v=PWxk6zCI5zk)
 
 Each round recording should show at least 30 seconds of autonomous driving. The Final Round recording can also show parking.
 
