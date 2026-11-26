@@ -200,8 +200,8 @@ Apart from robotics, I love MTB, video games, and cybersecurity. I’m always in
 
 | Demonstration | Link |
 |---|---|
-| Open Round | [Open Round (Open Challenge)](../video/video.md#open-round-open-challenge) |
-| Final Round | [Final Round (Obstacle Challenge)](../video/video.md#final-round-obstacle-challenge) |
+| Open Round | [Open Round (Open Challenge)](https://www.youtube.com/watch?v=65OOCZVhrC8) |
+| Final Round | [Final Round (Obstacle Challenge)](https://www.youtube.com/watch?v=PWxk6zCI5zk) |
 | Earlier combined recording | [Open and Obstacle driving](../video/video.md#earlier-combined-recording) |
 | Assembly demonstration | [Watch the assembly](https://youtu.be/HSzWATB6nWQ) |
 
